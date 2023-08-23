@@ -49,6 +49,7 @@ from watertap.unit_models.pressure_changer import Pump, EnergyRecoveryDevice
 from watertap.core.util.initialization import assert_degrees_of_freedom
 from watertap.costing import WaterTAPCosting
 
+
 def main():
     solver = get_solver()
 
@@ -67,8 +68,9 @@ def main():
 
     return m
 
+
 def build():
-     # flowsheet set up
+    # flowsheet set up
     m = ConcreteModel()
     m.fs = FlowsheetBlock(dynamic=False)
     m.fs.properties = props.SeawaterParameterBlock()
@@ -103,18 +105,16 @@ def build():
     )
 
     # connections
-    m.fs.s01 = Arc(source=m.fs.feed.outlet,destination=m.fs.P1.inlet)
-    m.fs.s02 = Arc(source=m.fs.P1.outlet,destination=m.fs.RO.inlet)
-    m.fs.s03 = Arc(source=m.fs.RO.retentate,destination=m.fs.disposal.inlet)
-    m.fs.s04 = Arc(source=m.fs.RO.permeate,destination=m.fs.product.inlet)
+    m.fs.s01 = Arc(source=m.fs.feed.outlet, destination=m.fs.P1.inlet)
+    m.fs.s02 = Arc(source=m.fs.P1.outlet, destination=m.fs.RO.inlet)
+    m.fs.s03 = Arc(source=m.fs.RO.retentate, destination=m.fs.disposal.inlet)
+    m.fs.s04 = Arc(source=m.fs.RO.permeate, destination=m.fs.product.inlet)
 
     TransformationFactory("network.expand_arcs").apply_to(m)
 
     # scaling
     # set default property values
-    m.fs.properties.set_default_scaling(
-        "flow_mass_phase_comp", 1, index=("Liq", "H2O")
-    )
+    m.fs.properties.set_default_scaling("flow_mass_phase_comp", 1, index=("Liq", "H2O"))
     m.fs.properties.set_default_scaling(
         "flow_mass_phase_comp", 1e2, index=("Liq", "TDS")
     )
@@ -127,6 +127,7 @@ def build():
     iscale.calculate_scaling_factors(m)
 
     return m
+
 
 def set_operating_conditions(m, solver=None):
     if solver is None:
@@ -147,7 +148,9 @@ def set_operating_conditions(m, solver=None):
 
     # P1, high pressure pump, 2 degrees of freedom (efficiency and outlet pressure)
     m.fs.P1.efficiency_pump.fix(0.80)  # pump efficiency [-]
-    m.fs.P1.control_volume.properties_out[0].pressure.fix(50e5) # could calculate this value
+    m.fs.P1.control_volume.properties_out[0].pressure.fix(
+        50e5
+    )  # could calculate this value
 
     # RO unit
     m.fs.RO.A_comp.fix(4.2e-12)  # membrane water permeability coefficient [m/s-Pa]
@@ -157,16 +160,16 @@ def set_operating_conditions(m, solver=None):
     m.fs.RO.permeate.pressure[0].fix(101325)  # atmospheric pressure [Pa]
     m.fs.RO.width.fix(5)  # stage width [m]
     # initialize RO
-    m.fs.RO.feed_side.properties[0,0].flow_mass_phase_comp["Liq", "H2O"] = value(
+    m.fs.RO.feed_side.properties[0, 0].flow_mass_phase_comp["Liq", "H2O"] = value(
         m.fs.feed.properties[0].flow_mass_phase_comp["Liq", "H2O"]
     )
-    m.fs.RO.feed_side.properties[0,0].flow_mass_phase_comp["Liq", "TDS"] = value(
+    m.fs.RO.feed_side.properties[0, 0].flow_mass_phase_comp["Liq", "TDS"] = value(
         m.fs.feed.properties[0].flow_mass_phase_comp["Liq", "TDS"]
     )
-    m.fs.RO.feed_side.properties[0,0].temperature = value(
+    m.fs.RO.feed_side.properties[0, 0].temperature = value(
         m.fs.feed.properties[0].temperature
     )
-    m.fs.RO.feed_side.properties[0,0].pressure = value(
+    m.fs.RO.feed_side.properties[0, 0].pressure = value(
         m.fs.P1.control_volume.properties_out[0].pressure
     )
     m.fs.RO.area.fix(50)  # guess area for RO initialization
@@ -179,7 +182,8 @@ def set_operating_conditions(m, solver=None):
             "that too many or not enough variables are fixed for a "
             "simulation.".format(degrees_of_freedom(m))
         )
-    
+
+
 def solve(blk, solver=None, tee=False, check_termination=True):
     if solver is None:
         solver = get_solver()
@@ -187,7 +191,8 @@ def solve(blk, solver=None, tee=False, check_termination=True):
     if check_termination:
         assert_optimal_termination(results)
     return results
-    
+
+
 def initialize_system(m, solver=None):
     if solver is None:
         solver = get_solver()
@@ -218,6 +223,7 @@ def initialize_system(m, solver=None):
             "that too many or not enough variables are fixed for a "
             "simulation.".format(degrees_of_freedom(m))
         )
+
 
 def optimize_set_up(m):
     # add objective
@@ -258,9 +264,11 @@ def optimize_set_up(m):
     # ---checking model---
     assert_degrees_of_freedom(m, 1)
 
+
 def optimize(m, solver=None, check_termination=True):
     # --solve---
     return solve(m, solver=solver, check_termination=check_termination)
+
 
 def display_system(m):
     print("---system metrics---")
@@ -293,6 +301,7 @@ def display_system(m):
         % value(m.fs.costing.specific_energy_consumption)
     )
     print("Levelized cost of water: %.2f $/m3" % value(m.fs.costing.LCOW))
+
 
 def display_design(m):
     print("---decision variables---")

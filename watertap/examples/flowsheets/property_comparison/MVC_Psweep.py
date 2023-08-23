@@ -22,16 +22,20 @@ flowsheet_Sea.set_up_optimization(m)
 
 # Sweep Parameters -- manipulated variables
 sweep_params = dict()
-sweep_params['Recovery'] = LinearSample(m.fs.recovery[0], 0.35, 0.85, 15)
-sweep_params['Inlet Salinity'] = LinearSample(m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "TDS"], 0.03, 0.18, 10)
+sweep_params["Recovery"] = LinearSample(m.fs.recovery[0], 0.35, 0.85, 15)
+sweep_params["Inlet Salinity"] = LinearSample(
+    m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "TDS"], 0.03, 0.18, 10
+)
 
 # Outputs -- recorded variables
 outputs = dict()
-outputs['LCOW'] = m.fs.costing.LCOW
-outputs['Specific energy consumption'] = m.fs.costing.specific_energy_consumption
-outputs['Evaporator area'] = m.fs.evaporator.area
+outputs["LCOW"] = m.fs.costing.LCOW
+outputs["Specific energy consumption"] = m.fs.costing.specific_energy_consumption
+outputs["Evaporator area"] = m.fs.evaporator.area
 
-parameter_sweep(m, sweep_params, outputs, csv_results_file_name='outputs_results_MVC_seawater.csv') 
+parameter_sweep(
+    m, sweep_params, outputs, csv_results_file_name="outputs_results_MVC_seawater.csv"
+)
 
 # --------------------- MVC with NaCl ---------------------
 # set up system
@@ -50,15 +54,17 @@ flowsheet_NaCl.set_up_optimization(m)
 
 # Sweep Parameters -- manipulated variables
 sweep_params = dict()
-sweep_params['Recovery'] = LinearSample(m.fs.recovery[0], 0.35, 0.85, 15)
-sweep_params['Inlet Salinity'] = LinearSample(m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"], 0.03, 0.18, 10)
+sweep_params["Recovery"] = LinearSample(m.fs.recovery[0], 0.35, 0.85, 15)
+sweep_params["Inlet Salinity"] = LinearSample(
+    m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"], 0.03, 0.18, 10
+)
 
 # Outputs -- recorded variables
 outputs = dict()
-outputs['LCOW'] = m.fs.costing.LCOW
-outputs['Specific energy consumption'] = m.fs.costing.specific_energy_consumption
-outputs['Evaporator area'] = m.fs.evaporator.area
+outputs["LCOW"] = m.fs.costing.LCOW
+outputs["Specific energy consumption"] = m.fs.costing.specific_energy_consumption
+outputs["Evaporator area"] = m.fs.evaporator.area
 
-parameter_sweep(m, sweep_params, outputs, csv_results_file_name='outputs_results_MVC_NaCl.csv')
-
-
+parameter_sweep(
+    m, sweep_params, outputs, csv_results_file_name="outputs_results_MVC_NaCl.csv"
+)

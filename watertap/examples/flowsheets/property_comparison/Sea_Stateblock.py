@@ -20,6 +20,7 @@ import watertap.property_models.seawater_prop_pack as props
 
 # Simple flowsheet to set up State Blocks for analysis
 
+
 def main():
     # create model, flowsheet
     m = ConcreteModel()

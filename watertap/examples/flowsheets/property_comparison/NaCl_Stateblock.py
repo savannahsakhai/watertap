@@ -16,9 +16,10 @@ from pyomo.util.check_units import assert_units_consistent
 import idaes.core.util.scaling as iscale
 from idaes.core.solvers import get_solver
 
-import watertap.property_models.NaCl_T_dep_prop_pack as props # update property pack as needed
+import watertap.property_models.NaCl_T_dep_prop_pack as props  # update property pack as needed
 
 # Simple flowsheet to set up State Blocks for analysis
+
 
 def main():
     # create model, flowsheet

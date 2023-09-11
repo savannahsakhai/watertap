@@ -27,6 +27,7 @@ from pyomo.environ import (
     Suffix,
     value,
     check_optimal_termination,
+    exp,
 )
 from pyomo.environ import units as pyunits
 
@@ -196,78 +197,15 @@ class NaClParameterData(PhysicalParameterBlock):
             doc="Thermal conductivity parameter D",
         )
 
-        # vapor pressure parameters, 0-150 C
-        # Sparrow 2003, Eq 6: Pvap = A+BT+CT2+DT3+ET4, where A = ao + a1X + a2X2 + a3X3 + a4X4
-        vap_pressure_A1_param_dict = {
-            "0": 0.9083e-3,
-            "1": -0.569e-3,
-            "2": 0.1945e-3,
-            "3": -3.736e-3,
-            "4": 2.82e-3,
-        }
-        vap_pressure_B1_param_dict = {
-            "0": -0.0669e-3,
-            "1": 0.0582e-3,
-            "2": -0.1668e-3,
-            "3": 0.676e-3,
-            "4": -2.091e-3,
-        }
-        vap_pressure_C1_param_dict = {
-            "0": 7.541e-6,
-            "1": -5.143e-6,
-            "2": 6.482e-6,
-            "3": -52.62e-6,
-            "4": 115.7e-6,
-        }
-        vap_pressure_D1_param_dict = {
-            "0": -0.0922e-6,
-            "1": 0.0649e-6,
-            "2": -0.1313e-6,
-            "3": 0.8024e-6,
-            "4": -1.986e-6,
-        }
-        vap_pressure_E1_param_dict = {
-            "0": 1.237e-9,
-            "1": -0.753e-9,
-            "2": 0.1448e-9,
-            "3": -6.964e-9,
-            "4": 14.61e-9,
-        }
-
-        self.vap_pressure_A1_param = Var(
-            vap_pressure_A1_param_dict.keys(),
+        # Antoine Equation (NIST WEBBOOK (Stull, 1947))
+        # 255.9 - 373 C
+        antoine_param_dict = {"A": 4.6543, "B": 1435.264, "C": -64.848}
+        self.vap_pressure_param = Var(
+            antoine_param_dict.keys(),
             domain=Reals,
-            initialize=vap_pressure_A1_param_dict,
-            units=pyunits.Pa,
-            doc="Vapor pressure parameters A1",
-        )
-        self.vap_pressure_B1_param = Var(
-            vap_pressure_B1_param_dict.keys(),
-            domain=Reals,
-            initialize=vap_pressure_B1_param_dict,
-            units=pyunits.Pa,
-            doc="Vapor pressure parameters B1",
-        )
-        self.vap_pressure_C1_param = Var(
-            vap_pressure_C1_param_dict.keys(),
-            domain=Reals,
-            initialize=vap_pressure_C1_param_dict,
-            units=pyunits.Pa,
-            doc="Vapor pressure parameters C1",
-        )
-        self.vap_pressure_D1_param = Var(
-            vap_pressure_D1_param_dict.keys(),
-            domain=Reals,
-            initialize=vap_pressure_D1_param_dict,
-            units=pyunits.Pa,
-            doc="Vapor pressure parameters D1",
-        )
-        self.vap_pressure_E1_param = Var(
-            vap_pressure_E1_param_dict.keys(),
-            domain=Reals,
-            initialize=vap_pressure_E1_param_dict,
-            units=pyunits.Pa,
-            doc="Vapor pressure parameters E1",
+            initialize=antoine_param_dict,
+            units=pyunits.dimensionless,
+            doc="Vapor Pressure Parameters -- Antoine's",
         )
 
         # traditional parameters are the only Vars currently on the block and should be fixed
@@ -860,44 +798,20 @@ class NaClStateBlockData(StateBlockData):
             doc="Vapor Pressure",
         )
 
-        # Sparrow 2003, Eq. 6, 0-150 C
         def rule_pressure_sat(b):
-            t = (b.temperature - 273.15 * pyunits.K) / pyunits.K
-            x = b.mass_frac_phase_comp["Liq", "NaCl"]
-            param_vec = [
-                b.params.vap_pressure_A1_param,
-                b.params.vap_pressure_B1_param,
-                b.params.vap_pressure_C1_param,
-                b.params.vap_pressure_D1_param,
-                b.params.vap_pressure_E1_param,
-            ]
-            iter_param = {"A": 0, "B": 0, "C": 0, "D": 0, "E": 0}
-            k = 0
-            for key in iter_param:
-                iter_param[key] = (
-                    param_vec[k]["0"]
-                    + param_vec[k]["1"] * x
-                    + param_vec[k]["2"] * x**2
-                    + param_vec[k]["3"] * x**3
-                    + param_vec[k]["4"] * x**4
+            t = b.temperature / pyunits.K
+            x = b.mole_frac_phase_comp["Liq", "H2O"]
+            p_w = (
+                exp(
+                    b.params.vap_pressure_param["A"]
+                    - (b.params.vap_pressure_param["B"])
+                    / (t + b.params.vap_pressure_param["C"])
                 )
-                k += 1
-            return (
-                b.pressure_sat
-                == (
-                    iter_param["A"]
-                    + iter_param["B"] * t
-                    + iter_param["C"] * t**2
-                    + iter_param["D"] * t**3
-                    + iter_param["E"] * t**4
-                )
-                * 1e6  # convert MPa to Pa
+                * 100000
+                * pyunits.Pa
             )
+            return b.pressure_sat == (x * p_w)  # Raoult's Law
 
-        # def rule_pressure_sat(b):
-        #     # Roult's Law
-        #     x = b.mole_frac_phase_comp["Liq", "H2O"]
-        #     return b.pressure_sat == (x * b.pressure)
         self.eq_pressure_sat = Constraint(rule=rule_pressure_sat)
 
     def _therm_cond_phase(self):

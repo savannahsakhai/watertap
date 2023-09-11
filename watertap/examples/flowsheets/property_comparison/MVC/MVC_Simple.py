@@ -53,6 +53,8 @@ import math
 
 
 def main():
+    log = idaeslog.getSolveLogger("solver.demo")
+    log.setLevel(idaeslog.ERROR)
     # build, set operating conditions, initialize for simulation
     m = build()
     set_operating_conditions(m)
@@ -75,6 +77,7 @@ def main():
     display_metrics(m)
     display_design(m)
 
+    # assert False
     print("\n***---Second solve - optimization results---***")
     # no longer want external heating in evaporator
     del m.fs.objective
@@ -116,7 +119,7 @@ def build():
     # Set lower bound of approach temperatures
     m.fs.hx_distillate.delta_temperature_in.setlb(0)
     m.fs.hx_distillate.delta_temperature_out.setlb(0)
-    m.fs.hx_distillate.area.setlb(10)
+    m.fs.hx_distillate.area.setlb(0)
 
     m.fs.hx_brine = HeatExchanger(
         hot_side_name="hot",
@@ -129,7 +132,7 @@ def build():
     # Set lower bound of approach temperatures
     m.fs.hx_brine.delta_temperature_in.setlb(0)
     m.fs.hx_brine.delta_temperature_out.setlb(0)
-    m.fs.hx_brine.area.setlb(10)
+    m.fs.hx_brine.area.setlb(0)
 
     m.fs.mixer_feed = Mixer(
         property_package=m.fs.properties_feed,
@@ -268,7 +271,7 @@ def build():
         m.fs.hx_distillate.overall_heat_transfer_coefficient, 1e-3
     )
 
-    iscale.set_scaling_factor(m.fs.hx_distillate.area, 1e-1)
+    iscale.set_scaling_factor(m.fs.hx_distillate.area, 1e-2)
     iscale.constraint_scaling_transform(
         m.fs.hx_distillate.cold_side.pressure_balance[0], 1e-5
     )
@@ -280,7 +283,7 @@ def build():
     iscale.set_scaling_factor(m.fs.hx_brine.hot.heat, 1e-3)
     iscale.set_scaling_factor(m.fs.hx_brine.cold.heat, 1e-3)
     iscale.set_scaling_factor(m.fs.hx_brine.overall_heat_transfer_coefficient, 1e-3)
-    iscale.set_scaling_factor(m.fs.hx_brine.area, 1e-1)
+    iscale.set_scaling_factor(m.fs.hx_brine.area, 1e-2)
     iscale.constraint_scaling_transform(
         m.fs.hx_brine.cold_side.pressure_balance[0], 1e-5
     )
@@ -375,13 +378,13 @@ def set_operating_conditions(m):
 
     # Distillate HX
     m.fs.hx_distillate.overall_heat_transfer_coefficient.fix(2e3)
-    m.fs.hx_distillate.area.fix(125)
+    m.fs.hx_distillate.area.fix(180)
     m.fs.hx_distillate.cold.deltaP[0].fix(7e3)
     m.fs.hx_distillate.hot.deltaP[0].fix(7e3)
 
     # Brine HX
     m.fs.hx_brine.overall_heat_transfer_coefficient.fix(2e3)
-    m.fs.hx_brine.area.fix(115)
+    m.fs.hx_brine.area.fix(180)
     m.fs.hx_brine.cold.deltaP[0].fix(7e3)
     m.fs.hx_brine.hot.deltaP[0].fix(7e3)
 
@@ -633,7 +636,9 @@ def solve(model, solver=None, tee=False, raise_on_failure=False):
     if solver is None:
         solver = get_solver()
 
-    results = solver.solve(model, tee=tee)
+    # solver.options = {'tol': 1e-9, 'max_iter':10000}
+    results = solver.solve(model, tee=True)
+
     if check_optimal_termination(results):
         return results
     msg = (

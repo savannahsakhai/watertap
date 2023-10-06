@@ -58,6 +58,11 @@ def main():
     set_operating_conditions(m)
     initialize_system(m, solver=solver)
 
+    solve(m, solver=solver)
+    print("\n***---Simulation results---***")
+    display_system(m)
+    display_design(m)
+
     # optimize and display
     optimize_set_up(m)
     solve(m, solver=solver)

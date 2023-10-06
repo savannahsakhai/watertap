@@ -30,14 +30,7 @@ from idaes.core import UnitModelCostingBlock
 import idaes.core.util.scaling as iscale
 import idaes.logger as idaeslog
 from idaes.core.util.misc import StrEnum
-
 import watertap.property_models.NaCl_T_dep_prop_pack as props
-from watertap.unit_models.reverse_osmosis_0D import (
-    ReverseOsmosis0D,
-    ConcentrationPolarizationType,
-    MassTransferCoefficient,
-    PressureChangeType,
-)
 from watertap.unit_models.reverse_osmosis_1D import (
     ReverseOsmosis1D,
     ConcentrationPolarizationType,
@@ -58,11 +51,16 @@ def main():
     set_operating_conditions(m)
     initialize_system(m, solver=solver)
 
-    # optimize and display
+    # solve with fixed area
+    solve(m, solver=solver)
+    print("\n***---Simulation results---***")
+    display_system(m)
+    display_design(m)
+
+    # unfix area, fix recovery, solve optimization
     optimize_set_up(m)
     solve(m, solver=solver)
-
-    print("\n***---Simulation results---***")
+    print("\n***---Optimization results---***")
     display_system(m)
     display_design(m)
 
@@ -76,17 +74,17 @@ def build():
     m.fs.properties = props.NaClParameterBlock()
     m.fs.costing = WaterTAPCosting()
 
-    # Control volume flow blocks
+    # control volume flow blocks
     m.fs.feed = Feed(property_package=m.fs.properties)
     m.fs.product = Product(property_package=m.fs.properties)
     m.fs.disposal = Product(property_package=m.fs.properties)
 
-    # --- Main pump ---
+    # --- Pump ---
     m.fs.P1 = Pump(property_package=m.fs.properties)
     m.fs.P1.costing = UnitModelCostingBlock(flowsheet_costing_block=m.fs.costing)
 
     # --- Reverse Osmosis Block ---
-    m.fs.RO = ReverseOsmosis0D(
+    m.fs.RO = ReverseOsmosis1D(
         property_package=m.fs.properties,
         has_pressure_change=True,
         pressure_change_type=PressureChangeType.calculated,
@@ -132,25 +130,18 @@ def build():
 def set_operating_conditions(m, solver=None):
     if solver is None:
         solver = get_solver()
-    # ---specifications---
-    # feed
-    # state variables
+
+    # Feed
     m.fs.feed.properties[0].pressure.fix(101325)  # feed pressure [Pa]
     m.fs.feed.properties[0].temperature.fix(273.15 + 25)  # feed temperature [K]
-    # properties (cannot be fixed for initialization routines, must calculate the state variables)
-    m.fs.feed.properties.calculate_state(
-        var_args={
-            ("flow_vol_phase", "Liq"): 1e-3,  # feed volumetric flow rate [m3/s]
-            ("mass_frac_phase_comp", ("Liq", "NaCl")): 0.035,
-        },  # feed NaCl mass fraction [-]
-        hold_state=True,  # fixes the calculated component mass flow rates
-    )
+    # feed mass flowrate of NaCl [kg/s]
+    m.fs.RO.inlet.flow_mass_phase_comp[0, "Liq", "NaCl"].fix(0.035)
+    # feed mass flowrate of water [kg/s]
+    m.fs.RO.inlet.flow_mass_phase_comp[0, "Liq", "H2O"].fix(0.965)
 
-    # P1, high pressure pump, 2 degrees of freedom (efficiency and outlet pressure)
+    # Pump Unit
     m.fs.P1.efficiency_pump.fix(0.80)  # pump efficiency [-]
-    m.fs.P1.control_volume.properties_out[0].pressure.fix(
-        50e5
-    )  # could calculate this value
+    m.fs.P1.control_volume.properties_out[0].pressure.fix(50e5)
 
     # RO unit
     m.fs.RO.A_comp.fix(4.2e-12)  # membrane water permeability coefficient [m/s-Pa]
@@ -159,6 +150,7 @@ def set_operating_conditions(m, solver=None):
     m.fs.RO.feed_side.spacer_porosity.fix(0.97)  # spacer porosity in membrane stage [-]
     m.fs.RO.permeate.pressure[0].fix(101325)  # atmospheric pressure [Pa]
     m.fs.RO.width.fix(5)  # stage width [m]
+
     # initialize RO
     m.fs.RO.feed_side.properties[0, 0].flow_mass_phase_comp["Liq", "H2O"] = value(
         m.fs.feed.properties[0].flow_mass_phase_comp["Liq", "H2O"]
@@ -172,7 +164,7 @@ def set_operating_conditions(m, solver=None):
     m.fs.RO.feed_side.properties[0, 0].pressure = value(
         m.fs.P1.control_volume.properties_out[0].pressure
     )
-    m.fs.RO.area.fix(50)  # guess area for RO initialization
+    m.fs.RO.area.fix(100)  # guess area for RO initialization
 
     # check degrees of freedom
     if degrees_of_freedom(m) != 0:
@@ -201,18 +193,15 @@ def initialize_system(m, solver=None):
     # ---initialize Feed---
     m.fs.feed.initialize(optarg=optarg)
 
-    # ---initialize Pump--- (?)
+    # ---initialize Pump---
     propagate_state(m.fs.s01)
     m.fs.P1.initialize(optarg=optarg)
     propagate_state(m.fs.s02)
 
     # ---initialize RO---
     m.fs.RO.initialize(optarg=optarg)
-    # unfix guessed area, and fix water recovery
-    m.fs.RO.area.unfix()
-    m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"].fix(0.5)
 
-    # ---initialize costing---
+    # ---initialize Costing---
     m.fs.costing.initialize()
 
     # check degrees of freedom
@@ -230,7 +219,7 @@ def optimize_set_up(m):
     m.fs.objective = Objective(expr=m.fs.costing.LCOW)
 
     # unfix decision variables and add bounds
-    # P1
+    # Pump
     m.fs.P1.control_volume.properties_out[0].pressure.unfix()
     m.fs.P1.control_volume.properties_out[0].pressure.setlb(10e5)
     m.fs.P1.control_volume.properties_out[0].pressure.setub(80e5)
@@ -239,24 +228,25 @@ def optimize_set_up(m):
     # RO
     m.fs.RO.area.unfix()
     m.fs.RO.area.setlb(1)
-    m.fs.RO.area.setub(150)
+    m.fs.RO.area.setub(200)
+    m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"].fix(0.5)
 
     # additional specifications
-    m.fs.product_salinity = Param(
-        initialize=500e-6, mutable=True
-    )  # product NaCl mass fraction [-]
-    m.fs.minimum_water_flux = Param(
-        initialize=1.0 / 3600.0, mutable=True
-    )  # minimum water flux [kg/m2-s]
+
+    # product NaCl mass fraction [-]
+    m.fs.product_salinity = Param(initialize=500e-6, mutable=True)
+    # minimum water flux [kg/m2-s]
+    m.fs.minimum_water_flux = Param(initialize=1.0 / 3600.0, mutable=True)
 
     # additional constraints
+
     m.fs.eq_product_quality = Constraint(
         expr=m.fs.product.properties[0].mass_frac_phase_comp["Liq", "NaCl"]
         <= m.fs.product_salinity
     )
-    iscale.constraint_scaling_transform(
-        m.fs.eq_product_quality, 1e3
-    )  # scaling constraint
+    # scaling constraint
+    iscale.constraint_scaling_transform(m.fs.eq_product_quality, 1e3)
+
     m.fs.eq_minimum_water_flux = Constraint(
         expr=m.fs.RO.flux_mass_phase_comp[0, 1, "Liq", "H2O"] >= m.fs.minimum_water_flux
     )

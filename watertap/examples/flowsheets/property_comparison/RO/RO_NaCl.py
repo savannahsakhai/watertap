@@ -20,6 +20,7 @@ from pyomo.environ import (
     assert_optimal_termination,
 )
 from pyomo.network import Arc
+import pyomo.environ as pyo
 from idaes.core import FlowsheetBlock
 from idaes.core.solvers import get_solver
 from idaes.core.util.model_statistics import degrees_of_freedom
@@ -101,6 +102,7 @@ def build():
     m.fs.costing.add_specific_electrical_carbon_intensity(
         m.fs.product.properties[0].flow_vol
     )
+    m.fs.costing.base_currency = pyo.units.USD_2020
 
     # connections
     m.fs.s01 = Arc(source=m.fs.feed.outlet, destination=m.fs.P1.inlet)
@@ -277,6 +279,19 @@ def display_system(m):
         m.fs.product.flow_mass_phase_comp[0, "Liq", "NaCl"].value / prod_flow_mass
     )
     print("Product: %.3f kg/s, %.0f ppm" % (prod_flow_mass, prod_mass_frac_NaCl * 1e6))
+
+    retentate_flow_mass = sum(
+        m.fs.RO.retentate.flow_mass_phase_comp[0, "Liq", j].value
+        for j in ["H2O", "NaCl"]
+    )
+    retentate_mass_frac_NaCl = (
+        m.fs.RO.retentate.flow_mass_phase_comp[0, "Liq", "NaCl"].value
+        / retentate_flow_mass
+    )
+    print(
+        "Retentate: %.3f kg/s, %.0f ppm"
+        % (retentate_flow_mass, retentate_mass_frac_NaCl * 1e6)
+    )
 
     print(
         "Volumetric recovery: %.1f%%"

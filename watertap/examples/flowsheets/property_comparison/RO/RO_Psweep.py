@@ -20,17 +20,18 @@ flowsheet_NaCl.optimize_set_up(m)
 # Sweep Parameters -- manipulated variables
 sweep_params = dict()
 sweep_params["Water Recovery"] = LinearSample(
-    m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.3, 0.7, 5
+    m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.3, 0.7, 25
 )
-sweep_params["Feed Mass NaCl"] = LinearSample(
-    m.fs.feed.flow_mass_phase_comp[0, "Liq", "NaCl"], 0.005, 0.1, 10
-)
+# sweep_params["Feed Mass NaCl"] = LinearSample(
+#     m.fs.feed.flow_mass_phase_comp[0, "Liq", "NaCl"], 0.01, 0.1, 10
+# )
 
 # Outputs -- recorded variables
 outputs = dict()
-outputs["RO membrane area"] = m.fs.RO.area
-outputs["Pump 1 pressure"] = m.fs.P1.control_volume.properties_out[0].pressure
-outputs["Levelized Cost of Water"] = m.fs.costing.LCOW
+outputs["Membrane Area"] = m.fs.RO.area
+outputs["Operating Pressure"] = m.fs.P1.control_volume.properties_out[0].pressure
+outputs["LCOW"] = m.fs.costing.LCOW
+outputs["SEC"] = m.fs.costing.specific_energy_consumption
 
 parameter_sweep(
     m, sweep_params, outputs, csv_results_file_name="outputs_results_RO_NaCl.csv"
@@ -51,16 +52,17 @@ flowsheet_Sea.optimize_set_up(m)
 # Sweep Parameters -- manipulated variables
 sweep_params = dict()
 sweep_params["Water Recovery"] = LinearSample(
-    m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.3, 0.7, 5
+    m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.3, 0.7, 25
 )
-sweep_params["Feed Mass TDS"] = LinearSample(
-    m.fs.feed.flow_mass_phase_comp[0, "Liq", "TDS"], 0.005, 0.1, 10
-)
+# sweep_params["Feed Mass NaCl"] = LinearSample(
+#     m.fs.feed.flow_mass_phase_comp[0, "Liq", "NaCl"], 0.01, 0.1, 10
+# )
 # Outputs -- recorded variables
 outputs = dict()
-outputs["RO membrane area"] = m.fs.RO.area
-outputs["Pump 1 pressure"] = m.fs.P1.control_volume.properties_out[0].pressure
-outputs["Levelized Cost of Water"] = m.fs.costing.LCOW
+outputs["Membrane Area"] = m.fs.RO.area
+outputs["Operating Pressure"] = m.fs.P1.control_volume.properties_out[0].pressure
+outputs["LCOW"] = m.fs.costing.LCOW
+outputs["SEC"] = m.fs.costing.specific_energy_consumption
 
 parameter_sweep(
     m, sweep_params, outputs, csv_results_file_name="outputs_results_RO_seawater.csv"
@@ -81,16 +83,17 @@ flowsheet_Simple.solve(m)
 # Sweep Parameters -- manipulated variables
 sweep_params = dict()
 sweep_params["Water Recovery"] = LinearSample(
-    m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.3, 0.7, 5
+    m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.3, 0.7, 25
 )
-sweep_params["Feed Mass TDS"] = LinearSample(
-    m.fs.feed.flow_mass_phase_comp[0, "Liq", "NaCl"], 0.005, 0.1, 10
-)
+# sweep_params["Feed Mass NaCl"] = LinearSample(
+#     m.fs.feed.flow_mass_phase_comp[0, "Liq", "NaCl"], 0.01, 0.1, 10
+# )
 # Outputs -- recorded variables
 outputs = dict()
-outputs["RO membrane area"] = m.fs.RO.area
-outputs["Pump 1 pressure"] = m.fs.P1.control_volume.properties_out[0].pressure
-outputs["Levelized Cost of Water"] = m.fs.costing.LCOW
+outputs["Membrane Area"] = m.fs.RO.area
+outputs["Operating Pressure"] = m.fs.P1.control_volume.properties_out[0].pressure
+outputs["LCOW"] = m.fs.costing.LCOW
+outputs["SEC"] = m.fs.costing.specific_energy_consumption
 
 parameter_sweep(
     m, sweep_params, outputs, csv_results_file_name="outputs_results_RO_simple.csv"

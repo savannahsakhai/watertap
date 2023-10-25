@@ -23,16 +23,19 @@ flowsheet_Sea.set_up_optimization(m)
 
 # Sweep Parameters -- manipulated variables
 sweep_params = dict()
-sweep_params["Recovery"] = LinearSample(m.fs.recovery[0], 0.35, 0.85, 15)
-sweep_params["Inlet Salinity"] = LinearSample(
-    m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "TDS"], 0.03, 0.18, 10
-)
+sweep_params["Water Recovery"] = LinearSample(m.fs.recovery[0], 0.3, 0.7, 25)
+# sweep_params["Inlet Salinity"] = LinearSample(
+#     m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "TDS"], 0.01, 0.1, 10
+# )
 
 # Outputs -- recorded variables
 outputs = dict()
 outputs["LCOW"] = m.fs.costing.LCOW
-outputs["Specific energy consumption"] = m.fs.costing.specific_energy_consumption
+outputs["SEC"] = m.fs.costing.specific_energy_consumption
 outputs["Evaporator area"] = m.fs.evaporator.area
+outputs["Evaporator temperature"] = m.fs.evaporator.properties_brine[0].temperature
+outputs["Evaporator pressure"] = m.fs.evaporator.properties_vapor[0].pressure
+outputs["Compressor pressure ratio"] = m.fs.compressor.pressure_ratio
 
 parameter_sweep(
     m, sweep_params, outputs, csv_results_file_name="outputs_results_MVC_seawater.csv"
@@ -55,16 +58,20 @@ flowsheet_NaCl.set_up_optimization(m)
 
 # Sweep Parameters -- manipulated variables
 sweep_params = dict()
-sweep_params["Recovery"] = LinearSample(m.fs.recovery[0], 0.35, 0.85, 15)
-sweep_params["Inlet Salinity"] = LinearSample(
-    m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"], 0.03, 0.18, 10
-)
+sweep_params["Water Recovery"] = LinearSample(m.fs.recovery[0], 0.3, 0.7, 25)
+# sweep_params["Inlet Salinity"] = LinearSample(
+#     m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"], 0.01, 0.1, 10
+# )
 
 # Outputs -- recorded variables
 outputs = dict()
 outputs["LCOW"] = m.fs.costing.LCOW
-outputs["Specific energy consumption"] = m.fs.costing.specific_energy_consumption
+outputs["SEC"] = m.fs.costing.specific_energy_consumption
 outputs["Evaporator area"] = m.fs.evaporator.area
+outputs["Evaporator temperature"] = m.fs.evaporator.properties_brine[0].temperature
+outputs["Evaporator pressure"] = m.fs.evaporator.properties_vapor[0].pressure
+outputs["Compressor pressure ratio"] = m.fs.compressor.pressure_ratio
+
 
 parameter_sweep(
     m, sweep_params, outputs, csv_results_file_name="outputs_results_MVC_NaCl.csv"
@@ -87,16 +94,20 @@ flowsheet_Simple.set_up_optimization(m)
 
 # Sweep Parameters -- manipulated variables
 sweep_params = dict()
-sweep_params["Recovery"] = LinearSample(m.fs.recovery[0], 0.35, 0.85, 15)
-sweep_params["Inlet Salinity"] = LinearSample(
-    m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"], 0.03, 0.18, 10
-)
+sweep_params["Water Recovery"] = LinearSample(m.fs.recovery[0], 0.3, 0.7, 25)
+# sweep_params["Inlet Salinity"] = LinearSample(
+#     m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"], 0.01, 0.1, 10
+# )
 
 # Outputs -- recorded variables
 outputs = dict()
 outputs["LCOW"] = m.fs.costing.LCOW
-outputs["Specific energy consumption"] = m.fs.costing.specific_energy_consumption
+outputs["SEC"] = m.fs.costing.specific_energy_consumption
 outputs["Evaporator area"] = m.fs.evaporator.area
+outputs["Evaporator temperature"] = m.fs.evaporator.properties_brine[0].temperature
+outputs["Evaporator pressure"] = m.fs.evaporator.properties_vapor[0].pressure
+outputs["Compressor pressure ratio"] = m.fs.compressor.pressure_ratio
+
 
 parameter_sweep(
     m, sweep_params, outputs, csv_results_file_name="outputs_results_MVC_simple.csv"

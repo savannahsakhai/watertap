@@ -533,7 +533,7 @@ class NaClStateBlockData(StateBlockData):
 
         self.temperature = Var(
             initialize=298.15,
-            bounds=(273.15, 373.15),
+            bounds=(273.15, 573.15),
             domain=NonNegativeReals,
             units=pyunits.degK,
             doc="State temperature",

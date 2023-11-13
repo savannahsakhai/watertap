@@ -19,7 +19,9 @@ sweep_params["Flow"] = LinearSample(
 outputs = dict()
 outputs["Enthalpy"] = m.fs.stream[0].enth_mass_phase["Liq"]
 outputs["Vap Pressure"] = m.fs.stream[0].pressure_sat
-outputs["Cp"] = m.fs.stream[0].cp_mass_phase["Liq"]
+outputs["Osmotic Pressure"] = m.fs.stream[0].pressure_osm_phase["Liq"]
+outputs["Diffusivity"] = m.fs.stream[0].diffus_phase_comp["Liq", "TDS"]
+outputs["Osmotic Coeff"] = m.fs.stream[0].osm_coeff
 
 parameter_sweep(
     m, sweep_params, outputs, csv_results_file_name="outputs_results_Sea.csv"
@@ -41,7 +43,9 @@ sweep_params["Flow"] = LinearSample(
 outputs = dict()
 outputs["Enthalpy"] = m.fs.stream[0].enth_mass_phase["Liq"]
 outputs["Vap Pressure"] = m.fs.stream[0].pressure_sat
-outputs["Cp"] = m.fs.stream[0].cp_mass_phase["Liq"]
+outputs["Osmotic Pressure"] = m.fs.stream[0].pressure_osm_phase["Liq"]
+outputs["Diffusivity"] = m.fs.stream[0].diffus_phase_comp["Liq", "NaCl"]
+outputs["Osmotic Coeff"] = m.fs.stream[0].osm_coeff
 
 parameter_sweep(
     m, sweep_params, outputs, csv_results_file_name="outputs_results_NaCl.csv"
@@ -62,7 +66,8 @@ sweep_params["Flow"] = LinearSample(
 outputs = dict()
 outputs["Enthalpy"] = m.fs.stream[0].enth_mass_phase["Liq"]
 outputs["Vap Pressure"] = m.fs.stream[0].pressure_sat
-# outputs["Cp"] = m.fs.stream[0].cp_mass_phase["Liq"]
+outputs["Osmotic Pressure"] = m.fs.stream[0].pressure_osm_phase["Liq"]
+outputs["Diffusivity"] = m.fs.stream[0].diffus_phase_comp["Liq", "NaCl"]
 
 parameter_sweep(
     m, sweep_params, outputs, csv_results_file_name="outputs_results_simple.csv"

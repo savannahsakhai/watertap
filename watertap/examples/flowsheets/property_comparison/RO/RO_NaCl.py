@@ -136,11 +136,16 @@ def set_operating_conditions(m, solver=None):
     # Feed
     m.fs.feed.properties[0].pressure.fix(101325)  # feed pressure [Pa]
     m.fs.feed.properties[0].temperature.fix(273.15 + 25)  # feed temperature [K]
-    # feed mass flowrate of NaCl [kg/s]
-    m.fs.RO.inlet.flow_mass_phase_comp[0, "Liq", "NaCl"].fix(0.035)
-    # feed mass flowrate of water [kg/s]
-    m.fs.RO.inlet.flow_mass_phase_comp[0, "Liq", "H2O"].fix(0.965)
-
+    m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"] = 0.035
+    m.fs.feed.properties.calculate_state(
+        var_args={
+            ("mass_frac_phase_comp", ("Liq", "NaCl")): value(
+                m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"]
+            ),  # feed mass concentration
+            ("flow_vol_phase", "Liq"): 1e-3,
+        },  # volumetric feed flowrate [-]
+        hold_state=True,  # fixes the calculated component mass flow rates
+    )
     # Pump Unit
     m.fs.P1.efficiency_pump.fix(0.80)  # pump efficiency [-]
     m.fs.P1.control_volume.properties_out[0].pressure.fix(50e5)
@@ -166,7 +171,7 @@ def set_operating_conditions(m, solver=None):
     m.fs.RO.feed_side.properties[0, 0].pressure = value(
         m.fs.P1.control_volume.properties_out[0].pressure
     )
-    m.fs.RO.area.fix(100)  # guess area for RO initialization
+    m.fs.RO.area.fix(50)  # guess area for RO initialization
 
     # check degrees of freedom
     if degrees_of_freedom(m) != 0:
@@ -320,6 +325,10 @@ def display_design(m):
             m.fs.P1.work_mechanical[0].value / 1e3,
         )
     )
+    m.fs.s01.display()
+    m.fs.s02.display()
+    m.fs.s03.display()
+    m.fs.s04.display()
 
 
 if __name__ == "__main__":

@@ -712,6 +712,14 @@ def display_design(m):
         % (m.fs.evaporator.properties_vapor[0].pressure.value * 1e-3)
     )
     print(
+        "Compressor INLET vapor temperature:             %.2f K"
+        % m.fs.compressor.control_volume.properties_in[0].temperature.value
+    )
+    print(
+        "Compressor INLET vapor pressure:                %.2f kPa"
+        % (m.fs.compressor.control_volume.properties_in[0].pressure.value * 1e-3)
+    )
+    print(
         "Compressed vapor temperature:             %.2f K"
         % m.fs.compressor.control_volume.properties_out[0].temperature.value
     )

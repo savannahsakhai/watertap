@@ -55,9 +55,9 @@ flowsheet_Sea.optimize_set_up(m)
 
 # Sweep Parameters -- manipulated variables
 sweep_params = dict()
-sweep_params["Water Recovery"] = LinearSample(
-    m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.3, 0.7, 25
-)
+# sweep_params["Water Recovery"] = LinearSample(
+#     m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.3, 0.7, 25
+# )
 sweep_params["Inlet Salinity"] = LinearSample(
     m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "TDS"], 0.01, 0.07, 10
 )
@@ -73,9 +73,9 @@ parameter_sweep(
     m,
     sweep_params,
     outputs,
-    csv_results_file_name="sal_outputs_results_RO_seawater.csv",
+    csv_results_file_name="sal_outputs_results_RO_seawater_salinity.csv",
 )
-
+assert False
 # --------------------- RO with Simple ---------------------
 # set up system
 m = flowsheet_Simple.build()

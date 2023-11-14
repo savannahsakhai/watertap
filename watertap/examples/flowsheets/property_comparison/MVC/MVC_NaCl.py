@@ -116,7 +116,7 @@ def build():
     # Set lower bound of approach temperatures
     m.fs.hx_distillate.delta_temperature_in.setlb(0)
     m.fs.hx_distillate.delta_temperature_out.setlb(0)
-    m.fs.hx_distillate.area.setlb(10)
+    m.fs.hx_distillate.area.setlb(0)
 
     m.fs.hx_brine = HeatExchanger(
         hot_side_name="hot",
@@ -129,7 +129,7 @@ def build():
     # Set lower bound of approach temperatures
     m.fs.hx_brine.delta_temperature_in.setlb(0)
     m.fs.hx_brine.delta_temperature_out.setlb(0)
-    m.fs.hx_brine.area.setlb(10)
+    m.fs.hx_brine.area.setlb(0)
 
     m.fs.mixer_feed = Mixer(
         property_package=m.fs.properties_feed,
@@ -387,11 +387,12 @@ def set_operating_conditions(m):
 
     # Evaporator
     m.fs.evaporator.inlet_feed.temperature[0] = 55 + 273.15  # provide guess
-    m.fs.evaporator.outlet_brine.temperature[0].fix(70 + 273.15)
+    m.fs.evaporator.outlet_brine.temperature[0].fix(75 + 273.15)
+
     m.fs.evaporator.U.fix(3e3)  # W/K-m^2
     m.fs.evaporator.area.setub(1e4)  # m^2
 
-    # Compressor
+    # Compressor  df
     m.fs.compressor.pressure_ratio.fix(1.6)
     m.fs.compressor.efficiency.fix(0.8)
 
@@ -408,7 +409,7 @@ def set_operating_conditions(m):
 
     # Costing
     m.fs.costing.factor_total_investment.fix(2)
-    m.fs.costing.electricity_cost = 0.1  # 0.15
+    m.fs.costing.electricity_cost = 0.1
     m.fs.costing.heat_exchanger.material_factor_cost.fix(5)
     m.fs.costing.evaporator.material_factor_cost.fix(5)
     m.fs.costing.compressor.unit_cost.fix(1 * 7364)
@@ -416,6 +417,8 @@ def set_operating_conditions(m):
     # Temperature bounds
     m.fs.evaporator.properties_vapor[0].temperature.setub(75 + 273.15)
     m.fs.compressor.control_volume.properties_out[0].temperature.setub(450)
+
+    m.fs.evaporator.properties_brine[0].mass_frac_phase_comp["Liq", "NaCl"].setub(0.24)
 
     # check degrees of freedom
     print("DOF after setting operating conditions: ", degrees_of_freedom(m))
@@ -650,7 +653,7 @@ def set_up_optimization(m):
     m.fs.objective = Objective(expr=m.fs.costing.LCOW)
     m.fs.Q_ext[0].fix(0)
     m.fs.evaporator.area.unfix()
-    m.fs.evaporator.outlet_brine.temperature[0].unfix()
+    # m.fs.evaporator.outlet_brine.temperature[0].unfix()
     m.fs.compressor.pressure_ratio.unfix()
     m.fs.hx_distillate.area.unfix()
     m.fs.hx_brine.area.unfix()

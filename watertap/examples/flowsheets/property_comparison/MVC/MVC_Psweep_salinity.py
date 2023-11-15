@@ -31,8 +31,6 @@ outputs = dict()
 outputs["LCOW"] = m.fs.costing.LCOW
 outputs["SEC"] = m.fs.costing.specific_energy_consumption
 outputs["Evaporator area"] = m.fs.evaporator.area
-outputs["Evaporator temperature"] = m.fs.evaporator.properties_brine[0].temperature
-outputs["Evaporator pressure"] = m.fs.evaporator.properties_vapor[0].pressure
 outputs["Compressor pressure ratio"] = m.fs.compressor.pressure_ratio
 
 parameter_sweep(
@@ -69,10 +67,7 @@ outputs = dict()
 outputs["LCOW"] = m.fs.costing.LCOW
 outputs["SEC"] = m.fs.costing.specific_energy_consumption
 outputs["Evaporator area"] = m.fs.evaporator.area
-outputs["Evaporator temperature"] = m.fs.evaporator.properties_brine[0].temperature
-outputs["Evaporator pressure"] = m.fs.evaporator.properties_vapor[0].pressure
 outputs["Compressor pressure ratio"] = m.fs.compressor.pressure_ratio
-
 
 parameter_sweep(
     m, sweep_params, outputs, csv_results_file_name="sal_outputs_results_MVC_NaCl.csv"
@@ -105,10 +100,7 @@ outputs = dict()
 outputs["LCOW"] = m.fs.costing.LCOW
 outputs["SEC"] = m.fs.costing.specific_energy_consumption
 outputs["Evaporator area"] = m.fs.evaporator.area
-outputs["Evaporator temperature"] = m.fs.evaporator.properties_brine[0].temperature
-outputs["Evaporator pressure"] = m.fs.evaporator.properties_vapor[0].pressure
 outputs["Compressor pressure ratio"] = m.fs.compressor.pressure_ratio
-
 
 parameter_sweep(
     m, sweep_params, outputs, csv_results_file_name="sal_outputs_results_MVC_simple.csv"

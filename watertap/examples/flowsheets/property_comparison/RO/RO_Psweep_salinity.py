@@ -21,10 +21,10 @@ flowsheet_NaCl.optimize_set_up(m)
 # Sweep Parameters -- manipulated variables
 sweep_params = dict()
 sweep_params["Water Recovery"] = LinearSample(
-    m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.3, 0.7, 25
+    m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.3, 0.7, 30
 )
 sweep_params["Inlet Salinity"] = LinearSample(
-    m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"], 0.01, 0.1, 25
+    m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"], 0.01, 0.07, 30
 )
 
 # Outputs -- recorded variables
@@ -56,10 +56,10 @@ flowsheet_Sea.optimize_set_up(m)
 # Sweep Parameters -- manipulated variables
 sweep_params = dict()
 sweep_params["Water Recovery"] = LinearSample(
-    m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.3, 0.7, 25
+    m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.3, 0.7, 30
 )
 sweep_params["Inlet Salinity"] = LinearSample(
-    m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "TDS"], 0.01, 0.1, 25
+    m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "TDS"], 0.01, 0.07, 30
 )
 
 # Outputs -- recorded variables
@@ -73,7 +73,7 @@ parameter_sweep(
     m,
     sweep_params,
     outputs,
-    csv_results_file_name="sal_outputs_results_RO_seawater_salinity.csv",
+    csv_results_file_name="sal_outputs_results_RO_seawater.csv",
 )
 
 # --------------------- RO with Simple ---------------------
@@ -94,10 +94,10 @@ m.fs.feed.properties[0].flow_vol_phase["Liq"].fix()
 # Sweep Parameters -- manipulated variables
 sweep_params = dict()
 sweep_params["Water Recovery"] = LinearSample(
-    m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.3, 0.7, 25
+    m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.3, 0.7, 30
 )
 sweep_params["Inlet Salinity"] = LinearSample(
-    m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"], 0.01, 0.1, 25
+    m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"], 0.01, 0.07, 30
 )
 
 # Outputs -- recorded variables

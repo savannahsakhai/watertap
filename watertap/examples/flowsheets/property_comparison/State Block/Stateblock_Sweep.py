@@ -13,7 +13,7 @@ sweep_params["Temperature"] = LinearSample(
     m.fs.stream[0].temperature, 20 + 273.15, 150 + 273.15, 25
 )
 sweep_params["Flow"] = LinearSample(
-    m.fs.stream[0].flow_mass_phase_comp["Liq", "TDS"], 0.01, 0.26, 15
+    m.fs.stream[0].flow_mass_phase_comp["Liq", "TDS"], 0.01, 0.26, 25
 )
 
 outputs = dict()
@@ -22,6 +22,8 @@ outputs["Vap Pressure"] = m.fs.stream[0].pressure_sat
 outputs["Osmotic Pressure"] = m.fs.stream[0].pressure_osm_phase["Liq"]
 outputs["Diffusivity"] = m.fs.stream[0].diffus_phase_comp["Liq", "TDS"]
 outputs["Osmotic Coeff"] = m.fs.stream[0].osm_coeff
+outputs["Density"] = m.fs.stream[0].dens_mass_phase["Liq"]
+outputs["Viscosity"] = m.fs.stream[0].visc_d_phase["Liq"]
 
 parameter_sweep(
     m, sweep_params, outputs, csv_results_file_name="outputs_results_Sea.csv"
@@ -37,7 +39,7 @@ sweep_params["Temperature"] = LinearSample(
     m.fs.stream[0].temperature, 20 + 273.15, 150 + 273.15, 25
 )
 sweep_params["Flow"] = LinearSample(
-    m.fs.stream[0].flow_mass_phase_comp["Liq", "NaCl"], 0.01, 0.26, 15
+    m.fs.stream[0].flow_mass_phase_comp["Liq", "NaCl"], 0.01, 0.26, 25
 )
 
 outputs = dict()
@@ -46,6 +48,8 @@ outputs["Vap Pressure"] = m.fs.stream[0].pressure_sat
 outputs["Osmotic Pressure"] = m.fs.stream[0].pressure_osm_phase["Liq"]
 outputs["Diffusivity"] = m.fs.stream[0].diffus_phase_comp["Liq", "NaCl"]
 outputs["Osmotic Coeff"] = m.fs.stream[0].osm_coeff
+outputs["Density"] = m.fs.stream[0].dens_mass_phase["Liq"]
+outputs["Viscosity"] = m.fs.stream[0].visc_d_phase["Liq"]
 
 parameter_sweep(
     m, sweep_params, outputs, csv_results_file_name="outputs_results_NaCl.csv"
@@ -60,7 +64,7 @@ sweep_params["Temperature"] = LinearSample(
     m.fs.stream[0].temperature, 20 + 273.15, 150 + 273.15, 25
 )
 sweep_params["Flow"] = LinearSample(
-    m.fs.stream[0].flow_mass_phase_comp["Liq", "NaCl"], 0.01, 0.26, 15
+    m.fs.stream[0].flow_mass_phase_comp["Liq", "NaCl"], 0.01, 0.26, 25
 )
 
 outputs = dict()
@@ -68,6 +72,8 @@ outputs["Enthalpy"] = m.fs.stream[0].enth_mass_phase["Liq"]
 outputs["Vap Pressure"] = m.fs.stream[0].pressure_sat
 outputs["Osmotic Pressure"] = m.fs.stream[0].pressure_osm_phase["Liq"]
 outputs["Diffusivity"] = m.fs.stream[0].diffus_phase_comp["Liq", "NaCl"]
+outputs["Density"] = m.fs.stream[0].dens_mass_phase["Liq"]
+outputs["Viscosity"] = m.fs.stream[0].visc_d_phase["Liq"]
 
 parameter_sweep(
     m, sweep_params, outputs, csv_results_file_name="outputs_results_simple.csv"

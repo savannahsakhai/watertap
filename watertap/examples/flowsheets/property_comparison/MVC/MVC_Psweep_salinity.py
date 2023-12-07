@@ -21,9 +21,9 @@ flowsheet_Sea.set_up_optimization(m)
 
 # Sweep Parameters -- manipulated variables
 sweep_params = dict()
-sweep_params["Water Recovery"] = LinearSample(m.fs.recovery[0], 0.45, 0.75, 30)
+sweep_params["Water Recovery"] = LinearSample(m.fs.recovery[0], 0.45, 0.75, 7)
 sweep_params["Inlet Salinity"] = LinearSample(
-    m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "TDS"], 0.035, 0.130, 30
+    m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "TDS"], 0.035, 0.13, 20
 )
 
 # Outputs -- recorded variables
@@ -57,9 +57,9 @@ flowsheet_NaCl.set_up_optimization(m)
 
 # Sweep Parameters -- manipulated variables
 sweep_params = dict()
-sweep_params["Water Recovery"] = LinearSample(m.fs.recovery[0], 0.45, 0.75, 30)
+sweep_params["Water Recovery"] = LinearSample(m.fs.recovery[0], 0.45, 0.75, 7)
 sweep_params["Inlet Salinity"] = LinearSample(
-    m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"], 0.035, 0.130, 30
+    m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"], 0.035, 0.13, 20
 )
 
 # Outputs -- recorded variables
@@ -90,9 +90,9 @@ flowsheet_Simple.set_up_optimization(m)
 
 # Sweep Parameters -- manipulated variables
 sweep_params = dict()
-sweep_params["Water Recovery"] = LinearSample(m.fs.recovery[0], 0.45, 0.75, 30)
+sweep_params["Water Recovery"] = LinearSample(m.fs.recovery[0], 0.45, 0.75, 7)
 sweep_params["Inlet Salinity"] = LinearSample(
-    m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"], 0.035, 0.130, 30
+    m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"], 0.035, 0.13, 20
 )
 
 # Outputs -- recorded variables

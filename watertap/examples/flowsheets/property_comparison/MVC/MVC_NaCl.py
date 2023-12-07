@@ -360,7 +360,6 @@ def set_operating_conditions(m):
     # Feed inlet
     m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"].fix(0.1)
     m.fs.feed.properties[0].flow_mass_phase_comp["Liq", "H2O"].fix(40)
-    # m.fs.feed.properties[0].flow_mass_phase_comp["Liq", "NaCl"].fix(4)
     m.fs.feed.properties[0].temperature.fix(273.15 + 25)
     m.fs.feed.properties[0].pressure.fix(101325)
 
@@ -376,14 +375,14 @@ def set_operating_conditions(m):
     # Distillate HX
     m.fs.hx_distillate.overall_heat_transfer_coefficient.fix(2e3)
     m.fs.hx_distillate.area.fix(125)
-    m.fs.hx_distillate.cold.deltaP[0].fix(7e3)
-    m.fs.hx_distillate.hot.deltaP[0].fix(7e3)
+    m.fs.hx_distillate.cold.deltaP[0].fix(-7e3)
+    m.fs.hx_distillate.hot.deltaP[0].fix(-7e3)
 
     # Brine HX
     m.fs.hx_brine.overall_heat_transfer_coefficient.fix(2e3)
     m.fs.hx_brine.area.fix(115)
-    m.fs.hx_brine.cold.deltaP[0].fix(7e3)
-    m.fs.hx_brine.hot.deltaP[0].fix(7e3)
+    m.fs.hx_brine.cold.deltaP[0].fix(-7e3)
+    m.fs.hx_brine.hot.deltaP[0].fix(-7e3)
 
     # Evaporator
     m.fs.evaporator.inlet_feed.temperature[0] = 55 + 273.15  # provide guess
@@ -391,6 +390,8 @@ def set_operating_conditions(m):
 
     m.fs.evaporator.U.fix(3e3)  # W/K-m^2
     m.fs.evaporator.area.setub(1e4)  # m^2
+
+    m.fs.evaporator.properties_brine[0].mass_frac_phase_comp["Liq", "NaCl"].setub(0.25)
 
     # Compressor  df
     m.fs.compressor.pressure_ratio.fix(1.6)
@@ -408,17 +409,12 @@ def set_operating_conditions(m):
     m.fs.tb_distillate.properties_out[0].flow_mass_phase_comp["Liq", "NaCl"].fix(1e-5)
 
     # Costing
-    m.fs.costing.factor_total_investment.fix(2)
-    m.fs.costing.electricity_cost = 0.1
     m.fs.costing.heat_exchanger.material_factor_cost.fix(5)
     m.fs.costing.evaporator.material_factor_cost.fix(5)
-    m.fs.costing.compressor.unit_cost.fix(1 * 7364)
 
     # Temperature bounds
     m.fs.evaporator.properties_vapor[0].temperature.setub(75 + 273.15)
     m.fs.compressor.control_volume.properties_out[0].temperature.setub(450)
-
-    m.fs.evaporator.properties_brine[0].mass_frac_phase_comp["Liq", "NaCl"].setub(0.24)
 
     # check degrees of freedom
     print("DOF after setting operating conditions: ", degrees_of_freedom(m))
@@ -596,15 +592,13 @@ def initialize_system(m, solver=None):
 
 
 def fix_outlet_pressures(m):
-    # The distillate outlet pressure remains unfixed so that there is not an implicit upper bound on the compressed vapor pressure
-
     # Unfix pump heads
     m.fs.pump_brine.control_volume.deltaP[0].unfix()
-    # m.fs.pump_distillate.control_volume.deltaP[0].unfix()
+    m.fs.pump_distillate.control_volume.deltaP[0].unfix()
 
     # Fix outlet pressures
     m.fs.brine.properties[0].pressure.fix(101325)
-    # m.fs.distillate.properties[0].pressure.fix(101325)
+    m.fs.distillate.properties[0].pressure.setlb(101325)
 
     return
 
@@ -632,7 +626,6 @@ def scale_costs(m):
 
 
 def solve(model, solver=None, tee=False, raise_on_failure=False):
-    # ---solving---optimiza
     if solver is None:
         solver = get_solver()
 
@@ -653,7 +646,6 @@ def set_up_optimization(m):
     m.fs.objective = Objective(expr=m.fs.costing.LCOW)
     m.fs.Q_ext[0].fix(0)
     m.fs.evaporator.area.unfix()
-    # m.fs.evaporator.outlet_brine.temperature[0].unfix()
     m.fs.compressor.pressure_ratio.unfix()
     m.fs.hx_distillate.area.unfix()
     m.fs.hx_brine.area.unfix()
@@ -738,6 +730,19 @@ def display_design(m):
         "Distillate heat exchanger area:           %.2f m2"
         % m.fs.hx_distillate.area.value
     )
+    print(
+        "Distillate pump pressure:           %.2f Pa"
+        % m.fs.pump_distillate.control_volume.properties_out[0].pressure.value
+    )
+    print(
+        "Distillate dP:           %.2f Pa"
+        % m.fs.pump_distillate.control_volume.deltaP[0].value
+    )
+    print(
+        "Distillate pressure:           %.2f Pa"
+        % m.fs.distillate.properties[0].pressure.value
+    )
+
     print(
         "Compressor pressure ratio:                %.2f"
         % m.fs.compressor.pressure_ratio.value

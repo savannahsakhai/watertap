@@ -64,7 +64,7 @@ def main():
     print("\n***---Optimization results---***")
     display_system(m)
     display_design(m)
-
+    m.fs.report()
     return m
 
 
@@ -120,7 +120,7 @@ def build():
     )
     # set unit model values
     iscale.set_scaling_factor(m.fs.P1.control_volume.work, 1e-3)
-    iscale.set_scaling_factor(m.fs.RO.area, 1e-2)
+    iscale.set_scaling_factor(m.fs.RO.area, 1e-3)
     m.fs.feed.properties[0].flow_vol_phase["Liq"]
     m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"]
     # calculate and propagate scaling factors
@@ -136,25 +136,24 @@ def set_operating_conditions(m, solver=None):
     # Feed
     m.fs.feed.properties[0].pressure.fix(101325)  # feed pressure [Pa]
     m.fs.feed.properties[0].temperature.fix(273.15 + 25)  # feed temperature [K]
-    m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"] = 0.035
-    m.fs.feed.properties.calculate_state(
-        var_args={
-            ("mass_frac_phase_comp", ("Liq", "NaCl")): value(
-                m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"]
-            ),  # feed mass concentration
-            ("flow_vol_phase", "Liq"): 1e-3,
-        },  # volumetric feed flowrate [-]
-        hold_state=True,  # fixes the calculated component mass flow rates
+    feed_flow_mass = 1
+    feed_mass_frac_NaCl = 0.035
+    feed_mass_frac_H2O = 1 - feed_mass_frac_NaCl
+    m.fs.feed.properties[0].flow_mass_phase_comp["Liq", "NaCl"].fix(
+        feed_flow_mass * feed_mass_frac_NaCl
+    )
+    m.fs.feed.properties[0].flow_mass_phase_comp["Liq", "H2O"].fix(
+        feed_flow_mass * feed_mass_frac_H2O
     )
     # Pump Unit
-    m.fs.P1.efficiency_pump.fix(0.80)  # pump efficiency [-]
+    m.fs.P1.efficiency_pump.fix(0.80)  # pump efficiency
     m.fs.P1.control_volume.properties_out[0].pressure.fix(50e5)
 
     # RO unit
     m.fs.RO.A_comp.fix(4.2e-12)  # membrane water permeability coefficient [m/s-Pa]
     m.fs.RO.B_comp.fix(3.5e-8)  # membrane salt permeability coefficient [m/s]
     m.fs.RO.feed_side.channel_height.fix(1e-3)  # channel height in membrane stage [m]
-    m.fs.RO.feed_side.spacer_porosity.fix(0.97)  # spacer porosity in membrane stage [-]
+    m.fs.RO.feed_side.spacer_porosity.fix(0.75)  # spacer porosity
     m.fs.RO.permeate.pressure[0].fix(101325)  # atmospheric pressure [Pa]
     m.fs.RO.width.fix(5)  # stage width [m]
 
@@ -171,7 +170,9 @@ def set_operating_conditions(m, solver=None):
     m.fs.RO.feed_side.properties[0, 0].pressure = value(
         m.fs.P1.control_volume.properties_out[0].pressure
     )
-    m.fs.RO.area.fix(50)  # guess area for RO initialization
+    m.fs.RO.area.fix(100)  # guess area for RO initialization
+
+    # Costing
 
     # check degrees of freedom
     if degrees_of_freedom(m) != 0:
@@ -235,18 +236,17 @@ def optimize_set_up(m):
     # RO
     m.fs.RO.area.unfix()
     m.fs.RO.area.setlb(1)
-    m.fs.RO.area.setub(200)
+    m.fs.RO.area.setub(50000)
     m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"].fix(0.5)
 
     # additional specifications
 
-    # product NaCl mass fraction [-]
+    # product NaCl mass fraction
     m.fs.product_salinity = Param(initialize=500e-6, mutable=True)
     # minimum water flux [kg/m2-s]
     m.fs.minimum_water_flux = Param(initialize=1.0 / 3600.0, mutable=True)
 
     # additional constraints
-
     m.fs.eq_product_quality = Constraint(
         expr=m.fs.product.properties[0].mass_frac_phase_comp["Liq", "NaCl"]
         <= m.fs.product_salinity
@@ -258,12 +258,11 @@ def optimize_set_up(m):
         expr=m.fs.RO.flux_mass_phase_comp[0, 1, "Liq", "H2O"] >= m.fs.minimum_water_flux
     )
 
-    # ---checking model---
+    # check degrees of freedom
     assert_degrees_of_freedom(m, 1)
 
 
 def optimize(m, solver=None, check_termination=True):
-    # --solve---
     return solve(m, solver=solver, check_termination=check_termination)
 
 
@@ -325,10 +324,6 @@ def display_design(m):
             m.fs.P1.work_mechanical[0].value / 1e3,
         )
     )
-    m.fs.s01.display()
-    m.fs.s02.display()
-    m.fs.s03.display()
-    m.fs.s04.display()
 
 
 if __name__ == "__main__":

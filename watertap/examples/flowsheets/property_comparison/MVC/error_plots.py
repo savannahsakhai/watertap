@@ -45,7 +45,7 @@ for i in results_col:
     vmax = max([max(error_nacl[i]), max(error_simple[i])])
     figure.plot_map(
         xdata=MVC_NaCl["Inlet Salinity"] * 100,
-        ydata=MVC_NaCl["# Water Recovery"],
+        ydata=MVC_NaCl["# Water Recovery"] * 100,
         zdata=error_nacl[i],
         text=False,
         build_map=True,
@@ -55,7 +55,7 @@ for i in results_col:
     )
     figure.plot_map(
         xdata=MVC_Simple["Inlet Salinity"] * 100,
-        ydata=MVC_Simple["# Water Recovery"],
+        ydata=MVC_Simple["# Water Recovery"] * 100,
         zdata=error_simple[i],
         text=False,
         build_map=True,
@@ -77,14 +77,16 @@ for i in results_col:
     figure.set_axis_ticklabels(
         xticklabels=xticks,
         yticklabels=yticks,
+        xformat=1,
+        yformat=2,
     )
+
     figure.set_fig_label(
-        xlabel="Inlet Composition",
-        ylabel="Recovery",
+        xlabel="Inlet Composition, %",
+        ylabel="Recovery, %",
     )
     print(i)
     figure.save_fig(name=i)
-
 
 for i in results_col:
     figure = fig_generator.figureGenerator()
@@ -93,7 +95,7 @@ for i in results_col:
     vmax = max([max(MVC_NaCl[i]), max(MVC_Simple[i]), max(MVC_Sea[i])])
     figure.plot_map(
         xdata=MVC_Sea["Inlet Salinity"] * 100,
-        ydata=MVC_Sea["# Water Recovery"],
+        ydata=MVC_Sea["# Water Recovery"] * 100,
         zdata=MVC_Sea[i],
         text=False,
         build_map=True,
@@ -103,7 +105,7 @@ for i in results_col:
     )
     figure.plot_map(
         xdata=MVC_NaCl["Inlet Salinity"] * 100,
-        ydata=MVC_NaCl["# Water Recovery"],
+        ydata=MVC_NaCl["# Water Recovery"] * 100,
         zdata=MVC_NaCl[i],
         text=False,
         build_map=True,
@@ -113,7 +115,7 @@ for i in results_col:
     )
     figure.plot_map(
         xdata=MVC_Simple["Inlet Salinity"] * 100,
-        ydata=MVC_Simple["# Water Recovery"],
+        ydata=MVC_Simple["# Water Recovery"] * 100,
         zdata=MVC_Simple[i],
         text=False,
         build_map=True,
@@ -135,10 +137,12 @@ for i in results_col:
     figure.set_axis_ticklabels(
         xticklabels=xticks,
         yticklabels=yticks,
+        xformat=1,
+        yformat=0,
     )
     figure.set_fig_label(
-        xlabel="Inlet Composition",
-        ylabel="Recovery",
+        xlabel="Inlet Composition, %",
+        ylabel="Recovery, %",
     )
     print(i + "_comparison")
     figure.save_fig(name=i + "_comparison")

@@ -268,7 +268,7 @@ def initialize_system(m, solver=None):
     # ---initialize feed block---
     m.fs.feed.initialize(optarg=optarg)
 
-    # ---initialize pumps 1 & 3---
+    # ---initialize pumps 1 & 2---
     propagate_state(m.fs.s01)
     m.fs.P1.initialize(optarg=optarg)
 

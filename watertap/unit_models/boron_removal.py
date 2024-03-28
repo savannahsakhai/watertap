@@ -43,6 +43,8 @@ import idaes.logger as idaeslog
 
 from watertap.core import ControlVolume0DBlock, InitializationMixin
 
+from watertap.costing.unit_models.boron_removal import cost_boron_removal
+
 __author__ = "Austin Ladshaw"
 
 _log = idaeslog.getLogger(__name__)
@@ -1124,3 +1126,7 @@ class BoronRemovalData(InitializationMixin, UnitModelBlockData):
                 iscale.constraint_scaling_transform(
                     self.eq_mass_transfer_term[t, "Liq", j], sf
                 )
+
+    @property
+    def default_costing_method(self):
+        return cost_boron_removal

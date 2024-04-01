@@ -558,11 +558,6 @@ def optimize_set_up(m):
     m.fs.RO1.area.setlb(1)
     m.fs.RO1.area.setub(150)
 
-    # m.fs.ph_swing.caustic_dose_rate.unfix()
-    # m.fs.ph_swing.reactor_volume.unfix()
-    # m.fs.ph_swing.reactor_volume.setlb(1)
-    # m.fs.ph_swing.reactor_volume.setub(500)
-
     m.fs.RO2.area.unfix()
     m.fs.RO2.area.setlb(1)
     m.fs.RO2.area.setub(150)
@@ -591,22 +586,6 @@ def optimize_set_up(m):
         expr=m.fs.RO2.flux_mass_phase_comp[0, 1, "Liq", "H2O"]
         >= m.fs.minimum_water_flux
     )
-    # m.fs.eq_boron_quality = Constraint(
-    #     expr=((m.fs.tb_boron.properties_in[0].flow_mass_phase_comp["Liq", "B[OH]4_-"]
-    #           + m.fs.tb_boron.properties_in[0].flow_mass_phase_comp["Liq", "B[OH]3"])
-    #           *(1 - m.fs.boron_2rej)
-    #           <= m.fs.boron_limit*m.fs.product.properties[0].flow_mass_phase_comp["Liq","H2O"])
-    # )
-    # iscale.constraint_scaling_transform(
-    #     m.fs.eq_boron_quality, 1e2
-    # )  # scaling constraint
-    # m.fs.eq_borate_dominates = Constraint(
-    #     expr=(0.75*(m.fs.ph_swing.outlet.flow_mol_phase_comp[0,"Liq", "B[OH]4_-"] + m.fs.ph_swing.outlet.flow_mol_phase_comp[0,"Liq", "B[OH]3"])
-    #           <= m.fs.ph_swing.outlet.flow_mol_phase_comp[0,"Liq", "B[OH]4_-"])
-    # )
-
-    # ---checking model---
-    # assert_degrees_of_freedom(m, 2)
 
 
 def optimize_set_up_boron(m):
@@ -629,6 +608,7 @@ def optimize_set_up_boron(m):
     # iscale.constraint_scaling_transform(
     #     m.fs.eq_boron_quality, 1e2
     # )  # scaling constraint
+
     m.fs.eq_borate_dominates = Constraint(
         expr=(
             0.9
@@ -639,9 +619,6 @@ def optimize_set_up_boron(m):
             <= m.fs.ph_swing.outlet.flow_mol_phase_comp[0, "Liq", "B[OH]4_-"]
         )
     )
-
-    # ---checking model---
-    # assert_degrees_of_freedom(m, 2)
 
 
 def optimize(m, solver=None, check_termination=True):
@@ -690,7 +667,6 @@ def display_design(m):
     print("RO2 membrane area %.1f m2" % (m.fs.RO2.area.value))
     print("Reactor volume:  ", m.fs.ph_swing.reactor_volume.value)
     print("Dose rate:  ", m.fs.ph_swing.caustic_dose_rate[0].value)
-    print("pH:  ", value(m.fs.ph_swing.outlet_pH()))
 
     print("---design variables---")
     print(
@@ -707,6 +683,7 @@ def display_design(m):
             m.fs.P2.work_mechanical[0].value / 1e3,
         )
     )
+    print("pH:  ", value(m.fs.ph_swing.outlet_pH()))
 
 
 def display_state(m):
@@ -730,6 +707,7 @@ def display_state(m):
     print_state("RO1 perm   ", m.fs.RO1.permeate)
     print_state("RO1 reten  ", m.fs.RO1.retentate)
 
+    print("--pH swing--")
     m.fs.ph_swing.report()
 
     print("--2nd stage--")

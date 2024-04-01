@@ -17,10 +17,10 @@ from ..util import register_costing_parameter_block, make_capital_cost_var
 
 
 def build_boron_removal_cost_param_block(blk):
-    blk.capital_cost_softening = pyo.Var(
+    blk.capital_cost_chem_rxr = pyo.Var(
         initialize=100,
         units=pyo.units.USD_2021 / (pyo.units.lb / pyo.units.day),
-        doc="Cost for typical mid sized softening reactor",
+        doc="place holder cost (based on eq. rxr)",
     )
 
 
@@ -37,7 +37,7 @@ def cost_boron_removal(blk):
             blk.capital_cost
             == blk.cost_factor
             * pyo.units.convert(
-                blk.costing_package.boron_removal.capital_cost_softening,
+                blk.costing_package.boron_removal.capital_cost_chem_rxr,
                 to_units=blk.costing_package.base_currency
                 / (pyo.units.lb / pyo.units.day),
             )

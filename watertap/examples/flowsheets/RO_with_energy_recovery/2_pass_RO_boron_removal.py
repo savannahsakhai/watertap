@@ -124,10 +124,10 @@ def build():
     m.fs.disposal1 = Product(property_package=m.fs.properties)
 
     # boron removal - ph swing
-    m.fs.boron_conc_feed = Var(initialize=5 / 1000, bounds=(0, 15))  # kg/m3
-    m.fs.boron_1rej = Var(initialize=0.7, bounds=(0, 1))
+    m.fs.boron_conc_feed = Var(initialize=5 / 1e6, bounds=(0, 15))  # kg/m3
+    m.fs.boron_1rej = Var(initialize=0.5, bounds=(0, 1))
     m.fs.boron_split_frac = Var(
-        initialize=0.9, bounds=(0, 1)
+        initialize=0.8, bounds=(0, 1)
     )  # boron -> boric acid + borate ions
 
     m.fs.tb_1stage = Translator(
@@ -164,16 +164,13 @@ def build():
 
     @m.fs.tb_1stage.Constraint()
     def eq_flow_mass_sodium(blk):
-        return (
-            blk.properties_out[0].flow_mass_phase_comp["Liq", "Na_+"]
-            == 0.1 * blk.properties_in[0].flow_mass_phase_comp["Liq", "TDS"]
-        )
+        return blk.properties_out[0].flow_mass_phase_comp["Liq", "Na_+"] == 0
 
     @m.fs.tb_1stage.Constraint()
     def eq_flow_mass_tds(blk):
         return (
             blk.properties_out[0].flow_mass_phase_comp["Liq", "TDS"]
-            == 0.9 * blk.properties_in[0].flow_mass_phase_comp["Liq", "TDS"]
+            == blk.properties_in[0].flow_mass_phase_comp["Liq", "TDS"]
         )
 
     @m.fs.tb_1stage.Constraint()
@@ -240,44 +237,6 @@ def build():
     m.fs.boron_2rej = Var(initialize=0.98, bounds=(0, 1))
     m.fs.boron_limit = Var(initialize=0.5 / 1000, bounds=(0, 15))
 
-    # m.fs.tb_2stage = Translator(
-    #     inlet_property_package=m.fs.properties,
-    #     outlet_property_package=m.fs.properties_mcas,
-    # )
-    # # Translator block to convert nacl to mcas
-    # @m.fs.tb_2stage.Constraint()
-    # def eq_flow_mass_comp(blk):
-    #     return (
-    #         blk.properties_in[0].flow_mass_phase_comp["Liq", "H2O"]
-    #         == blk.properties_out[0].flow_mass_phase_comp["Liq", "H2O"]
-    #     )
-    # @m.fs.tb_2stage.Constraint()
-    # def eq_boron_comp(blk):
-    #     return (
-    #         blk.properties_out[0].flow_mol_phase_comp["Liq", "B[OH]3"]
-    #         == m.fs.ph_swing.outlet.flow_mol_phase_comp[0,"Liq", "B[OH]3"]*(1 - m.fs.boron_2rej)
-    #     )
-    # @m.fs.tb_2stage.Constraint()
-    # def eq_borate_comp(blk):
-    #     return (
-    #         blk.properties_out[0].flow_mol_phase_comp["Liq", "B[OH]4_-"]
-    #         == m.fs.ph_swing.outlet.flow_mol_phase_comp[0,"Liq", "B[OH]4_-"]*(1 - m.fs.boron_2rej)
-    #     )
-
-    # @m.fs.tb_1stage.Constraint()
-    # def eq_sodium_comp(blk):
-    #     return (
-    #         blk.properties_out[0].flow_mass_phase_comp["Liq", "Na_+"]
-    #         == .00001*blk.properties_in[0].flow_mass_phase_comp["Liq", "H2O"]
-    #     )
-    # @m.fs.tb_2stage.Constraint()
-    # def eq_temperature(blk):
-    #     return blk.properties_in[0].temperature == blk.properties_out[0].temperature
-
-    # @m.fs.tb_2stage.Constraint()
-    # def eq_pressure(blk):
-    #     return blk.properties_in[0].pressure == blk.properties_out[0].pressure
-
     # --------- Connections ---------
     # 1st Stage
     m.fs.s01 = Arc(source=m.fs.feed.outlet, destination=m.fs.P1.inlet)
@@ -324,7 +283,7 @@ def build():
     iscale.set_scaling_factor(m.fs.RO1.area, 1e1)
 
     # set unit model values - boron removal
-    iscale.set_scaling_factor(m.fs.ph_swing.caustic_dose_rate, 1e4)
+    iscale.set_scaling_factor(m.fs.ph_swing.caustic_dose_rate, 1e5)
     iscale.set_scaling_factor(m.fs.ph_swing.reactor_volume, 1e0)
     scaling_setup(
         m,
@@ -332,8 +291,8 @@ def build():
             "H2O": 10,
             "H_+": 5e-5,
             "OH_-": 5e-5,
-            "B[OH]3": 1e-3,
-            "B[OH]4_-": 1e-4,
+            "B[OH]3": 1e-5,
+            "B[OH]4_-": 1e-5,
             "Na_+": 1e-4,
             "HCO3_-": 1e-4,
             "TDS": 1e4,
@@ -402,15 +361,15 @@ def set_operating_conditions(m, water_recovery=0.5, over_pressure=0.3, solver=No
     m.fs.P2.control_volume.properties_out[0].pressure.fix(50e5)
 
     # Boron rejection and translator block helpers
-    m.fs.boron_conc_feed.fix(5 / 1000)
-    m.fs.boron_1rej.fix(0.7)
+    m.fs.boron_conc_feed.fix(5 / 1e6)
+    m.fs.boron_1rej.fix(0.4)
     m.fs.boron_split_frac.fix(0.9)
-    m.fs.boron_2rej.fix(0.98)
-    m.fs.boron_limit.fix(1 / 1000)
+    m.fs.boron_2rej.fix(0.99)
+    m.fs.boron_limit.fix(0.5 / 1e6)
     # Boron removal - ph swing
-    m.fs.ph_swing.reactor_volume.fix(50)
+    m.fs.ph_swing.reactor_volume.fix(1)
     # m.fs.ph_swing.outlet.flow_mol_phase_comp[(0, "Liq", "B[OH]3")].fix(1.98677e-5)
-    m.fs.ph_swing.caustic_dose_rate.fix(4e-4)
+    m.fs.ph_swing.caustic_dose_rate.fix(1e-6)
 
     # RO units - Assume these remain the same as a 1 stage RO system or should sizing be halfed?
     m.fs.RO1.A_comp.fix(4.2e-12)  # membrane water permeability coefficient [m/s-Pa]
@@ -595,19 +554,22 @@ def optimize_set_up_boron(m):
 
     # boron removal
     m.fs.ph_swing.caustic_dose_rate.unfix()
-    m.fs.ph_swing.reactor_volume.unfix()
-    m.fs.ph_swing.reactor_volume.setlb(1)
-    m.fs.ph_swing.reactor_volume.setub(100)
+    # m.fs.ph_swing.caustic_dose_rate.setlb(1e-8)
 
-    # m.fs.eq_boron_quality = Constraint(
-    #     expr=((m.fs.tb_boron.properties_in[0].flow_mass_phase_comp["Liq", "B[OH]4_-"]
-    #           + m.fs.tb_boron.properties_in[0].flow_mass_phase_comp["Liq", "B[OH]3"])
-    #           *(1 - m.fs.boron_2rej)
-    #           <= m.fs.boron_limit*m.fs.product.properties[0].flow_mass_phase_comp["Liq","H2O"])
-    # )
-    # iscale.constraint_scaling_transform(
-    #     m.fs.eq_boron_quality, 1e2
-    # )  # scaling constraint
+    m.fs.eq_boron_quality = Constraint(
+        expr=(
+            (
+                m.fs.tb_boron.properties_in[0].flow_mass_phase_comp["Liq", "B[OH]4_-"]
+                + m.fs.tb_boron.properties_in[0].flow_mass_phase_comp["Liq", "B[OH]3"]
+            )
+            * (1 - m.fs.boron_2rej)
+            <= m.fs.boron_limit
+            * m.fs.product.properties[0].flow_mass_phase_comp["Liq", "H2O"]
+        )
+    )
+    iscale.constraint_scaling_transform(
+        m.fs.eq_boron_quality, 1e2
+    )  # scaling constraint
 
     m.fs.eq_borate_dominates = Constraint(
         expr=(
@@ -643,6 +605,17 @@ def display_system(m):
         m.fs.product.flow_mass_phase_comp[0, "Liq", "TDS"].value / prod_flow_mass
     )
     print("Product: %.3f kg/s, %.0f ppm" % (prod_flow_mass, prod_mass_frac_TDS * 1e6))
+
+    boron_prod = (
+        m.fs.tb_boron.properties_in[0].flow_mass_phase_comp["Liq", "B[OH]4_-"]
+        + m.fs.tb_boron.properties_in[0].flow_mass_phase_comp["Liq", "B[OH]3"]
+    ) * (1 - m.fs.boron_2rej)
+    prod_mass_frac_boron = value(boron_prod) / prod_flow_mass
+
+    print(
+        "Boron in product: %.10f kg/s, %.3f ppm"
+        % (value(boron_prod), prod_mass_frac_boron * 1e6)
+    )
 
     print(
         "Volumetric recovery: %.1f%%"

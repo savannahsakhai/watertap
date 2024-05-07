@@ -25,7 +25,9 @@ from pyomo.environ import (
 )
 from pyomo.network import Arc
 from idaes.core import FlowsheetBlock
-from idaes.core.solvers import get_solver
+
+# from idaes.core.solvers import get_solver
+from watertap.core.solvers import get_solver
 from idaes.core.util.model_statistics import degrees_of_freedom
 from idaes.core.util.initialization import solve_indexed_blocks, propagate_state
 from idaes.models.unit_models import Mixer, Separator, Product, Feed
@@ -124,16 +126,17 @@ def build():
     m.fs.disposal1 = Product(property_package=m.fs.properties)
 
     # boron removal - ph swing
-    m.fs.boron_conc_feed = Var(initialize=5 / 1e6, bounds=(0, 15))  # kg/m3
+    m.fs.boron_conc_feed = Var(initialize=5 / 1e6, bounds=(0, 15))
     m.fs.boron_1rej = Var(initialize=0.5, bounds=(0, 1))
     m.fs.boron_split_frac = Var(
-        initialize=0.8, bounds=(0, 1)
+        initialize=0.9, bounds=(0, 1)
     )  # boron -> boric acid + borate ions
 
     m.fs.tb_1stage = Translator(
         inlet_property_package=m.fs.properties,
         outlet_property_package=m.fs.properties_mcas,
     )
+
     # Translator block to convert nacl to mcas
     @m.fs.tb_1stage.Constraint()
     def eq_flow_mass_h2o(blk):
@@ -197,6 +200,7 @@ def build():
         inlet_property_package=m.fs.properties_mcas,
         outlet_property_package=m.fs.properties,
     )
+
     # Translator block to convert mcas to nacl
     @m.fs.tb_boron.Constraint()
     def eq_flow_mass_h2o(blk):
@@ -234,8 +238,7 @@ def build():
     m.fs.disposal2 = Product(property_package=m.fs.properties)
     m.fs.product = Product(property_package=m.fs.properties)
 
-    m.fs.boron_2rej = Var(initialize=0.98, bounds=(0, 1))
-    m.fs.boron_limit = Var(initialize=0.5 / 1000, bounds=(0, 15))
+    m.fs.boron_2rej = Var(initialize=0.75, bounds=(0, 1))
 
     # --------- Connections ---------
     # 1st Stage
@@ -362,13 +365,11 @@ def set_operating_conditions(m, water_recovery=0.5, over_pressure=0.3, solver=No
 
     # Boron rejection and translator block helpers
     m.fs.boron_conc_feed.fix(5 / 1e6)
-    m.fs.boron_1rej.fix(0.4)
+    m.fs.boron_1rej.fix(0.7)
     m.fs.boron_split_frac.fix(0.9)
-    m.fs.boron_2rej.fix(0.99)
-    m.fs.boron_limit.fix(0.5 / 1e6)
+    m.fs.boron_2rej.fix(0.97)
     # Boron removal - ph swing
     m.fs.ph_swing.reactor_volume.fix(1)
-    # m.fs.ph_swing.outlet.flow_mol_phase_comp[(0, "Liq", "B[OH]3")].fix(1.98677e-5)
     m.fs.ph_swing.caustic_dose_rate.fix(1e-6)
 
     # RO units - Assume these remain the same as a 1 stage RO system or should sizing be halfed?
@@ -483,7 +484,7 @@ def initialize_system(m, solver=None):
         m.fs.tb_1stage.properties_out[0].temperature
     )
     m.fs.ph_swing.inlet.pressure = value(m.fs.tb_1stage.properties_out[0].pressure)
-    m.fs.ph_swing.initialize(optarg=optarg)
+    m.fs.ph_swing.initialize(optarg=optarg, solver="ipopt-watertap")
 
     # ---initialize pump 2 ---
     propagate_state(m.fs.s07)
@@ -548,14 +549,26 @@ def optimize_set_up(m):
 
 
 def optimize_set_up_boron(m):
-    # objective
-    # m.fs.objective = Objective(expr= m.fs.costing.LCOW)
     # unfix decision variables and add bounds
 
     # boron removal
     m.fs.ph_swing.caustic_dose_rate.unfix()
-    # m.fs.ph_swing.caustic_dose_rate.setlb(1e-8)
+    m.fs.boron_2rej.unfix()
+    m.fs.eq_boron_rej = Constraint(
+        expr=(
+            m.fs.boron_2rej
+            == (
+                -0.0973 * m.fs.ph_swing.pH[0] ** 4
+                + 2.6191 * m.fs.ph_swing.pH[0] ** 3
+                - 23.034 * m.fs.ph_swing.pH[0] ** 2
+                + 71.115 * m.fs.ph_swing.pH[0]
+                + 40
+            )
+            / 100
+        )
+    )
 
+    m.fs.boron_limit = Param(initialize=0.5 / 1e6, mutable=True)
     m.fs.eq_boron_quality = Constraint(
         expr=(
             (
@@ -571,16 +584,16 @@ def optimize_set_up_boron(m):
         m.fs.eq_boron_quality, 1e2
     )  # scaling constraint
 
-    m.fs.eq_borate_dominates = Constraint(
-        expr=(
-            0.9
-            * (
-                m.fs.ph_swing.outlet.flow_mol_phase_comp[0, "Liq", "B[OH]4_-"]
-                + m.fs.ph_swing.outlet.flow_mol_phase_comp[0, "Liq", "B[OH]3"]
-            )
-            <= m.fs.ph_swing.outlet.flow_mol_phase_comp[0, "Liq", "B[OH]4_-"]
-        )
-    )
+    # m.fs.eq_borate_dominates = Constraint(
+    #     expr=(
+    #         0.9
+    #         * (
+    #             m.fs.ph_swing.outlet.flow_mol_phase_comp[0, "Liq", "B[OH]4_-"]
+    #             + m.fs.ph_swing.outlet.flow_mol_phase_comp[0, "Liq", "B[OH]3"]
+    #         )
+    #         <= m.fs.ph_swing.outlet.flow_mol_phase_comp[0, "Liq", "B[OH]4_-"]
+    #     )
+    # )
 
 
 def optimize(m, solver=None, check_termination=True):
@@ -640,6 +653,8 @@ def display_design(m):
     print("RO2 membrane area %.1f m2" % (m.fs.RO2.area.value))
     print("Reactor volume:  ", m.fs.ph_swing.reactor_volume.value)
     print("Dose rate:  ", m.fs.ph_swing.caustic_dose_rate[0].value)
+    print("Outlet pH: ", value(m.fs.ph_swing.pH[0]))
+    print("Rejection: ", value(m.fs.boron_2rej))
 
     print("---design variables---")
     print(
@@ -656,7 +671,6 @@ def display_design(m):
             m.fs.P2.work_mechanical[0].value / 1e3,
         )
     )
-    print("pH:  ", value(m.fs.ph_swing.outlet_pH()))
 
 
 def display_state(m):

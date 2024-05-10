@@ -58,16 +58,9 @@ def main():
 
     # build, set, and initialize
     m = build()
-    # are operating conditions the same as 1-stage RO system?
-    set_operating_conditions(m, water_recovery=0.5, over_pressure=0.3, solver=solver)
-    initialize_system(m, solver=solver)
 
-    # simulate and display
-    # solve(m, solver=solver)
-    # print("\n***---Simulation results---***")
-    # display_system(m)
-    # display_design(m)
-    # display_state(m)
+    set_operating_conditions(m, water_recovery=0.5, solver=solver)
+    initialize_system(m, solver=solver)
 
     # optimize and display
     optimize_set_up(m)
@@ -255,9 +248,7 @@ def build():
     # 2nd Stage
     m.fs.s08 = Arc(source=m.fs.P2.outlet, destination=m.fs.RO2.inlet)
     m.fs.s09 = Arc(source=m.fs.RO2.permeate, destination=m.fs.product.inlet)
-    # m.fs.s09 = Arc(source=m.fs.RO2.permeate, destination=m.fs.tb_2stage.inlet)
     m.fs.s10 = Arc(source=m.fs.RO2.retentate, destination=m.fs.disposal2.inlet)
-    # m.fs.s11 = Arc(source=m.fs.tb_2stage.inlet, destination=m.fs.product.inlet)
     TransformationFactory("network.expand_arcs").apply_to(m)
 
     # --------- Costing ---------
@@ -329,7 +320,6 @@ def scaling_setup(
         "HCO3_-": 1e-4,
     },
 ):
-    # Set some scaling factors and look for 'bad' scaling
     for j in state:
         idx = (0, "Liq", j)
         if idx in m.fs.ph_swing.inlet.flow_mol_phase_comp:
@@ -337,10 +327,8 @@ def scaling_setup(
                 "flow_mol_phase_comp", 1 / state[j], index=("Liq", j)
             )
 
-    # iscale.calculate_scaling_factors(m.fs)
 
-
-def set_operating_conditions(m, water_recovery=0.5, over_pressure=0.3, solver=None):
+def set_operating_conditions(m, water_recovery=0.5, solver=None):
     if solver is None:
         solver = get_solver()
 
@@ -365,12 +353,12 @@ def set_operating_conditions(m, water_recovery=0.5, over_pressure=0.3, solver=No
 
     # Boron rejection and translator block helpers
     m.fs.boron_conc_feed.fix(5 / 1e6)
-    m.fs.boron_1rej.fix(0.7)
+    m.fs.boron_1rej.fix(0.4)
     m.fs.boron_split_frac.fix(0.9)
     m.fs.boron_2rej.fix(0.97)
     # Boron removal - ph swing
     m.fs.ph_swing.reactor_volume.fix(1)
-    m.fs.ph_swing.caustic_dose_rate.fix(1e-6)
+    m.fs.ph_swing.caustic_dose_rate.fix(1e-5)
 
     # RO units - Assume these remain the same as a 1 stage RO system or should sizing be halfed?
     m.fs.RO1.A_comp.fix(4.2e-12)  # membrane water permeability coefficient [m/s-Pa]
@@ -584,17 +572,6 @@ def optimize_set_up_boron(m):
         m.fs.eq_boron_quality, 1e2
     )  # scaling constraint
 
-    # m.fs.eq_borate_dominates = Constraint(
-    #     expr=(
-    #         0.9
-    #         * (
-    #             m.fs.ph_swing.outlet.flow_mol_phase_comp[0, "Liq", "B[OH]4_-"]
-    #             + m.fs.ph_swing.outlet.flow_mol_phase_comp[0, "Liq", "B[OH]3"]
-    #         )
-    #         <= m.fs.ph_swing.outlet.flow_mol_phase_comp[0, "Liq", "B[OH]4_-"]
-    #     )
-    # )
-
 
 def optimize(m, solver=None, check_termination=True):
     # --solve---
@@ -626,7 +603,7 @@ def display_system(m):
     prod_mass_frac_boron = value(boron_prod) / prod_flow_mass
 
     print(
-        "Boron in product: %.10f kg/s, %.3f ppm"
+        "Boron in product: %.2E kg/s, %.3f ppm"
         % (value(boron_prod), prod_mass_frac_boron * 1e6)
     )
 
@@ -642,7 +619,7 @@ def display_system(m):
         "Energy Consumption: %.1f kWh/m3"
         % value(m.fs.costing.specific_energy_consumption)
     )
-    print("Levelized cost of water: %.2f $/m3" % value(m.fs.costing.LCOW))
+    print("Levelized cost of water: %.2f $/m3 \n" % value(m.fs.costing.LCOW))
 
 
 def display_design(m):
@@ -652,9 +629,7 @@ def display_design(m):
     print("RO2 operating pressure %.1f bar" % (m.fs.RO2.inlet.pressure[0].value / 1e5))
     print("RO2 membrane area %.1f m2" % (m.fs.RO2.area.value))
     print("Reactor volume:  ", m.fs.ph_swing.reactor_volume.value)
-    print("Dose rate:  ", m.fs.ph_swing.caustic_dose_rate[0].value)
-    print("Outlet pH: ", value(m.fs.ph_swing.pH[0]))
-    print("Rejection: ", value(m.fs.boron_2rej))
+    print("Dose rate: %.2E \n" % m.fs.ph_swing.caustic_dose_rate[0].value)
 
     print("---design variables---")
     print(
@@ -665,7 +640,7 @@ def display_design(m):
         )
     )
     print(
-        "Pump 2\noutlet pressure: %.1f bar\npower %.2f kW"
+        "Pump 2\noutlet pressure: %.1f bar\npower %.2f kW \n"
         % (
             m.fs.P2.outlet.pressure[0].value / 1e5,
             m.fs.P2.work_mechanical[0].value / 1e3,
@@ -693,14 +668,17 @@ def display_state(m):
     print_state("P1 out    ", m.fs.P1.outlet)
     print_state("RO1 perm   ", m.fs.RO1.permeate)
     print_state("RO1 reten  ", m.fs.RO1.retentate)
+    print("Boron Rejection : %.2f \n" % value(m.fs.boron_1rej))
 
     print("--pH swing--")
     m.fs.ph_swing.report()
+    print("Outlet pH : %.2f \n" % value(m.fs.ph_swing.pH[0]))
 
     print("--2nd stage--")
     print_state("P2 out    ", m.fs.P2.outlet)
     print_state("RO2 perm   ", m.fs.RO2.permeate)
     print_state("RO2 reten  ", m.fs.RO2.retentate)
+    print("Boron Rejection : %.2f \n" % value(m.fs.boron_2rej))
 
 
 if __name__ == "__main__":

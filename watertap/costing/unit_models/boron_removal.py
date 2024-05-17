@@ -42,6 +42,14 @@ def cost_boron_removal(blk):
     make_capital_cost_var(blk)
     blk.costing_package.add_cost_factor(blk, "TIC")
 
+    rxr_vol = (
+        pyo.units.convert(
+            blk.unit_model.control_volume.properties_out[0].flow_vol_phase["Liq"],
+            to_units=pyo.units.m**3 / pyo.units.s,
+        )
+        * blk.costing_package.boron_removal.residence_time_vessel
+    )
+
     blk.capital_cost_constraint = pyo.Constraint(
         expr=(
             blk.capital_cost
@@ -55,16 +63,7 @@ def cost_boron_removal(blk):
                     )
                     * (8000 * pyo.units.day)  # num of days
                 )
-                + (
-                    blk.costing_package.boron_removal.capital_cost_vessel
-                    * pyo.units.convert(
-                        blk.unit_model.control_volume.properties_out[0].flow_vol_phase[
-                            "Liq"
-                        ],
-                        to_units=pyo.units.m**3 / pyo.units.s,
-                    )
-                    * blk.costing_package.boron_removal.residence_time_vessel
-                )
+                + (blk.costing_package.boron_removal.capital_cost_vessel * rxr_vol)
             )
         )
     )

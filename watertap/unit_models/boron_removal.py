@@ -598,7 +598,9 @@ class BoronRemovalData(InitializationMixin, UnitModelBlockData):
             doc="Outlet pH",
         )
         def eq_outlet_pH(self, t):
-            return self.pH[t] == -log10(self.conc_mol_H[t] / 1000)
+            return self.pH[t] == -log10(
+                self.conc_mol_H[t] / (1000 * (pyunits.mol / pyunits.m**3))
+            )
 
         # Constraints for mass transfer terms
         @self.Constraint(
@@ -817,11 +819,11 @@ class BoronRemovalData(InitializationMixin, UnitModelBlockData):
                 self.conc_mol_Borate[t], max(100 / self.conc_mol_Borate[t].value, 100)
             )
 
-    def outlet_pH(self, time=0):
-        return -log10(value(self.conc_mol_H[time]) / 1000)
+    def outlet_pH(self, t=0):
+        return -log10(self.conc_mol_H[t] / (1000 * (pyunits.mol / pyunits.m**3)))
 
-    def outlet_pOH(self, time=0):
-        return -log10(value(self.conc_mol_OH[time]) / 1000)
+    def outlet_pOH(self, t=0):
+        return -log10(self.conc_mol_OH[t] / (1000 * (pyunits.mol / pyunits.m**3)))
 
     def propogate_initial_state(self):
         units_meta = self.config.property_package.get_metadata().get_derived_units

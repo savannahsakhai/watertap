@@ -62,6 +62,12 @@ def main():
     set_operating_conditions(m, water_recovery=0.5, solver=solver)
     initialize_system(m, solver=solver)
 
+    # solve(m, solver=solver, check_termination=False)
+    # print("\n***---Simulation results---***")
+    # display_system(m)
+    # display_design(m)
+    # display_state(m)
+
     # optimize and display
     optimize_set_up(m)
     optimize(m, solver=solver)
@@ -484,6 +490,15 @@ def initialize_system(m, solver=None):
 
     m.fs.costing.initialize()
 
+    # # redine operating cond
+    # #m.fs.RO1.recovery_mass_phase_comp[0, "Liq", "H2O"].unfix()
+    # #m.fs.RO2.recovery_mass_phase_comp[0, "Liq", "H2O"].unfix()
+    # m.fs.RO1.area.fix(130)
+    # m.fs.RO2.area.fix(50)
+    # m.fs.RO2.recovery_mass_phase_comp[0, "Liq", "H2O"].fix(0.8)
+    # m.fs.P1.control_volume.properties_out[0].pressure.fix(70e5)
+    # m.fs.P2.control_volume.properties_out[0].pressure.fix(15e5)
+
 
 def optimize_set_up(m):
     # objective
@@ -509,6 +524,10 @@ def optimize_set_up(m):
     m.fs.RO2.area.unfix()
     m.fs.RO2.area.setlb(1)
     m.fs.RO2.area.setub(150)
+
+    m.fs.RO2.recovery_mass_phase_comp[0, "Liq", "H2O"].unfix()
+    m.fs.RO2.recovery_mass_phase_comp[0, "Liq", "H2O"].setlb(0.5)
+    m.fs.RO2.recovery_mass_phase_comp[0, "Liq", "H2O"].setub(0.8)
 
     # additional specifications
     m.fs.product_salinity = Param(
@@ -620,6 +639,9 @@ def display_system(m):
         % value(m.fs.costing.specific_energy_consumption)
     )
     print("Levelized cost of water: %.2f $/m3 \n" % value(m.fs.costing.LCOW))
+    print(
+        "Cost of boron removal: $ %.2f \n" % value(m.fs.ph_swing.costing.capital_cost)
+    )
 
 
 def display_design(m):

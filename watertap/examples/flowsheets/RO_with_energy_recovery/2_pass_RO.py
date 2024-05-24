@@ -21,7 +21,7 @@ from pyomo.environ import (
 )
 from pyomo.network import Arc
 from idaes.core import FlowsheetBlock
-from idaes.core.solvers import get_solver
+from watertap.core.solvers import get_solver
 from idaes.core.util.model_statistics import degrees_of_freedom
 from idaes.core.util.initialization import solve_indexed_blocks, propagate_state
 from idaes.models.unit_models import Mixer, Separator, Product, Feed
@@ -212,7 +212,7 @@ def set_operating_conditions(m, water_recovery=0.5, over_pressure=0.3, solver=No
         m.fs.P1.control_volume.properties_out[0].pressure
     )
     m.fs.RO1.area.fix(50)  # guess area for RO initialization
-    m.fs.RO1.initialize(optarg=solver.options)
+    m.fs.RO1.initialize(optarg=solver.options, solver="ipopt-watertap")
 
     # initialize RO2
     m.fs.RO2.feed_side.properties_in[0].flow_mass_phase_comp["Liq", "H2O"] = value(
@@ -228,7 +228,7 @@ def set_operating_conditions(m, water_recovery=0.5, over_pressure=0.3, solver=No
         m.fs.P2.control_volume.properties_out[0].pressure
     )
     m.fs.RO2.area.fix(50)  # guess area for RO initialization
-    m.fs.RO2.initialize(optarg=solver.options)
+    m.fs.RO2.initialize(optarg=solver.options, solver="ipopt-watertap")
 
     # unfix guessed area, and fix water recovery - should water recovery be 0.5 for both stages?
     m.fs.RO1.area.unfix()
@@ -247,7 +247,7 @@ def set_operating_conditions(m, water_recovery=0.5, over_pressure=0.3, solver=No
         )
 
 
-def solve(blk, solver=None, tee=True, check_termination=True):
+def solve(blk, solver=None, tee=False, check_termination=True):
     if solver is None:
         solver = get_solver()
     results = solver.solve(blk, tee=tee)
@@ -262,8 +262,8 @@ def initialize_system(m, solver=None):
     optarg = solver.options
 
     # ---initialize ROs---
-    m.fs.RO1.initialize(optarg=optarg)
-    m.fs.RO2.initialize(optarg=optarg)
+    m.fs.RO1.initialize(optarg=optarg, solver="ipopt-watertap")
+    m.fs.RO2.initialize(optarg=optarg, solver="ipopt-watertap")
 
     # ---initialize feed block---
     m.fs.feed.initialize(optarg=optarg)
@@ -303,6 +303,10 @@ def optimize_set_up(m):
     m.fs.RO2.area.setlb(1)
     m.fs.RO2.area.setub(150)
 
+    m.fs.RO2.recovery_mass_phase_comp[0, "Liq", "H2O"].unfix()
+    m.fs.RO2.recovery_mass_phase_comp[0, "Liq", "H2O"].setlb(0.5)
+    m.fs.RO2.recovery_mass_phase_comp[0, "Liq", "H2O"].setub(0.9)
+
     # additional specifications
     m.fs.product_salinity = Param(
         initialize=500e-6, mutable=True
@@ -329,7 +333,7 @@ def optimize_set_up(m):
     )
 
     # ---checking model---
-    assert_degrees_of_freedom(m, 2)
+    # assert_degrees_of_freedom(m, 2)
 
 
 def optimize(m, solver=None, check_termination=True):

@@ -73,12 +73,12 @@ def main():
     display_design(m)
     display_state(m)
 
-    optimize_set_up_recovery(m)
-    optimize(m, solver=solver)
-    print("\n***---Optimization results-- Recovery---***")
-    display_system(m)
-    display_design(m)
-    display_state(m)
+    # optimize_set_up_width(m)
+    # optimize(m, solver=solver)
+    # print("\n***---Optimization results-- Recovery---***")
+    # display_system(m)
+    # display_design(m)
+    # display_state(m)
 
 
 def build():
@@ -159,6 +159,22 @@ def build():
             m.fs.boron_RO1_perm * (1 - m.fs.boron_2rej) <= m.fs.boron_limit
     )
     )
+
+    # m.fs.water_recovery = Var(
+    #     initialize=0.5,
+    #     bounds=(0, 1),
+    #     units=pyunits.dimensionless,
+    #     doc="System Water Recovery",
+    # )
+    # m.fs.eq_water_recovery_overall = Constraint(
+    #     expr=m.fs.feed.properties[0].flow_mass_phase_comp["Liq", "H2O"]
+    #     * m.fs.water_recovery
+    #     == m.fs.product.properties[0].flow_mass_phase_comp["Liq", "H2O"]
+    # )
+    # m.fs.eq_water_recovery = Constraint(
+    #     expr= (m.fs.RO1.recovery_mass_phase_comp[0, "Liq", "H2O"]* m.fs.RO2.recovery_mass_phase_comp[0, "Liq", "H2O"]) 
+    #     == m.fs.water_recovery
+    # )
 
     # --------- Connections ---------
     # 1st Stage
@@ -243,6 +259,7 @@ def set_operating_conditions(m, water_recovery=0.5, over_pressure=0.3, solver=No
         hold_state=True,  # fixes the calculated component mass flow rates
     )
     m.fs.boron_feed.fix(10/1000) # boron conc in feed g/kg w
+    #m.fs.water_recovery.fix(0.20)
 
     m.fs.P1.efficiency_pump.fix(0.80)  # pump efficiency [-]
     m.fs.P1.control_volume.properties_out[0].pressure.fix(50e5)
@@ -338,8 +355,8 @@ def initialize_system(m, solver=None):
     optarg = solver.options
 
     # ---initialize ROs---
-    m.fs.RO1.initialize(optarg=optarg, solver="ipopt-watertap")
-    m.fs.RO2.initialize(optarg=optarg, solver="ipopt-watertap")
+    #m.fs.RO1.initialize(optarg=optarg, solver="ipopt-watertap")
+    #m.fs.RO2.initialize(optarg=optarg, solver="ipopt-watertap")
 
     # ---initialize feed block---
     m.fs.feed.initialize(optarg=optarg)
@@ -358,7 +375,9 @@ def optimize_set_up(m):
     # objective
     m.fs.objective = Objective(expr=m.fs.costing.LCOW)
     # unfix decision variables and add bounds
-    
+    # m.fs.water_recovery.unfix()
+    m.fs.RO1.recovery_mass_phase_comp[0, "Liq", "H2O"].unfix()
+    m.fs.RO2.recovery_mass_phase_comp[0, "Liq", "H2O"].unfix()
     # pumps
     m.fs.P1.control_volume.properties_out[0].pressure.unfix()
     m.fs.P1.control_volume.properties_out[0].pressure.setlb(10e5)
@@ -378,10 +397,6 @@ def optimize_set_up(m):
     m.fs.RO2.area.unfix()
     m.fs.RO2.area.setlb(1)
     m.fs.RO2.area.setub(150)
-
-    # m.fs.RO2.recovery_mass_phase_comp[0, "Liq", "H2O"].unfix()
-    # m.fs.RO2.recovery_mass_phase_comp[0, "Liq", "H2O"].setlb(0.5)
-    # m.fs.RO2.recovery_mass_phase_comp[0, "Liq", "H2O"].setub(0.9)
 
     m.fs.NaOH.unfix()
 
@@ -413,11 +428,14 @@ def optimize_set_up(m):
     # ---checking model---
     #assert_degrees_of_freedom(m, 2)
 
-def optimize_set_up_recovery(m):
+def optimize_set_up_width(m):
+    m.fs.RO1.width.unfix()
+    m.fs.RO1.width.setlb(1)
+    m.fs.RO1.width.setub(10)
 
-    m.fs.RO2.recovery_mass_phase_comp[0, "Liq", "H2O"].unfix()
-    m.fs.RO2.recovery_mass_phase_comp[0, "Liq", "H2O"].setlb(0.5)
-    m.fs.RO2.recovery_mass_phase_comp[0, "Liq", "H2O"].setub(0.9)
+    m.fs.RO2.width.unfix()
+    m.fs.RO2.width.setlb(1)
+    m.fs.RO2.width.setub(10)
 
 
 def optimize(m, solver=None, check_termination=True):
@@ -444,14 +462,10 @@ def display_system(m):
     prod_conc_mg_kg_Boron = (m.fs.boron_RO1_perm.value * (1 - m.fs.boron_2rej.value)) * 1e3
     print("Product: %.3f kg/s, %.0f ppm salt, %.2f ppm boron" % (prod_flow_mass, prod_mass_frac_NaCl * 1e6, prod_conc_mg_kg_Boron))
 
-    print(
-        "Volumetric recovery: %.1f%%"
-        % (value(m.fs.RO2.recovery_vol_phase[0, "Liq"]) * 100)
-    )
-    print(
-        "Water recovery: %.1f%%"
-        % (value(m.fs.RO2.recovery_mass_phase_comp[0, "Liq", "H2O"]) * 100)
-    )
+    # print(
+    #     "Water recovery: %.1f%%"
+    #     % (value(m.fs.water_recovery) * 100)
+    # )
     print(
         "Energy Consumption: %.1f kWh/m3"
         % value(m.fs.costing.specific_energy_consumption)
@@ -463,8 +477,12 @@ def display_design(m):
     print("---decision variables---")
     print("RO1 operating pressure %.1f bar" % (m.fs.RO1.inlet.pressure[0].value / 1e5))
     print("RO1 membrane area %.1f m2" % (m.fs.RO1.area.value))
+    print("RO1 width %.1f m2" % (m.fs.RO1.width.value))
+    print("RO1 recovery %.1f " % (value(m.fs.RO1.recovery_mass_phase_comp[0, "Liq", "H2O"]) * 100))
     print("RO2 operating pressure %.1f bar" % (m.fs.RO2.inlet.pressure[0].value / 1e5))
     print("RO2 membrane area %.1f m2" % (m.fs.RO2.area.value))
+    print("RO2 width %.1f m2" % (m.fs.RO2.width.value))
+    print("RO2 recovery %.1f " % (value(m.fs.RO2.recovery_mass_phase_comp[0, "Liq", "H2O"]) * 100))
     print("NaOH dose %.1f mg/ kg w" %(m.fs.NaOH.value))
 
     print("---design variables---")

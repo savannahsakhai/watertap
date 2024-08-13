@@ -462,28 +462,32 @@ def display_system(m):
 
 
 def display_design(m):
-    print("---decision variables---")
-    print("RO1 operating pressure %.1f bar" % (m.fs.RO1.inlet.pressure[0].value / 1e5))
-    print("RO1 membrane area %.1f m2" % (m.fs.RO1.area.value))
-    print("RO2 operating pressure %.1f bar" % (m.fs.RO2.inlet.pressure[0].value / 1e5))
-    print("RO2 membrane area %.1f m2" % (m.fs.RO2.area.value))
-
-
-    print("---design variables---")
+    print("---Design and Decision variables---")
+    print("---Pump 1---")
     print(
-        "Pump 1\noutlet pressure: %.1f bar\npower %.2f kW"
+        "outlet pressure: %.1f bar\npower %.2f kW"
         % (
             m.fs.P1.outlet.pressure[0].value / 1e5,
             m.fs.P1.work_mechanical[0].value / 1e3,
         )
     )
+    print("---RO1---")
+    print("RO1 operating pressure %.1f bar" % (m.fs.RO1.inlet.pressure[0].value / 1e5))
+    print("RO1 membrane area %.1f m2" % (m.fs.RO1.area.value))
+    # print("RO1 width %.1f m2" % (m.fs.RO1.width.value))
+    print("---Pump 2---")
     print(
-        "Pump 2\noutlet pressure: %.1f bar\npower %.2f kW"
+        "outlet pressure: %.1f bar\npower %.2f kW"
         % (
             m.fs.P2.outlet.pressure[0].value / 1e5,
             m.fs.P2.work_mechanical[0].value / 1e3,
         )
     )
+    print("---RO2---")
+    print("RO2 operating pressure %.1f bar" % (m.fs.RO2.inlet.pressure[0].value / 1e5))
+    print("RO2 membrane area %.1f m2" % (m.fs.RO2.area.value))
+    # print("RO2 width %.1f m2" % (m.fs.RO2.width.value))
+  
 
 
 
@@ -507,6 +511,7 @@ def display_state(m):
 
     print("--1st stage--")
     print_state("Feed      ", m.fs.feed.outlet)
+    print_state("M1 out    ", m.fs.M1.outlet)
     print_state("P1 out    ", m.fs.P1.outlet)
     print_state("RO1 perm   ", m.fs.RO1.permeate)
     print_state("RO1 reten  ", m.fs.RO1.retentate)

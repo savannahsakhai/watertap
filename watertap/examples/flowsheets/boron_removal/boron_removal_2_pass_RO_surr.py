@@ -61,9 +61,9 @@ def main():
     # simulate and display
     solve(m, solver=solver)
     print("\n***---Simulation results---***")
-    display_system(m)
+    # display_system(m)
     display_design(m)
-    display_state(m)
+    # display_state(m)
 
     # optimize and display
     optimize_set_up(m)
@@ -71,13 +71,6 @@ def main():
     print("\n***---Optimization results---***")
     display_system(m)
     display_design(m)
-    display_state(m)
-
-    # optimize_set_up_width(m)
-    # optimize(m, solver=solver)
-    # print("\n***---Optimization results-- Recovery---***")
-    # display_system(m)
-    # display_design(m)
     # display_state(m)
 
 
@@ -93,6 +86,12 @@ def build():
     # --------- Unit models ---------
     # 1st Stage
     m.fs.feed = Feed(property_package=m.fs.properties)
+    m.fs.M1 = Mixer(
+        property_package=m.fs.properties,
+        momentum_mixing_type=MomentumMixingType.equality,
+        inlet_list=["feed", "recycle"],
+    )
+    m.fs.M1.pressure_equality_constraints[0, 2].deactivate()
     m.fs.P1 = Pump(property_package=m.fs.properties)
     m.fs.RO1 = ReverseOsmosis0D(
         property_package=m.fs.properties,
@@ -112,44 +111,81 @@ def build():
         mass_transfer_coefficient=MassTransferCoefficient.calculated,
         concentration_polarization_type=ConcentrationPolarizationType.calculated,
     )
-    m.fs.disposal2 = Product(property_package=m.fs.properties)
+    #m.fs.disposal2 = Product(property_package=m.fs.properties)
     m.fs.product = Product(property_package=m.fs.properties)
 
-    # ph swing -- surrogate
-    surr = PysmoSurrogate.load_from_file(r'c:\Users\sss0031\Documents\WaterTAP\watertap\watertap\examples\flowsheets\boron_removal\pysmo_rbf_spline_surrogate.json')
+    # acidification -- surrogate
+    acid_add_surr = PysmoSurrogate.load_from_file(r'G:\My Drive\Research\Dev\Boron Surrogate\Surrogate Gen\Acid pH\pysmo_oli_rbf_spline_acidification.json')
 
-    # vars and params
-    m.fs.boron_feed = Var(initialize=5/1000, bounds=(0, None), doc= "feed - boron g/ kg w")
-    m.fs.boron_RO1_perm = Var(initialize=1/1000, bounds=(0, None), doc= "RO1 perm - boron g/ kg w")
-    m.fs.boron_1rej = Param(initialize=0.4)
-    m.fs.boron_2rej = Var(initialize=0.75, bounds=(0, 1))
-    m.fs.NaOH = Var(initialize=5, doc="NaOH dosing rate mg/ kg w")
-    m.fs.pH = Var(initialize=7, doc="pH after NaOH addition")
-    m.fs.boron_limit = Param(initialize= 0.5/1000, doc= "boron limit g/ kg w")
+    # # vars
+    m.fs.CO2 = Var(initialize=50, bounds=(0,None), doc="CO2 dosing rate mg/L")
+    m.fs.pH_RO1_feed = Var(initialize=6, doc="pH after CO2 addition")
 
     # create input and output variable object lists for flowsheet
-    inputs = [m.fs.boron_RO1_perm,m.fs.NaOH]
-    outputs = [m.fs.pH]
+    inputs_acid = [m.fs.CO2]
+    outputs_acid = [m.fs.pH_RO1_feed]
     
     # create the Pyomo/IDAES block that corresponds to the surrogate
-    m.fs.surrogate = SurrogateBlock(concrete=True)
-    m.fs.surrogate.build_model(surr, input_vars=inputs, output_vars=outputs)
+    m.fs.acid_add = SurrogateBlock(concrete=True)
+    m.fs.acid_add.build_model(acid_add_surr, input_vars=inputs_acid, output_vars=outputs_acid)
+
+    m.fs.eq_CO2 = Constraint(
+        expr=(
+            m.fs.pH_RO1_feed <= 6.5
+        )
+    )
+
+    # ph swing -- surrogate
+    pH_swing_surr = PysmoSurrogate.load_from_file(r'G:\My Drive\Research\Dev\Boron Surrogate\Surrogate Gen\pH swing\pysmo_phreeqc_rbf_spline_ph_swing.json')
+
+    # vars and params
+    m.fs.boron_feed = Var(initialize=5/1000, bounds=(0, None), doc= "RO1 perm - boron g/ kg w")
+    m.fs.boron_RO1_perm = Var(initialize=5.4/1000, bounds=(0, None), doc= "RO1 perm - boron g/ kg w")
+    m.fs.boron_RO1_inlet = Var(initialize=9/1000, bounds=(0, None), doc= "RO1 inlet - boron g/ kg w")
+    m.fs.boron_1rej = Var(initialize=0.5, bounds=(0, 1))
+    m.fs.boron_2rej = Var(initialize=0.75, bounds=(0, 1))
+    m.fs.NaOH = Var(initialize=5, bounds=(0,None), doc="NaOH dosing rate mg/ kg w")
+    m.fs.pH_RO2_feed = Var(initialize=8, doc="pH after NaOH addition")
+    m.fs.boron_limit = Param(initialize= 0.5/1000, mutable = True, doc= "boron limit g/ kg w")
+
+    # create input and output variable object lists for flowsheet
+    inputs_base = [m.fs.pH_RO1_feed,m.fs.NaOH]
+    outputs_base = [m.fs.pH_RO2_feed]
+    
+    # create the Pyomo/IDAES block that corresponds to the surrogate
+    m.fs.base_add = SurrogateBlock(concrete=True)
+    m.fs.base_add.build_model(pH_swing_surr, input_vars=inputs_base, output_vars=outputs_base)
 
     # constraints
     m.fs.eq_boron_RO1 = Constraint(
         expr=(
-            m.fs.boron_RO1_perm == m.fs.boron_feed * (1 - m.fs.boron_1rej)
+            m.fs.boron_RO1_perm == m.fs.boron_RO1_inlet * (1 - m.fs.boron_1rej)
         )
     )
     m.fs.eq_boron_rej2 = Constraint(
         expr=(
             m.fs.boron_2rej
             == (
-                -0.0973 * m.fs.pH ** 4
-                + 2.6191 * m.fs.pH ** 3
-                - 23.034 * m.fs.pH ** 2
-                + 71.115 * m.fs.pH
-                + 40
+                - 0.4205 * m.fs.pH_RO2_feed ** 5
+                + 16.908 * m.fs.pH_RO2_feed ** 4
+                - 267.96 * m.fs.pH_RO2_feed ** 3
+                + 2092.1 * m.fs.pH_RO2_feed ** 2
+                - 8040.3 * m.fs.pH_RO2_feed 
+                + 12213
+            )
+            / 100
+        )
+    )
+    m.fs.eq_boron_rej1 = Constraint(
+        expr=(
+            m.fs.boron_1rej
+            == (
+                - 0.4205 * m.fs.pH_RO1_feed ** 5
+                + 16.908 * m.fs.pH_RO1_feed ** 4
+                - 267.96 * m.fs.pH_RO1_feed ** 3
+                + 2092.1 * m.fs.pH_RO1_feed ** 2
+                - 8040.3 * m.fs.pH_RO1_feed 
+                + 12213
             )
             / 100
         )
@@ -160,36 +196,28 @@ def build():
     )
     )
 
-    # m.fs.water_recovery = Var(
-    #     initialize=0.5,
-    #     bounds=(0, 1),
-    #     units=pyunits.dimensionless,
-    #     doc="System Water Recovery",
-    # )
-    # m.fs.eq_water_recovery_overall = Constraint(
-    #     expr=m.fs.feed.properties[0].flow_mass_phase_comp["Liq", "H2O"]
-    #     * m.fs.water_recovery
-    #     == m.fs.product.properties[0].flow_mass_phase_comp["Liq", "H2O"]
-    # )
-    # m.fs.eq_water_recovery = Constraint(
-    #     expr= (m.fs.RO1.recovery_mass_phase_comp[0, "Liq", "H2O"]* m.fs.RO2.recovery_mass_phase_comp[0, "Liq", "H2O"]) 
-    #     == m.fs.water_recovery
-    # )
+    m.fs.eq_boron_mixer = Constraint(
+        expr=(
+            m.fs.boron_RO1_inlet == m.fs.boron_feed + (m.fs.boron_RO1_perm * m.fs.boron_2rej)
+        )
+    )
 
     # --------- Connections ---------
     # 1st Stage
-    m.fs.s01 = Arc(source=m.fs.feed.outlet, destination=m.fs.P1.inlet)
+    m.fs.s00 = Arc(source=m.fs.feed.outlet, destination=m.fs.M1.feed)
+    m.fs.s01 = Arc(source=m.fs.M1.outlet, destination=m.fs.P1.inlet)
     m.fs.s02 = Arc(source=m.fs.P1.outlet, destination=m.fs.RO1.inlet)
     m.fs.s03 = Arc(source=m.fs.RO1.permeate, destination=m.fs.P2.inlet)
     m.fs.s04 = Arc(source=m.fs.RO1.retentate, destination=m.fs.disposal1.inlet)
     # 2nd Stage
     m.fs.s05 = Arc(source=m.fs.P2.outlet, destination=m.fs.RO2.inlet)
     m.fs.s06 = Arc(source=m.fs.RO2.permeate, destination=m.fs.product.inlet)
-    m.fs.s07 = Arc(source=m.fs.RO2.retentate, destination=m.fs.disposal2.inlet)
+    m.fs.s07 = Arc(source=m.fs.RO2.retentate, destination=m.fs.M1.recycle)
     TransformationFactory("network.expand_arcs").apply_to(m)
 
     # --------- Costing ---------
     # costing (1st stage)
+    m.fs.M1.costing = UnitModelCostingBlock(flowsheet_costing_block=m.fs.costing)
     m.fs.P1.costing = UnitModelCostingBlock(flowsheet_costing_block=m.fs.costing)
     m.fs.RO1.costing = UnitModelCostingBlock(flowsheet_costing_block=m.fs.costing)
     # costing (2nd stage)
@@ -199,15 +227,32 @@ def build():
     m.fs.costing.NaOH_cost = Param(
         initialize=0.5, units=m.fs.costing.base_currency / pyunits.kg, mutable=True
     )
-
     m.fs.costing.register_flow_type("NaOH", m.fs.costing.NaOH_cost)
 
+    naoh = (m.fs.NaOH * pyunits.mg)
+    water1 = (m.fs.RO1.permeate.flow_mass_phase_comp[0, "Liq", "H2O"]/ pyunits.kg)
     m.fs.costing.cost_flow(
         pyunits.convert(
-            (m.fs.NaOH * pyunits.mg) * m.fs.RO1.permeate.flow_mass_phase_comp[0, "Liq", "H2O"] / pyunits.kg,
+            naoh*water1,
             to_units=pyunits.kg / pyunits.s,
         ),
         "NaOH",
+    )
+
+    m.fs.costing.CO2_cost = Param(
+        initialize=0.24, units=m.fs.costing.base_currency / pyunits.kg, mutable=True
+    )
+    m.fs.costing.register_flow_type("CO2", m.fs.costing.CO2_cost)
+
+    co2 = (m.fs.CO2 * pyunits.mg)
+    water2 = (m.fs.RO1.feed_side.properties_in[0].flow_mass_phase_comp["Liq", "H2O"]/ pyunits.kg)
+
+    m.fs.costing.cost_flow(
+        pyunits.convert(
+            co2*water2,
+            to_units=pyunits.kg / pyunits.s,
+        ),
+        "CO2",
     )
 
     m.fs.costing.cost_process()
@@ -258,9 +303,8 @@ def set_operating_conditions(m, water_recovery=0.5, over_pressure=0.3, solver=No
         },  # feed NaCl mass fraction [-]
         hold_state=True,  # fixes the calculated component mass flow rates
     )
-    m.fs.boron_feed.fix(10/1000) # boron conc in feed g/kg w
-    #m.fs.water_recovery.fix(0.20)
-
+    # m.fs.boron_RO1_inlet.fix(10/1000) # boron conc in feed g/kg w
+    m.fs.boron_feed.fix(5/1000)
     m.fs.P1.efficiency_pump.fix(0.80)  # pump efficiency [-]
     m.fs.P1.control_volume.properties_out[0].pressure.fix(50e5)
 
@@ -278,7 +322,9 @@ def set_operating_conditions(m, water_recovery=0.5, over_pressure=0.3, solver=No
     m.fs.RO1.width.fix(5)  # stage width [m]
 
     # pH swing 
-    m.fs.NaOH.fix(30) # NaOH mg/kg w
+    m.fs.NaOH.fix(50) # NaOH mg/kg w
+    # acidification
+    m.fs.CO2.fix(100) # CO2 mg/L
 
     # Assume these are the same as RO1?
     m.fs.RO2.A_comp.fix(4.2e-12)  # membrane water permeability coefficient [m/s-Pa]
@@ -340,7 +386,7 @@ def set_operating_conditions(m, water_recovery=0.5, over_pressure=0.3, solver=No
         )
 
 
-def solve(blk, solver=None, tee=False, check_termination=True):
+def solve(blk, solver=None, tee=False, check_termination=False):
     if solver is None:
         solver = get_solver()
     results = solver.solve(blk, tee=tee)
@@ -355,11 +401,14 @@ def initialize_system(m, solver=None):
     optarg = solver.options
 
     # ---initialize ROs---
-    #m.fs.RO1.initialize(optarg=optarg, solver="ipopt-watertap")
-    #m.fs.RO2.initialize(optarg=optarg, solver="ipopt-watertap")
+    m.fs.RO1.initialize(optarg=optarg, solver="ipopt-watertap")
+    m.fs.RO2.initialize(optarg=optarg, solver="ipopt-watertap")
 
     # ---initialize feed block---
     m.fs.feed.initialize(optarg=optarg)
+
+    m.fs.M1.initialize(optarg=optarg)
+    m.fs.M1.pressure_equality_constraints[0, 2].deactivate()
 
     # ---initialize pumps 1 & 2---
     propagate_state(m.fs.s01)
@@ -378,6 +427,20 @@ def optimize_set_up(m):
     # m.fs.water_recovery.unfix()
     m.fs.RO1.recovery_mass_phase_comp[0, "Liq", "H2O"].unfix()
     m.fs.RO2.recovery_mass_phase_comp[0, "Liq", "H2O"].unfix()
+
+    m.fs.water_recovery = Var(
+        initialize=0.5,
+        bounds=(0, 1),
+        units=pyunits.dimensionless,
+        doc="System Water Recovery",
+    )
+    m.fs.eq_water_recovery_overall = Constraint(
+        expr=m.fs.feed.properties[0].flow_mass_phase_comp["Liq", "H2O"]
+        * m.fs.water_recovery
+        == m.fs.product.properties[0].flow_mass_phase_comp["Liq", "H2O"]
+    )
+    m.fs.water_recovery.fix(0.5)
+
     # pumps
     m.fs.P1.control_volume.properties_out[0].pressure.unfix()
     m.fs.P1.control_volume.properties_out[0].pressure.setlb(10e5)
@@ -399,6 +462,7 @@ def optimize_set_up(m):
     m.fs.RO2.area.setub(150)
 
     m.fs.NaOH.unfix()
+    m.fs.CO2.unfix()
 
     # additional specifications
     m.fs.product_salinity = Param(
@@ -461,11 +525,11 @@ def display_system(m):
     )
     prod_conc_mg_kg_Boron = (m.fs.boron_RO1_perm.value * (1 - m.fs.boron_2rej.value)) * 1e3
     print("Product: %.3f kg/s, %.0f ppm salt, %.2f ppm boron" % (prod_flow_mass, prod_mass_frac_NaCl * 1e6, prod_conc_mg_kg_Boron))
-
-    # print(
-    #     "Water recovery: %.1f%%"
-    #     % (value(m.fs.water_recovery) * 100)
-    # )
+    
+    print(
+        "Water recovery: %.1f%%"
+        % (value(m.fs.water_recovery) * 100)
+    )
     print(
         "Energy Consumption: %.1f kWh/m3"
         % value(m.fs.costing.specific_energy_consumption)
@@ -474,33 +538,39 @@ def display_system(m):
 
 
 def display_design(m):
-    print("---decision variables---")
-    print("RO1 operating pressure %.1f bar" % (m.fs.RO1.inlet.pressure[0].value / 1e5))
-    print("RO1 membrane area %.1f m2" % (m.fs.RO1.area.value))
-    print("RO1 width %.1f m2" % (m.fs.RO1.width.value))
-    print("RO1 recovery %.1f " % (value(m.fs.RO1.recovery_mass_phase_comp[0, "Liq", "H2O"]) * 100))
-    print("RO2 operating pressure %.1f bar" % (m.fs.RO2.inlet.pressure[0].value / 1e5))
-    print("RO2 membrane area %.1f m2" % (m.fs.RO2.area.value))
-    print("RO2 width %.1f m2" % (m.fs.RO2.width.value))
-    print("RO2 recovery %.1f " % (value(m.fs.RO2.recovery_mass_phase_comp[0, "Liq", "H2O"]) * 100))
-    print("NaOH dose %.1f mg/ kg w" %(m.fs.NaOH.value))
-
-    print("---design variables---")
+    print("---Design and Decision variables---")
+    print("---Acidification---")
+    print("CO2 dose %.1f mg/L" %(m.fs.CO2.value))
+    print("Operating pH of RO1: %.1f " %(m.fs.pH_RO1_feed.value))
+    print("---Pump 1---")
     print(
-        "Pump 1\noutlet pressure: %.1f bar\npower %.2f kW"
+        "outlet pressure: %.1f bar\npower %.2f kW"
         % (
             m.fs.P1.outlet.pressure[0].value / 1e5,
             m.fs.P1.work_mechanical[0].value / 1e3,
         )
     )
+    print("---RO1---")
+    print("RO1 operating pressure %.1f bar" % (m.fs.RO1.inlet.pressure[0].value / 1e5))
+    print("RO1 membrane area %.1f m2" % (m.fs.RO1.area.value))
+    # print("RO1 width %.1f m2" % (m.fs.RO1.width.value))
+    print("---pH swing---")
+    print("NaOH dose %.1f mg/ kg w" %(m.fs.NaOH.value))
+    print("Boron rejection (RO2): %.2f " %(m.fs.boron_2rej.value))
+    print("Operating pH of RO2: %.1f " %(m.fs.pH_RO2_feed.value))
+    print("---Pump 2---")
     print(
-        "Pump 2\noutlet pressure: %.1f bar\npower %.2f kW"
+        "outlet pressure: %.1f bar\npower %.2f kW"
         % (
             m.fs.P2.outlet.pressure[0].value / 1e5,
             m.fs.P2.work_mechanical[0].value / 1e3,
         )
     )
-
+    print("---RO2---")
+    print("RO2 operating pressure %.1f bar" % (m.fs.RO2.inlet.pressure[0].value / 1e5))
+    print("RO2 membrane area %.1f m2" % (m.fs.RO2.area.value))
+    # print("RO2 width %.1f m2" % (m.fs.RO2.width.value))
+  
 
 def display_state(m):
     print("---state---")
@@ -510,26 +580,25 @@ def display_state(m):
             b.flow_mass_phase_comp[0, "Liq", j].value for j in ["H2O", "NaCl"]
         )
         mass_frac_ppm = b.flow_mass_phase_comp[0, "Liq", "NaCl"].value / flow_mass * 1e6
+        TDS_flow_mass = b.flow_mass_phase_comp[0, "Liq", "NaCl"].value *1e2
         pressure_bar = b.pressure[0].value / 1e5
         print(
             s
-            + ": %.3f kg/s, %.0f ppm, %.1f bar"
-            % (flow_mass, mass_frac_ppm, pressure_bar)
+            + ": %.3f kg/s, %.0f ppm, %.3f *10^2 kg/s TDS, %.1f bar"
+            % (flow_mass, mass_frac_ppm, TDS_flow_mass, pressure_bar)
         )
 
     print("--1st stage--")
     print_state("Feed      ", m.fs.feed.outlet)
+    print_state("M1 out    ", m.fs.M1.outlet)
     print_state("P1 out    ", m.fs.P1.outlet)
     print_state("RO1 perm   ", m.fs.RO1.permeate)
     print_state("RO1 reten  ", m.fs.RO1.retentate)
-    print("Boron rejection %.2f " %(m.fs.boron_1rej.value))
 
     print("--2nd stage--")
     print_state("P2 out    ", m.fs.P2.outlet)
     print_state("RO2 perm   ", m.fs.RO2.permeate)
     print_state("RO2 reten  ", m.fs.RO2.retentate)
-    print("pH of RO2 feedv %.1f " %(m.fs.pH.value))
-    print("Boron rejection %.2f " %(m.fs.boron_2rej.value))
 
 if __name__ == "__main__":
     main()

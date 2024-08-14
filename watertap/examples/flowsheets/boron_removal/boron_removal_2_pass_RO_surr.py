@@ -115,7 +115,7 @@ def build():
     m.fs.product = Product(property_package=m.fs.properties)
 
     # acidification -- surrogate
-    acid_add_surr = PysmoSurrogate.load_from_file(r'G:\My Drive\Research\Dev\Boron Surrogate\Surrogate Gen\Acid pH\pysmo_oli_rbf_spline_acidification.json')
+    acid_add_surr = PysmoSurrogate.load_from_file(r'G:\My Drive\Research\Dev\Boron Surrogate\Surrogate Gen\Acid pH -- recycle\pysmo_rbf_spline_surrogate_oli_acid.json')
 
     # # vars
     m.fs.CO2 = Var(initialize=50, bounds=(0,None), doc="CO2 dosing rate mg/L")

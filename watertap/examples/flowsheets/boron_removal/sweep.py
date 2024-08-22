@@ -35,7 +35,7 @@ def set_up_sensitivity():
 
     outputs["RO1_Boron_rej"] = m.fs.boron_1rej
     outputs["RO1_Feed_pH"] = m.fs.pH_RO1_feed
-    outputs["CO2 dose"] = m.fs.CO2
+    outputs["HCl dose"] = m.fs.HCl
 
     outputs["RO2_Boron_rej"] = m.fs.boron_2rej
     outputs["RO2_Feed_pH"] = m.fs.pH_RO2_feed
@@ -53,7 +53,7 @@ def set_up_sensitivity():
 def run_analysis(case_num=1, nx=2, interpolate_nan_outputs=True, output_filename=None):
 
     if output_filename is None:
-        output_filename = "sensitivity_full_flowsheet" + str(case_num) + ".csv"
+        output_filename = "sensitivity_full_flowsheet_" + str(case_num) + ".csv"
 
     outputs, opt_function, m = set_up_sensitivity()
 
@@ -62,10 +62,13 @@ def run_analysis(case_num=1, nx=2, interpolate_nan_outputs=True, output_filename
     if case_num == 1:
         # sensitivity analysis
         sweep_params["boron_feed"] = LinearSample(
-            m.fs.boron_feed,  1 / 1000, 25 / 1000, 48
+            m.fs.boron_feed,  1 / 1000, 25 / 1000, 49
         )
         sweep_params["boron_limit"] = PredeterminedFixedSample(
             m.fs.boron_limit, [0.3/1000, 0.5 / 1000, 1 / 1000, 2.4 / 1000]
+        )
+        sweep_params["NaOH Cost"] = PredeterminedFixedSample(
+            m.fs.costing.NaOH_cost, [0.25, 0.5, 1]
         )
     else:
         raise ValueError(f"{case_num} is not yet implemented")

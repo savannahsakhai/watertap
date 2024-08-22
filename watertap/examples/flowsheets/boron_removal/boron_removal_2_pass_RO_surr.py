@@ -115,28 +115,24 @@ def build():
     m.fs.product = Product(property_package=m.fs.properties)
 
     # acidification -- surrogate
-    acid_add_surr = PysmoSurrogate.load_from_file(r'G:\My Drive\Research\Dev\Boron Surrogate\Surrogate Gen\Acid pH -- recycle\pysmo_rbf_spline_surrogate_oli_acid.json')
+    acid_add_surr = PysmoSurrogate.load_from_file(r'G:\My Drive\Research\Dev\Boron Surrogate\Surrogate Gen\Acid pH -- recycle,hcl\pysmo_rbf_spline_surrogate_phreeqc_acid.json')
 
     # # vars
-    m.fs.CO2 = Var(initialize=50, bounds=(0,None), doc="CO2 dosing rate mg/L")
-    m.fs.pH_RO1_feed = Var(initialize=6, doc="pH after CO2 addition")
+    m.fs.HCl = Var(initialize=20, bounds=(0,None), doc="HCl dosing rate mg/kg w")
+    m.fs.pH_RO1_feed = Var(initialize=6, bounds=(5.5, 6.5), doc="pH after HCl addition")
+    m.fs.pH_RO1_feed.fix(5.5)
 
     # create input and output variable object lists for flowsheet
-    inputs_acid = [m.fs.CO2]
+    inputs_acid = [m.fs.HCl]
     outputs_acid = [m.fs.pH_RO1_feed]
     
     # create the Pyomo/IDAES block that corresponds to the surrogate
     m.fs.acid_add = SurrogateBlock(concrete=True)
     m.fs.acid_add.build_model(acid_add_surr, input_vars=inputs_acid, output_vars=outputs_acid)
 
-    m.fs.eq_CO2 = Constraint(
-        expr=(
-            m.fs.pH_RO1_feed <= 6.5
-        )
-    )
 
     # ph swing -- surrogate
-    pH_swing_surr = PysmoSurrogate.load_from_file(r'G:\My Drive\Research\Dev\Boron Surrogate\Surrogate Gen\pH swing\pysmo_phreeqc_rbf_spline_ph_swing.json')
+    pH_swing_surr = PysmoSurrogate.load_from_file(r'G:\My Drive\Research\Dev\Boron Surrogate\Surrogate Gen\pH swing\pysmo_rbf_spline_surrogate_phreeqc_survey.json')
 
     # vars and params
     m.fs.boron_feed = Var(initialize=5/1000, bounds=(0, None), doc= "RO1 perm - boron g/ kg w")
@@ -145,7 +141,7 @@ def build():
     m.fs.boron_1rej = Var(initialize=0.5, bounds=(0, 1))
     m.fs.boron_2rej = Var(initialize=0.75, bounds=(0, 1))
     m.fs.NaOH = Var(initialize=5, bounds=(0,None), doc="NaOH dosing rate mg/ kg w")
-    m.fs.pH_RO2_feed = Var(initialize=8, doc="pH after NaOH addition")
+    m.fs.pH_RO2_feed = Var(initialize=8, bounds=(7.5,12.5), doc="pH after NaOH addition")
     m.fs.boron_limit = Param(initialize= 0.5/1000, mutable = True, doc= "boron limit g/ kg w")
 
     # create input and output variable object lists for flowsheet
@@ -223,14 +219,13 @@ def build():
     # costing (2nd stage)
     m.fs.P2.costing = UnitModelCostingBlock(flowsheet_costing_block=m.fs.costing)
     m.fs.RO2.costing = UnitModelCostingBlock(flowsheet_costing_block=m.fs.costing)
-
     m.fs.costing.NaOH_cost = Param(
         initialize=0.5, units=m.fs.costing.base_currency / pyunits.kg, mutable=True
     )
     m.fs.costing.register_flow_type("NaOH", m.fs.costing.NaOH_cost)
 
-    naoh = (m.fs.NaOH * pyunits.mg)
-    water1 = (m.fs.RO1.permeate.flow_mass_phase_comp[0, "Liq", "H2O"]/ pyunits.kg)
+    naoh = (m.fs.NaOH * 1e-6) # mg to kg
+    water1 = (m.fs.RO1.permeate.flow_mass_phase_comp[0, "Liq", "H2O"])
     m.fs.costing.cost_flow(
         pyunits.convert(
             naoh*water1,
@@ -239,20 +234,20 @@ def build():
         "NaOH",
     )
 
-    m.fs.costing.CO2_cost = Param(
-        initialize=0.24, units=m.fs.costing.base_currency / pyunits.kg, mutable=True
+    m.fs.costing.HCl_cost = Param(
+        initialize=0.5, units=m.fs.costing.base_currency / pyunits.kg, mutable=True
     )
-    m.fs.costing.register_flow_type("CO2", m.fs.costing.CO2_cost)
+    m.fs.costing.register_flow_type("HCl", m.fs.costing.HCl_cost)
 
-    co2 = (m.fs.CO2 * pyunits.mg)
-    water2 = (m.fs.RO1.feed_side.properties_in[0].flow_mass_phase_comp["Liq", "H2O"]/ pyunits.kg)
+    HCl = (m.fs.HCl * 1e-6) # mg to kg
+    water2 = (m.fs.RO1.feed_side.properties_in[0].flow_mass_phase_comp["Liq", "H2O"])
 
     m.fs.costing.cost_flow(
         pyunits.convert(
-            co2*water2,
+            HCl*water2,
             to_units=pyunits.kg / pyunits.s,
         ),
-        "CO2",
+        "HCl",
     )
 
     m.fs.costing.cost_process()
@@ -322,9 +317,9 @@ def set_operating_conditions(m, water_recovery=0.5, over_pressure=0.3, solver=No
     m.fs.RO1.width.fix(5)  # stage width [m]
 
     # pH swing 
-    m.fs.NaOH.fix(50) # NaOH mg/kg w
+    m.fs.NaOH.fix(30) # NaOH mg/kg w
     # acidification
-    m.fs.CO2.fix(100) # CO2 mg/L
+    # m.fs.HCl.fix(50) # HCl mg/kg w
 
     # Assume these are the same as RO1?
     m.fs.RO2.A_comp.fix(4.2e-12)  # membrane water permeability coefficient [m/s-Pa]
@@ -462,7 +457,7 @@ def optimize_set_up(m):
     m.fs.RO2.area.setub(150)
 
     m.fs.NaOH.unfix()
-    m.fs.CO2.unfix()
+    # m.fs.HCl.unfix()
 
     # additional specifications
     m.fs.product_salinity = Param(
@@ -540,7 +535,7 @@ def display_system(m):
 def display_design(m):
     print("---Design and Decision variables---")
     print("---Acidification---")
-    print("CO2 dose %.1f mg/L" %(m.fs.CO2.value))
+    print("HCl dose %.1f mg/kg w" %(m.fs.HCl.value))
     print("Operating pH of RO1: %.1f " %(m.fs.pH_RO1_feed.value))
     print("---Pump 1---")
     print(

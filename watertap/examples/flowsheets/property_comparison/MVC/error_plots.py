@@ -10,13 +10,13 @@ from analysis_plot_kit.core import fig_generator
 # read in data
 # watertap\watertap\examples\flowsheets\property_comparison\MVC\sal_outputs_results_MVC_NaCl.csv
 MVC_NaCl = pd.read_csv(
-    r"watertap\watertap\examples\flowsheets\property_comparison\MVC\sal_outputs_results_MVC_NaCl.csv"
+    r"watertap\examples\flowsheets\property_comparison\MVC\sal_outputs_results_MVC_NaCl.csv"
 )
 MVC_Sea = pd.read_csv(
-    r"watertap\watertap\examples\flowsheets\property_comparison\MVC\sal_outputs_results_MVC_seawater.csv"
+    r"watertap\examples\flowsheets\property_comparison\MVC\sal_outputs_results_MVC_seawater.csv"
 )
 MVC_Simple = pd.read_csv(
-    r"watertap\watertap\examples\flowsheets\property_comparison\MVC\sal_outputs_results_MVC_simple.csv"
+    r"watertap\examples\flowsheets\property_comparison\MVC\sal_outputs_results_MVC_simple.csv"
 )
 
 # find errors and create dataframe

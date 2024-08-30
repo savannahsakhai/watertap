@@ -10,13 +10,13 @@ from analysis_plot_kit.core import fig_generator
 # read in data
 # watertap\watertap\examples\flowsheets\property_comparison\RO\sal_outputs_results_RO_NaCl.csv
 RO_NaCl = pd.read_csv(
-    r"watertap\watertap\examples\flowsheets\property_comparison\RO\sal_outputs_results_RO_NaCl.csv"
+    r"watertap\examples\flowsheets\property_comparison\RO\sal_outputs_results_RO_NaCl.csv"
 )
 RO_Sea = pd.read_csv(
-    r"watertap\watertap\examples\flowsheets\property_comparison\RO\sal_outputs_results_RO_seawater.csv"
+    r"watertap\examples\flowsheets\property_comparison\RO\sal_outputs_results_RO_seawater.csv"
 )
 RO_Simple = pd.read_csv(
-    r"watertap\watertap\examples\flowsheets\property_comparison\RO\sal_outputs_results_RO_simple.csv"
+    r"watertap\examples\flowsheets\property_comparison\RO\sal_outputs_results_RO_simple.csv"
 )
 
 # find errors and create dataframe

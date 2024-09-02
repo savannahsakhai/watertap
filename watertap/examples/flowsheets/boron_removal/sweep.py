@@ -32,6 +32,7 @@ def set_up_sensitivity():
     # create outputs
     outputs["LCOW"] = m.fs.costing.LCOW
     outputs["SEC"] = m.fs.costing.specific_energy_consumption
+    outputs["Recovery"] = m.fs.water_recovery
 
     outputs["RO1_Boron_rej"] = m.fs.boron_1rej
     outputs["RO1_Feed_pH"] = m.fs.pH_RO1_feed
@@ -67,9 +68,9 @@ def run_analysis(case_num=1, nx=2, interpolate_nan_outputs=True, output_filename
         sweep_params["boron_limit"] = PredeterminedFixedSample(
             m.fs.boron_limit, [0.3/1000, 0.5 / 1000, 1 / 1000, 2.4 / 1000]
         )
-        sweep_params["NaOH Cost"] = PredeterminedFixedSample(
-            m.fs.costing.NaOH_cost, [0.25, 0.5, 1]
-        )
+        # sweep_params["NaOH Cost"] = PredeterminedFixedSample(
+        #     m.fs.costing.NaOH_cost, [0.25, 0.5, 1]
+        # )
     else:
         raise ValueError(f"{case_num} is not yet implemented")
 

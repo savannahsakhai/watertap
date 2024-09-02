@@ -158,34 +158,34 @@ def build():
             m.fs.boron_RO1_perm == m.fs.boron_RO1_inlet * (1 - m.fs.boron_1rej)
         )
     )
+    # high pH regression for boron rej -- 1 membrane
     m.fs.eq_boron_rej2 = Constraint(
         expr=(
             m.fs.boron_2rej
             == (
-                - 0.4205 * m.fs.pH_RO2_feed ** 5
-                + 16.908 * m.fs.pH_RO2_feed ** 4
-                - 267.96 * m.fs.pH_RO2_feed ** 3
-                + 2092.1 * m.fs.pH_RO2_feed ** 2
-                - 8040.3 * m.fs.pH_RO2_feed 
-                + 12213
+                - 4.2628 * m.fs.pH_RO2_feed ** 2
+                + 96.05 * m.fs.pH_RO2_feed 
+                - 442.79
             )
             / 100
         )
     )
-    m.fs.eq_boron_rej1 = Constraint(
-        expr=(
-            m.fs.boron_1rej
-            == (
-                - 0.4205 * m.fs.pH_RO1_feed ** 5
-                + 16.908 * m.fs.pH_RO1_feed ** 4
-                - 267.96 * m.fs.pH_RO1_feed ** 3
-                + 2092.1 * m.fs.pH_RO1_feed ** 2
-                - 8040.3 * m.fs.pH_RO1_feed 
-                + 12213
-            )
-            / 100
-        )
-    )
+
+    # # brackish water membrane rejection
+    # m.fs.eq_boron_rej2 = Constraint(
+    #     expr=(
+    #         m.fs.boron_2rej
+    #         == (
+    #             - 0.7007 * m.fs.pH_RO2_feed ** 3
+    #             + 19.64 * m.fs.pH_RO2_feed ** 2
+    #             - 168.07 * m.fs.pH_RO2_feed 
+    #             + 499.28
+    #         )
+    #         / 100
+    #     )
+    # )
+    m.fs.boron_1rej.fix(0.50)
+   
     m.fs.eq_boron_RO2_quality = Constraint(
         expr=(
             m.fs.boron_RO1_perm * (1 - m.fs.boron_2rej) <= m.fs.boron_limit
@@ -322,6 +322,9 @@ def set_operating_conditions(m, water_recovery=0.5, over_pressure=0.3, solver=No
     # m.fs.HCl.fix(50) # HCl mg/kg w
 
     # Assume these are the same as RO1?
+    # BWRO
+    # m.fs.RO2.A_comp.fix(3 / (3600 * 1000 * 1e5))  # membrane water permeability coefficient [m/s-Pa]
+    # m.fs.RO2.B_comp.fix(0.15 / (3600 * 1000))  # membrane salt permeability coefficient [m/s]
     m.fs.RO2.A_comp.fix(4.2e-12)  # membrane water permeability coefficient [m/s-Pa]
     m.fs.RO2.B_comp.fix(3.5e-8)  # membrane salt permeability coefficient [m/s]
     m.fs.RO2.feed_side.channel_height.fix(1e-3)  # channel height in membrane stage [m]
@@ -434,7 +437,7 @@ def optimize_set_up(m):
         * m.fs.water_recovery
         == m.fs.product.properties[0].flow_mass_phase_comp["Liq", "H2O"]
     )
-    m.fs.water_recovery.fix(0.5)
+    # m.fs.water_recovery.fix(0.5)
 
     # pumps
     m.fs.P1.control_volume.properties_out[0].pressure.unfix()

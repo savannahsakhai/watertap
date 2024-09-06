@@ -46,7 +46,7 @@ def set_up_sensitivity():
     outputs["Mem Area RO2"] = m.fs.RO2.area
 
     outputs["P1"] = m.fs.RO1.inlet.pressure[0]
-    outputs["P2"] = m.fs.RO1.inlet.pressure[0]
+    outputs["P2"] = m.fs.RO2.inlet.pressure[0]
 
     return outputs, opt_function, m
 

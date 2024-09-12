@@ -1,0 +1,206 @@
+import pandas as pd
+import numpy as np
+from mpl_toolkits import mplot3d
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator
+import matplotlib.pyplot as plt
+
+from analysis_plot_kit.core import fig_generator
+
+# read in data
+data_property_seawater = pd.read_csv(r'C:\Users\sss0031\Documents\GitHub\watertap\watertap\flowsheets\property_analysis\data_property_sea.csv')
+data_property_nacl = pd.read_csv(r'C:\Users\sss0031\Documents\GitHub\watertap\watertap\flowsheets\property_analysis\data_property_nacl.csv')
+data_property_simple = pd.read_csv(r'C:\Users\sss0031\Documents\GitHub\watertap\watertap\flowsheets\property_analysis\data_property_simple.csv')
+data_property_reatoro = pd.read_csv(r'C:\Users\sss0031\Documents\GitHub\watertap\watertap\flowsheets\property_analysis\data_property_reaktoro.csv')
+# Feed TDS,Temperature,Enthalpy,Vap Pressure,Osmotic Pressure,Density
+
+# find errors and create dataframe
+results_col = ["Osmotic Pressure", "Density"] # "Enthalpy", "Vap Pressure", 
+error_sea = pd.DataFrame()
+error_nacl = pd.DataFrame()
+error_simple = pd.DataFrame()
+for i in results_col:
+    error_sea[i] = pd.DataFrame(abs(data_property_reatoro[i] - data_property_seawater[i]) / data_property_reatoro[i]) * 100
+    error_nacl[i] = pd.DataFrame(abs(data_property_reatoro[i] - data_property_nacl[i]) / data_property_reatoro[i]) * 100
+    error_simple[i] = pd.DataFrame(abs(data_property_reatoro[i] - data_property_simple[i]) / data_property_reatoro[i]) * 100
+
+
+for i in results_col:
+    figure = fig_generator.figureGenerator()
+    figure.init_figure(width=3.5*3, height=2.5*3, ncols=2, nrows=2)
+    vmin = min([min(data_property_seawater[i]), min(data_property_nacl[i]),min(data_property_simple[i]),min(data_property_reatoro[i])])
+    vmax = max([max(data_property_seawater[i]), max(data_property_nacl[i]),max(data_property_simple[i]),max(data_property_reatoro[i])])
+    figure.plot_map(
+        xdata=data_property_reatoro["# Feed TDS"] /1000,
+        ydata=data_property_reatoro["Temperature"] - 273.15,
+        zdata=data_property_reatoro[i],
+        text=False,
+        build_map=True,
+        ax_idx=[0,0],
+        vmin=vmin,
+        vmax=vmax,
+    )
+    figure.plot_map(
+        xdata=data_property_seawater["# Feed TDS"] * 1000,
+        ydata=data_property_seawater["Temperature"]- 273.1,
+        zdata=data_property_seawater[i],
+        text=False,
+        build_map=True,
+        ax_idx=[0,1],
+        vmin=vmin,
+        vmax=vmax,
+    )
+    figure.plot_map(
+        xdata=data_property_nacl["# Feed TDS"] * 1000,
+        ydata=data_property_nacl["Temperature"]- 273.1,
+        zdata=data_property_nacl[i],
+        text=False,
+        build_map=True,
+        ax_idx=[1,0],
+        vmin=vmin,
+        vmax=vmax,
+    )
+    figure.plot_map(
+        xdata=data_property_simple["# Feed TDS"] * 1000,
+        ydata=data_property_simple["Temperature"]- 273.1,
+        zdata=data_property_simple[i],
+        text=False,
+        build_map=True,
+        ax_idx=[1,1],
+        vmin=vmin,
+        vmax=vmax,
+    )
+    zticks = np.linspace(vmin, vmax, 6)
+    figure.add_colorbar(zticks=zticks, zlabel=[i])
+    xticks = (
+        [3.436420e+04/1e3, 5.00e+04/1e3, 1.0e+05/1e3, 1.2e+05/1e3, 2.0e+05/1e3]
+    )
+    yticks = np.linspace(
+        min(data_property_nacl["Temperature"])- 273.1, max(data_property_nacl["Temperature"])- 273.1, 6
+    )
+    xticks = np.around(xticks, decimals=2)
+    yticks = np.around(yticks, decimals=1)
+    figure.set_axis_ticklabels(
+        xticklabels=xticks,
+        yticklabels=yticks,
+        xformat=1,
+        yformat=0,
+        xlabel="Feed Composition, g/kg",
+        ylabel="Temperature, C",
+        ax_idx = [0,0]
+    )
+    figure.set_axis_ticklabels(
+        xticklabels=xticks,
+        yticklabels=yticks,
+        xformat=1,
+        yformat=0,
+        xlabel="Feed Composition, g/kg",
+        ylabel="Temperature, C",
+        ax_idx = [0,1]
+    )
+    figure.set_axis_ticklabels(
+        xticklabels=xticks,
+        yticklabels=yticks,
+        xformat=1,
+        yformat=0,
+        xlabel="Feed Composition, g/kg",
+        ylabel="Temperature, C",
+        ax_idx = [1,0]
+    )
+    figure.set_axis_ticklabels(
+        xticklabels=xticks,
+        yticklabels=yticks,
+        xformat=1,
+        yformat=0,
+        xlabel="Feed Composition, g/kg",
+        ylabel="Temperature, C",
+        ax_idx = [1,1]
+    )
+
+
+    print(i)
+    figure.save_fig(name=i)
+
+
+# for i in results_col:
+#     figure = fig_generator.figureGenerator()
+#     figure.init_figure(width=3.5*3, height=2.5*3, ncols=2, nrows=2)
+#     vmin = min([min(error_nacl[i]), min(error_simple[i]),min( error_sea[i])])
+#     vmax = max([max(error_nacl[i]), max(error_simple[i]), max(error_sea[i])])
+#     figure.plot_map(
+#         xdata=data_property_seawater["# Feed TDS"] * 1000,
+#         ydata=data_property_seawater["Temperature"],
+#         zdata=data_property_seawater[i],
+#         text=False,
+#         build_map=True,
+#         ax_idx=[0,1],
+#         vmin=vmin,
+#         vmax=vmax,
+#     )
+#     figure.plot_map(
+#         xdata=data_property_seawater["# Feed TDS"] * 1000,
+#         ydata=data_property_seawater["Temperature"],
+#         zdata=error_sea[i],
+#         text=False,
+#         build_map=True,
+#         ax_idx=[0,1],
+#         vmin=vmin,
+#         vmax=vmax,
+#     )
+#     figure.plot_map(
+#         xdata=data_property_nacl["# Feed TDS"] * 1000,
+#         ydata=data_property_nacl["Temperature"],
+#         zdata=error_nacl[i],
+#         text=False,
+#         build_map=True,
+#         ax_idx=[1,0],
+#         vmin=vmin,
+#         vmax=vmax,
+#     )
+#     figure.plot_map(
+#         xdata=data_property_simple["# Feed TDS"] * 1000,
+#         ydata=data_property_simple["Temperature"],
+#         zdata=error_simple[i],
+#         text=False,
+#         build_map=True,
+#         ax_idx=[1,1],
+#         vmin=vmin,
+#         vmax=vmax,
+#     )
+#     zticks = np.linspace(vmin, vmax, 6)
+#     figure.add_colorbar(zticks=zticks, zlabel="% error")
+#     xticks = (
+#         [3.436420e+04/1e3, 5.00e+04/1e3, 1.0e+05/1e3, 1.2e+05/1e3, 2.0e+05/1e3]
+#     )
+#     yticks = np.linspace(
+#         min(data_property_nacl["Temperature"]), max(data_property_nacl["Temperature"]), 7
+#     )
+#     xticks = np.around(xticks, decimals=2)
+#     yticks = np.around(yticks, decimals=1)
+#     figure.set_axis_ticklabels(
+#         xticklabels=xticks,
+#         yticklabels=yticks,
+#         xformat=1,
+#         yformat=2,
+#         xlabel="Feed Composition, g/kg",
+#         ylabel="Temperature, K",
+#         ax_idx = [0,1]
+#     )
+#     figure.set_axis_ticklabels(
+#         xticklabels=xticks,
+#         yticklabels=yticks,
+#         xformat=1,
+#         yformat=2,
+#         xlabel="Feed Composition, g/kg",
+#         ylabel="Temperature, K",
+#         ax_idx = [1,0]
+#     )
+#     figure.set_axis_ticklabels(
+#         xticklabels=xticks,
+#         yticklabels=yticks,
+#         xformat=1,
+#         yformat=2,
+#         xlabel="Feed Composition, g/kg",
+#         ylabel="Temperature, K",
+#         ax_idx = [1,1]
+#     )

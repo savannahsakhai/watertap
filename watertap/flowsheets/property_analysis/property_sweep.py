@@ -36,7 +36,7 @@ def run_analysis(case_num=1, flowsheet=flowsheet_Sea, interpolate_nan_outputs=Fa
             m.fs.stream[0].mass_frac_phase_comp["Liq", "TDS"], [3.436420e+04/1e6, 5.00e+04/1e6, 1.0e+05/1e6, 1.2e+05/1e6, 2.0e+05/1e6]
         )
         sweep_params["Temperature"] = LinearSample(
-            m.fs.stream[0].temperature, 20 + 273.15, 85 + 273.15, 13
+            m.fs.stream[0].temperature, 25 + 273.15, 85 + 273.15, 61
         )
 
     elif case_num == 2:
@@ -46,7 +46,7 @@ def run_analysis(case_num=1, flowsheet=flowsheet_Sea, interpolate_nan_outputs=Fa
             m.fs.stream[0].mass_frac_phase_comp["Liq", "NaCl"], [3.436420e+04/1e6, 5.00e+04/1e6, 1.0e+05/1e6, 1.2e+05/1e6, 2.0e+05/1e6]
         )
         sweep_params["Temperature"] = LinearSample(
-            m.fs.stream[0].temperature, 20 + 273.15, 85 + 273.15, 13
+            m.fs.stream[0].temperature, 25 + 273.15, 85 + 273.15, 61
         )
 
     else:

@@ -375,10 +375,10 @@ def set_operating_conditions(m):
     m.fs.hx_brine.hot.deltaP[0].fix(-7e3)
 
     # Evaporator
-    m.fs.evaporator.inlet_feed.temperature[0] = 60 + 273.15  # provide guess
+    m.fs.evaporator.inlet_feed.temperature[0] = 55 + 273.15  # provide guess
     m.fs.evaporator.outlet_brine.temperature[0].fix(75 + 273.15)
     m.fs.evaporator.U.fix(3e3)  # W/K-m^2
-    m.fs.evaporator.area.setub(1e4)  # m^2
+    m.fs.evaporator.area.setub(1e6)  # m^2
 
     # Compressor
     m.fs.compressor.pressure_ratio.fix(1.6)

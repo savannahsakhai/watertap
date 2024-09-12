@@ -34,7 +34,7 @@ def set_up_sensitivity_MVC(flowsheet):
     return outputs, opt_function, m
 
 
-def run_analysis_MVC(case_num=1, flowsheet=MVC_flowsheet_Sea, interpolate_nan_outputs=True, output_filename=None):
+def run_analysis_MVC(case_num=1, flowsheet=MVC_flowsheet_Sea, interpolate_nan_outputs=False, output_filename=None):
     
     if output_filename is None:
         output_filename = "sensitivity_" + str(case_num) + ".csv"
@@ -46,14 +46,14 @@ def run_analysis_MVC(case_num=1, flowsheet=MVC_flowsheet_Sea, interpolate_nan_ou
     if case_num == 1:
         # sensitivity analysis
         sweep_params = dict()
-        sweep_params["Water Recovery"] = LinearSample(m.fs.recovery[0], 0.4, 0.8, 41)
+        sweep_params["Water Recovery"] = LinearSample(m.fs.recovery[0], 0.45, 0.75, 81)
         sweep_params["Inlet Salinity"] = PredeterminedFixedSample(
             m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "TDS"], [0.035, 0.07]
         )
     elif case_num == 2:
         # sensitivity analysis
         sweep_params = dict()
-        sweep_params["Water Recovery"] = LinearSample(m.fs.recovery[0], 0.4, 0.8, 41)
+        sweep_params["Water Recovery"] = LinearSample(m.fs.recovery[0], 0.45, 0.75, 81)
         sweep_params["Inlet Salinity"] = PredeterminedFixedSample(
             m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"], [0.035, 0.07]
         )
@@ -95,7 +95,7 @@ def set_up_sensitivity_RO(flowsheet):
     return outputs, opt_function, m
 
 
-def run_analysis_RO(case_num=1, flowsheet=RO_flowsheet_Sea, interpolate_nan_outputs=True, output_filename=None):
+def run_analysis_RO(case_num=1, flowsheet=RO_flowsheet_Sea, interpolate_nan_outputs=False, output_filename=None):
     
     if output_filename is None:
         output_filename = "sensitivity_" + str(case_num) + ".csv"
@@ -108,7 +108,7 @@ def run_analysis_RO(case_num=1, flowsheet=RO_flowsheet_Sea, interpolate_nan_outp
         # sensitivity analysis
         sweep_params = dict()
         sweep_params["Water Recovery"] = LinearSample(
-            m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.3, 0.7, 41
+            m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.3, 0.55, 51
         )
     else:
         raise ValueError(f"{case_num} is not yet implemented")
@@ -128,7 +128,7 @@ def run_analysis_RO(case_num=1, flowsheet=RO_flowsheet_Sea, interpolate_nan_outp
 if __name__ == "__main__":
     results, sweep_params, m = run_analysis_MVC(case_num=1, flowsheet=MVC_flowsheet_Sea, output_filename="data_MVC_sea.csv")
     results, sweep_params, m = run_analysis_MVC(case_num=2, flowsheet=MVC_flowsheet_NaCl, output_filename="data_MVC_nacl.csv")
-    results, sweep_params, m = run_analysis_MVC(case_num=2, flowsheet=MVC_flowsheet_Simple, output_filename="data_MVC_sea.csv")
+    results, sweep_params, m = run_analysis_MVC(case_num=2, flowsheet=MVC_flowsheet_Simple, output_filename="data_MVC_simple.csv")
     results, sweep_params, m = run_analysis_RO(case_num=1, flowsheet=RO_flowsheet_Sea, output_filename="data_RO_sea.csv")
     results, sweep_params, m = run_analysis_RO(case_num=1, flowsheet=RO_flowsheet_NaCl, output_filename="data_RO_nacl.csv")
     results, sweep_params, m = run_analysis_RO(case_num=1, flowsheet=RO_flowsheet_Simple, output_filename="data_RO_simple.csv")

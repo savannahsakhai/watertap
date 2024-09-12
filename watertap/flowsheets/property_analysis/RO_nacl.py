@@ -225,7 +225,9 @@ def initialize_system(m, solver=None):
 def optimize_set_up(m):
     # add objective
     m.fs.objective = Objective(expr=m.fs.costing.LCOW)
-
+    m.fs.feed.flow_mass_phase_comp.unfix()
+    m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"].fix()
+    m.fs.feed.properties[0].flow_vol_phase["Liq"].fix()
     # unfix decision variables and add bounds
     # Pump
     m.fs.P1.control_volume.properties_out[0].pressure.unfix()

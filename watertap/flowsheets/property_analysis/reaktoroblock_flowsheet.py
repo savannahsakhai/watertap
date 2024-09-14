@@ -49,6 +49,11 @@ def main():
     solve(m)
     print("\n***---Simulation results---***")
     display(m)
+ 
+    # optimize(m)
+    # solve(m)
+    # print("\n***---Simulation results---***")
+    # display(m)
 
     return m
 
@@ -109,6 +114,13 @@ def build(sea_water_composition, sea_water_ph):
     # set_scaling_factor(m.fs.sea_water.enthalpy, 1e-4)
     m.fs.sea_water.TDS = Var(initialize=35000, units=pyunits.mg/pyunits.L)
     m.fs.sea_water.TDS_adjust_constant = Var(initialize=1)
+
+    m.fs.sea_water.mass_flow_TDS = Var(initialize=1,  units=pyunits.kg / pyunits.s)
+
+    m.fs.sea_water.eq_TDS_flow = Constraint(
+        expr=m.fs.sea_water.mass_flow_TDS
+        == sum(m.fs.sea_water.species_mass_flow[ion] for ion in m.fs.sea_water.species_concentrations)
+    )
 
     m.fs.sea_water.eq_TDS = Constraint(
         expr=m.fs.sea_water.TDS
@@ -213,7 +225,10 @@ def display(m):
         "Density",
         m.fs.sea_water.density.value,
     )
-
+#    print(
+#             "Enthalpy",
+#             m.fs.sea_water.enthalpy.value,
+#         )
    print(
         "Osmotic pressure",
         m.fs.sea_water.osmotic_pressure.value,

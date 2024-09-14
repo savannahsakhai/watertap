@@ -1,6 +1,6 @@
 from parameter_sweep import LinearSample, parameter_sweep, PredeterminedFixedSample
 from pyomo.environ import units as pyunits
-import reaktoroblock_flowsheet as reaktoro_flowsheet
+import reaktoro_pse.tutorials.RO_reaktoro_2 as reaktoro_flowsheet
 
 def set_up_sensitivity():
     outputs = {}
@@ -17,26 +17,26 @@ def set_up_sensitivity():
     sea_water_ph = 7.56
 
     m = reaktoro_flowsheet.build(sea_water_composition, sea_water_ph)
-    # reaktoro_flowsheet.set_operating_conditions(m, sea_water_composition, sea_water_ph)
-    reaktoro_flowsheet.initialize_system(m, sea_water_composition)
+    reaktoro_flowsheet.set_operating_conditions(m, sea_water_composition)
+    reaktoro_flowsheet.initialize_system(m)
     reaktoro_flowsheet.solve(m)
-    # reaktoro_flowsheet.optimize_set_up(m)
-    # reaktoro_flowsheet.optimize(m)
+    reaktoro_flowsheet.optimize_set_up(m)
+    reaktoro_flowsheet.solve(m)
 
     # optimize_kwargs = {"fail_flag": False}
     opt_function = reaktoro_flowsheet.solve
-
     # create outputs
-    outputs["TDS mg/L"] = m.fs.sea_water.mass_flow_TDS
-    outputs["Density"] = m.fs.sea_water.density
-    outputs["Osmotic Pressure"] = m.fs.sea_water.osmotic_pressure
-    # outputs["Enthalpy"] = m.fs.sea_water.enthalpy
+    outputs["TDS flow"] = m.fs.feed.properties[0].flow_mass_phase_comp[("Liq", "NaCl")]
+    outputs["Water flow"] = m.fs.feed.properties[0].flow_mass_phase_comp[("Liq", "H2O")]
+    outputs["LCOW"] = m.fs.costing.LCOW
+    outputs["SEC"] = m.fs.costing.specific_energy_consumption
+    outputs["Membrane Area"] = m.fs.RO.area
+    outputs["Operating Pressure"] = m.fs.P1.control_volume.properties_out[0].pressure
 
-    
     return outputs, opt_function, m
 
 
-def run_analysis(case_num=3, nx=2, interpolate_nan_outputs=True, output_filename=None):
+def run_analysis(case_num=1, nx=2, interpolate_nan_outputs=True, output_filename=None):
 
     if output_filename is None:
         output_filename = "sensitivity_full_flowsheet_" + str(case_num) + ".csv"
@@ -45,15 +45,12 @@ def run_analysis(case_num=3, nx=2, interpolate_nan_outputs=True, output_filename
 
     sweep_params = {}
 
-    if case_num == 3:
+    if case_num == 1:
         # sensitivity analysis
         sweep_params = dict()
-        sweep_params["Feed TDS"] = PredeterminedFixedSample(
-           m.fs.sea_water.mass_flow_TDS, [3.361113e-02,4.838276e-02,9.373868e-02,1.366460e-01,1.775197e-01]
-        )
-        sweep_params["Temperature"] = LinearSample(
-            m.fs.sea_water.temperature, 25 + 273.15, 85 + 273.15, 7
-        )
+        sweep_params["Water Recovery"] = LinearSample(
+                m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.3, 0.55, 51
+            )
         
     else:
         raise ValueError(f"{case_num} is not yet implemented")
@@ -64,7 +61,6 @@ def run_analysis(case_num=3, nx=2, interpolate_nan_outputs=True, output_filename
         outputs,
         csv_results_file_name=output_filename,
         optimize_function=opt_function,
-        # optimize_kwargs=optimize_kwargs,
         interpolate_nan_outputs=interpolate_nan_outputs,
     )
 
@@ -72,5 +68,4 @@ def run_analysis(case_num=3, nx=2, interpolate_nan_outputs=True, output_filename
 
 
 if __name__ == "__main__":
-    results, sweep_params, m = run_analysis()
-    print(results)
+    results, sweep_params, m = run_analysis(output_filename="data_RO_reaktoro.csv")

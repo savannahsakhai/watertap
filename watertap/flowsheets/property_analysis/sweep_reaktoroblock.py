@@ -27,7 +27,7 @@ def set_up_sensitivity():
     opt_function = reaktoro_flowsheet.solve
 
     # create outputs
-    outputs["TDS mg/L"] = m.fs.sea_water.mass_flow_TDS
+    outputs["TDS mg/L"] = m.fs.sea_water.TDS
     outputs["Density"] = m.fs.sea_water.density
     outputs["Osmotic Pressure"] = m.fs.sea_water.osmotic_pressure
     # outputs["Enthalpy"] = m.fs.sea_water.enthalpy
@@ -72,5 +72,5 @@ def run_analysis(case_num=3, nx=2, interpolate_nan_outputs=True, output_filename
 
 
 if __name__ == "__main__":
-    results, sweep_params, m = run_analysis()
+    results, sweep_params, m = run_analysis(output_filename="data_property_reaktoro")
     print(results)

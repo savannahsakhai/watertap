@@ -136,15 +136,8 @@ def set_operating_conditions(m, solver=None):
     # Feed
     m.fs.feed.properties[0].pressure.fix(101325)  # feed pressure [Pa]
     m.fs.feed.properties[0].temperature.fix(273.15 + 25)  # feed temperature [K]
-    feed_flow_mass = 1
-    feed_mass_frac_TDS = 0.035
-    feed_mass_frac_H2O = 1 - feed_mass_frac_TDS
-    m.fs.feed.properties[0].flow_mass_phase_comp["Liq", "TDS"].fix(
-        feed_flow_mass * feed_mass_frac_TDS
-    )
-    m.fs.feed.properties[0].flow_mass_phase_comp["Liq", "H2O"].fix(
-        feed_flow_mass * feed_mass_frac_H2O
-    )
+    m.fs.feed.properties[0].flow_mass_phase_comp["Liq", "TDS"].fix(3.243333e-02)
+    m.fs.feed.properties[0].flow_mass_phase_comp["Liq", "H2O"].fix(9.650000e-01)
     # Pump Unit
     m.fs.P1.efficiency_pump.fix(0.80)  # pump efficiency
     m.fs.P1.control_volume.properties_out[0].pressure.fix(50e5)

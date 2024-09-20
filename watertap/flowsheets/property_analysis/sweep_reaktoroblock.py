@@ -52,7 +52,7 @@ def run_analysis(case_num=3, nx=2, interpolate_nan_outputs=True, output_filename
            m.fs.sea_water.mass_flow_TDS, [3.361113e-02,4.838276e-02,9.373868e-02,1.366460e-01,1.775197e-01]
         )
         sweep_params["Temperature"] = LinearSample(
-            m.fs.sea_water.temperature, 25 + 273.15, 85 + 273.15, 7
+            m.fs.sea_water.temperature, 25 + 273.15, 95 + 273.15, 8
         )
         
     else:
@@ -72,5 +72,5 @@ def run_analysis(case_num=3, nx=2, interpolate_nan_outputs=True, output_filename
 
 
 if __name__ == "__main__":
-    results, sweep_params, m = run_analysis(output_filename="data_property_reaktoro")
+    results, sweep_params, m = run_analysis(output_filename="data_property_RO_reaktoro.csv")
     print(results)

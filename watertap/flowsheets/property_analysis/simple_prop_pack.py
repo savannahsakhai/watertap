@@ -804,8 +804,7 @@ class NaClStateBlockData(StateBlockData):
             p_w = (
                 exp(
                     b.params.vap_pressure_param["A"]
-                    - (b.params.vap_pressure_param["B"])
-                    / (t + b.params.vap_pressure_param["C"])
+                    - (b.params.vap_pressure_param["B"]/(t + b.params.vap_pressure_param["C"]))
                 )
                 * 100000
                 * pyunits.Pa

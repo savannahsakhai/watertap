@@ -357,6 +357,7 @@ def set_operating_conditions(m, sea_water_composition):
 
     for comp, pyoobj in m.fs.feed.eq_feed_species_mass_flow.items():
         calculate_variable_from_constraint(m.fs.feed.species_mass_flow[comp], pyoobj)
+
         set_scaling_factor(
             m.fs.feed.species_mass_flow[ion], 1 / m.fs.feed.species_mass_flow[comp].value
         )

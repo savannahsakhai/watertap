@@ -33,7 +33,7 @@ from watertap.unit_models.mvc.components.lmtd_chen_callback import (
     delta_temperature_chen_callback,
 )
 from watertap.unit_models.pressure_changer import Pump
-import simple_prop_pack as props_sw
+import watertap.flowsheets.property_analysis.MVC.simple_prop_pack as props_sw
 import watertap.property_models.water_prop_pack as props_w
 from watertap.costing import WaterTAPCosting
 import math

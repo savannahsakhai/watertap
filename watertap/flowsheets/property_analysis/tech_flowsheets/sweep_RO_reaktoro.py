@@ -1,6 +1,7 @@
 from parameter_sweep import LinearSample, parameter_sweep, PredeterminedFixedSample
 from pyomo.environ import units as pyunits
-import reaktoro_pse.tutorials.RO_reaktoro_2 as reaktoro_flowsheet
+import RO_reaktoro as reaktoro_flowsheet
+import time
 
 def set_up_sensitivity():
     outputs = {}
@@ -68,4 +69,9 @@ def run_analysis(case_num=1, nx=2, interpolate_nan_outputs=True, output_filename
 
 
 if __name__ == "__main__":
+    start_time = time.time()
     results, sweep_params, m = run_analysis(output_filename="data_RO_reaktoro.csv")
+    end_time= time.time()
+    elapsed_time_1 = end_time - start_time
+
+    print(elapsed_time_1)

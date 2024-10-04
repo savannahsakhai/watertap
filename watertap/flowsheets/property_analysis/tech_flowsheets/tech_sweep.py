@@ -6,6 +6,7 @@ import RO_seawater as RO_flowsheet_Sea
 import RO_nacl as RO_flowsheet_NaCl
 import RO_simple as RO_flowsheet_Simple
 from parameter_sweep import LinearSample, parameter_sweep, PredeterminedFixedSample
+import time
 
 def set_up_sensitivity_MVC(flowsheet):
     outputs = {}
@@ -30,6 +31,8 @@ def set_up_sensitivity_MVC(flowsheet):
     outputs["SEC"] = m.fs.costing.specific_energy_consumption
     outputs["Evaporator area"] = m.fs.evaporator.area
     outputs["Compressor pressure ratio"] = m.fs.compressor.pressure_ratio
+    outputs["Brine HX area"] = m.fs.hx_brine.area
+    outputs["Dist HX area"] = m.fs.hx_distillate.area
         
     return outputs, opt_function, m
 
@@ -126,9 +129,40 @@ def run_analysis_RO(case_num=1, flowsheet=RO_flowsheet_Sea, interpolate_nan_outp
 
 
 if __name__ == "__main__":
+    # start_time = time.time()
     # results, sweep_params, m = run_analysis_MVC(case_num=1, flowsheet=MVC_flowsheet_Sea, output_filename="data_MVC_sea.csv")
+    # end_time= time.time()
+    # elapsed_time_1 = end_time - start_time
+
+    # start_time = time.time()
     # results, sweep_params, m = run_analysis_MVC(case_num=2, flowsheet=MVC_flowsheet_NaCl, output_filename="data_MVC_nacl.csv")
-    results, sweep_params, m = run_analysis_MVC(case_num=2, flowsheet=MVC_flowsheet_Simple, output_filename="data_MVC_simple.csv")
-    # results, sweep_params, m = run_analysis_RO(case_num=1, flowsheet=RO_flowsheet_Sea, output_filename="data_RO_sea.csv")
-    # results, sweep_params, m = run_analysis_RO(case_num=1, flowsheet=RO_flowsheet_NaCl, output_filename="data_RO_nacl.csv")
+    # end_time= time.time()
+    # elapsed_time_2 = end_time - start_time
+
+    # start_time = time.time()
+    # results, sweep_params, m = run_analysis_MVC(case_num=2, flowsheet=MVC_flowsheet_Simple, output_filename="data_MVC_simple.csv")
+    # end_time= time.time()
+    # elapsed_time_3 = end_time - start_time
+
+    # print(elapsed_time_1)
+    # print(elapsed_time_2)
+    # print(elapsed_time_3)
+
+    start_time = time.time()
+    results, sweep_params, m = run_analysis_RO(case_num=1, flowsheet=RO_flowsheet_Sea, output_filename="data_RO_sea.csv")
+    end_time= time.time()
+    elapsed_time_1 = end_time - start_time
+
+    start_time = time.time()
+    results, sweep_params, m = run_analysis_RO(case_num=1, flowsheet=RO_flowsheet_NaCl, output_filename="data_RO_nacl.csv")
+    end_time= time.time()
+    elapsed_time_2 = end_time - start_time
+
+    start_time = time.time()
     results, sweep_params, m = run_analysis_RO(case_num=1, flowsheet=RO_flowsheet_Simple, output_filename="data_RO_simple.csv")
+    end_time= time.time()
+    elapsed_time_3 = end_time - start_time
+
+    print(elapsed_time_1)
+    print(elapsed_time_2)
+    print(elapsed_time_3)

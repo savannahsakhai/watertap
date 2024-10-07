@@ -31,7 +31,7 @@ from idaes.core import UnitModelCostingBlock
 import idaes.core.util.scaling as iscale
 import idaes.logger as idaeslog
 from idaes.core.util.misc import StrEnum
-import watertap.flowsheets.property_analysis.MVC.simple_prop_pack as props
+import simple_prop_pack as props
 from watertap.unit_models.reverse_osmosis_1D import (
     ReverseOsmosis1D,
     ConcentrationPolarizationType,

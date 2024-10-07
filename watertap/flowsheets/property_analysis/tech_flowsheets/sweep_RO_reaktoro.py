@@ -50,7 +50,7 @@ def run_analysis(case_num=1, nx=2, interpolate_nan_outputs=True, output_filename
         # sensitivity analysis
         sweep_params = dict()
         sweep_params["Water Recovery"] = LinearSample(
-                m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.3, 0.55, 51
+                m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.3, 0.5, 41
             )
         
     else:

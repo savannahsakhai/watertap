@@ -137,8 +137,16 @@ def set_operating_conditions(m, solver=None):
     m.fs.feed.properties[0].pressure.fix(101325)  # feed pressure [Pa]
     m.fs.feed.properties[0].temperature.fix(273.15 + 25)  # feed temperature [K]
 
-    m.fs.feed.properties[0].flow_mass_phase_comp["Liq", "NaCl"].fix(3.243333e-02)
-    m.fs.feed.properties[0].flow_mass_phase_comp["Liq", "H2O"].fix(9.650000e-01)
+    feed_flow_mass = 1
+    feed_mass_frac_NaCl = 0.035
+    feed_mass_frac_H2O = 1 - feed_mass_frac_NaCl
+    m.fs.feed.properties[0].flow_mass_phase_comp["Liq", "NaCl"].fix(
+        feed_flow_mass * feed_mass_frac_NaCl
+    )
+    m.fs.feed.properties[0].flow_mass_phase_comp["Liq", "H2O"].fix(
+        feed_flow_mass * feed_mass_frac_H2O
+    )
+
     # Pump Unit
     m.fs.P1.efficiency_pump.fix(0.80)  # pump efficiency [-]
     m.fs.P1.control_volume.properties_out[0].pressure.fix(50e5)
@@ -224,7 +232,7 @@ def optimize_set_up(m):
     # Pump
     m.fs.P1.control_volume.properties_out[0].pressure.unfix()
     m.fs.P1.control_volume.properties_out[0].pressure.setlb(10e5)
-    m.fs.P1.control_volume.properties_out[0].pressure.setub(80e5)
+    m.fs.P1.control_volume.properties_out[0].pressure.setub(200e5)
     m.fs.P1.deltaP.setlb(0)
 
     # RO

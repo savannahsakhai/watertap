@@ -27,8 +27,7 @@ def set_up_sensitivity():
     # optimize_kwargs = {"fail_flag": False}
     opt_function = reaktoro_flowsheet.solve
     # create outputs
-    outputs["TDS flow"] = m.fs.feed.properties[0].flow_mass_phase_comp[("Liq", "NaCl")]
-    outputs["Water flow"] = m.fs.feed.properties[0].flow_mass_phase_comp[("Liq", "H2O")]
+    # outputs["Feed Mass Frac"] = m.fs.feed.properties[0].mass_frac_phase_comp[("Liq", "NaCl")]
     outputs["LCOW"] = m.fs.costing.LCOW
     outputs["SEC"] = m.fs.costing.specific_energy_consumption
     outputs["Membrane Area"] = m.fs.RO.area
@@ -52,6 +51,15 @@ def run_analysis(case_num=1, nx=2, interpolate_nan_outputs=True, output_filename
         sweep_params["Water Recovery"] = LinearSample(
                 m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.3, 0.5, 41
             )
+    elif case_num == 2:
+        # sensitivity analysis
+        sweep_params = dict()
+        sweep_params["Feed Mass Frac"] = PredeterminedFixedSample(
+            m.fs.feed.properties[0].mass_frac_phase_comp[("Liq", "NaCl")], [.035, .05, .07, .1]
+        )  
+        sweep_params["Water Recovery"] = LinearSample(
+            m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.3, 0.7, 5
+        )
         
     else:
         raise ValueError(f"{case_num} is not yet implemented")
@@ -70,7 +78,7 @@ def run_analysis(case_num=1, nx=2, interpolate_nan_outputs=True, output_filename
 
 if __name__ == "__main__":
     start_time = time.time()
-    results, sweep_params, m = run_analysis(output_filename="data_RO_reaktoro.csv")
+    results, sweep_params, m = run_analysis(case_num=2, output_filename="data_HPRO_reaktoro.csv")
     end_time= time.time()
     elapsed_time_1 = end_time - start_time
 

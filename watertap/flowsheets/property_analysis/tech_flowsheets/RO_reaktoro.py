@@ -197,6 +197,9 @@ def set_up_reaktoro(m, sea_water_composition,sea_water_ph):
     m.fs.feed.species_concentrations = Var(
         ions, initialize=1, bounds=(0, None), units=pyunits.mg / pyunits.L
     )
+    m.fs.feed.species_concentrations_adj = Var(
+        ions, initialize=1, units=pyunits.mg / pyunits.L
+    )
     ions.append("H2O")
     m.fs.feed.species_mass_flow = Var(
         ions, initialize=1, bounds=(0, None), units=pyunits.kg / pyunits.s
@@ -211,6 +214,22 @@ def set_up_reaktoro(m, sea_water_composition,sea_water_ph):
     ) 
     m.fs.feed.reaktoro_osmotic_pressure = Var(initialize=1, units=pyunits.Pa)
 
+    # m.fs.feed.TDS = Var(initialize=35000, units=pyunits.mg/pyunits.L)
+
+    m.fs.feed.TDS_adjust_constant = Var(initialize=1)
+
+    @m.fs.feed.Constraint(list(m.fs.feed.species_concentrations.keys()))
+    def eq_feed_TDS_adjust(fs, ion):
+        return m.fs.feed.species_concentrations_adj[ion] == (
+            m.fs.feed.TDS_adjust_constant*m.fs.feed.species_concentrations[ion]
+        )
+    
+    # m.fs.feed.eq_TDS = Constraint(
+    #     expr= (
+    #         m.fs.feed.TDS == sum(m.fs.feed.species_concentrations_adj[ion] for ion in m.fs.feed.species_concentrations)
+    #     )
+    # )
+
     # Constraints
     @m.fs.feed.Constraint(list(m.fs.feed.species_mass_flow.keys()))
     def eq_feed_species_mass_flow(fs, ion):
@@ -222,7 +241,7 @@ def set_up_reaktoro(m, sea_water_composition,sea_water_ph):
         else:
             """calculate mass flow based on density"""
             return m.fs.feed.species_mass_flow[ion] == pyunits.convert(
-                m.fs.feed.species_concentrations[ion]
+                m.fs.feed.species_concentrations_adj[ion]
                 * m.fs.feed.properties[0].flow_mass_phase_comp[("Liq", "H2O")]
                 / m.fs.feed.reaktoro_density,
                 to_units=pyunits.kg / pyunits.s,
@@ -231,6 +250,12 @@ def set_up_reaktoro(m, sea_water_composition,sea_water_ph):
         expr=m.fs.feed.properties[0].flow_mass_phase_comp[("Liq", "NaCl")]
         == sum(m.fs.feed.species_mass_flow[ion] for ion in m.fs.feed.species_concentrations)
     )
+
+    # m.fs.feed.eq_mass_frac_NaCl = Constraint(
+    #     expr=m.fs.feed.properties[0].mass_frac_phase_comp[("Liq", "NaCl")]
+    #     == sum(m.fs.feed.species_mass_flow[ion] for ion in m.fs.feed.species_concentrations)
+    #     / sum(m.fs.feed.species_mass_flow[ion] for ion in m.fs.feed.species_mass_flow)
+    # )
 
     m.fs.feed.reaktoro_outputs = {
         ("osmoticPressure",
@@ -335,9 +360,10 @@ def set_operating_conditions(m, sea_water_composition):
     # Feed
     m.fs.feed.properties[0].temperature.fix(273 + 25)  # temperature (K)
     m.fs.feed.properties[0].pressure.fix(101325)  # pressure (Pa)
-    m.fs.feed.properties[0].flow_mass_phase_comp["Liq", "H2O"].fix(
-        0.965
-    )  # mass flowrate of H2O (kg/s)
+    # m.fs.feed.TDS.fix(35000)
+    m.fs.feed.properties[0].flow_mass_phase_comp["Liq", "H2O"].fix(1)
+    m.fs.feed.properties[0].flow_mass_phase_comp["Liq", "NaCl"].fix(0.035/1.035)
+    # m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"].fix(0.035)
     m.fs.feed.properties[0].conc_mass_phase_comp[...]  # construct concentration props
     m.fs.feed.properties[0].pressure_osm_phase[...]
     m.fs.properties.set_default_scaling(
@@ -355,6 +381,9 @@ def set_operating_conditions(m, sea_water_composition):
         m.fs.feed.species_concentrations[ion].fix(value)
         set_scaling_factor(m.fs.feed.species_concentrations[ion], 1 / value)
 
+    for comp, pyoobj in m.fs.feed.eq_feed_TDS_adjust.items():
+        calculate_variable_from_constraint(m.fs.feed.species_concentrations_adj[comp], pyoobj)
+
     for comp, pyoobj in m.fs.feed.eq_feed_species_mass_flow.items():
         calculate_variable_from_constraint(m.fs.feed.species_mass_flow[comp], pyoobj)
 
@@ -363,11 +392,10 @@ def set_operating_conditions(m, sea_water_composition):
         )
         constraint_scaling_transform(pyoobj, 1 / m.fs.feed.species_mass_flow[comp].value)
 
-
-    calculate_variable_from_constraint(
-        m.fs.feed.properties[0].flow_mass_phase_comp[("Liq", "NaCl")], m.fs.feed.eq_NaCl
-    )
-    constraint_scaling_transform(m.fs.feed.eq_NaCl, 1 / 0.035)
+    # calculate_variable_from_constraint(
+    #     m.fs.feed.properties[0].flow_mass_phase_comp[("Liq", "NaCl")], m.fs.feed.eq_NaCl
+    # )
+    # constraint_scaling_transform(m.fs.feed.eq_NaCl, 1 / 0.035)
 
     set_scaling_factor(m.fs.feed.reaktoro_density, 1 / 1000)
     set_scaling_factor(m.fs.feed.reaktoro_osmotic_pressure, 1 / 1e5)
@@ -400,12 +428,15 @@ def set_operating_conditions(m, sea_water_composition):
     
 
 
-def solve(blk, solver=None, tee=False, check_termination=True):
+def solve(m, solver=None, tee=False, check_termination=True):
+    print("Feed Mass Frac: %.2f , Recovery: %.3f" % (m.fs.feed.properties[0].mass_frac_phase_comp[("Liq", "NaCl")].value, m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"].value))
     if solver is None:
         solver = get_solver(solver="cyipopt-watertap")
-    results = solver.solve(blk, tee=tee)
-    if check_termination:
-        assert_optimal_termination(results)
+        solver.options["max_iter"]= 100
+    results = solver.solve(m, tee=tee)
+    # if check_termination:
+    #     assert_optimal_termination(results)
+    print("Termination condition: ", results.solver.termination_condition)
     return results
 
 
@@ -415,7 +446,7 @@ def initialize_system(m, solver=None):
     optarg = solver.options
 
     # ---initialize Feed---
-    m.fs.feed.initialize(optarg=optarg)
+    m.fs.feed.initialize(optarg=optarg, solver="ipopt-watertap")
 
     m.fs.feed.reaktoro_properties.initialize()
     m.fs.feed.reaktoro_properties.set_jacobian_scaling({("density", None): 1000})
@@ -448,6 +479,9 @@ def initialize_system(m, solver=None):
     # ---initialize Costing---
     m.fs.costing.initialize()
 
+    m.fs.feed.properties[0].flow_mass_phase_comp["Liq", "NaCl"].unfix()
+    m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"].fix(0.035)
+
 
 def optimize_set_up(m):
     # add objective
@@ -456,7 +490,7 @@ def optimize_set_up(m):
     # unfix decision variables and add bounds
     # Pump
     m.fs.P1.outlet.pressure[0].unfix()
-    m.fs.P1.outlet.pressure[0].setub(80e5)
+    m.fs.P1.outlet.pressure[0].setub(200e5)
 
     # RO
     m.fs.RO.width.fix(5)

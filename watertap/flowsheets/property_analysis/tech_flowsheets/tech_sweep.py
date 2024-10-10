@@ -49,17 +49,18 @@ def run_analysis_MVC(case_num=1, flowsheet=MVC_flowsheet_Sea, interpolate_nan_ou
     if case_num == 1:
         # sensitivity analysis
         sweep_params = dict()
-        sweep_params["Water Recovery"] = LinearSample(m.fs.recovery[0], 0.5, 0.7, 41)
         sweep_params["Inlet Salinity"] = PredeterminedFixedSample(
-            m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "TDS"], [0.1]
+            m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "TDS"], [.070, .100, .125, .150]
         )
+        sweep_params["Water Recovery"] = LinearSample(m.fs.recovery[0], 0.4, 0.8, 5)
+
     elif case_num == 2:
         # sensitivity analysis
         sweep_params = dict()
-        sweep_params["Water Recovery"] = LinearSample(m.fs.recovery[0], 0.5, 0.7, 41)
         sweep_params["Inlet Salinity"] = PredeterminedFixedSample(
-            m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"], [0.1]
+            m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"], [.070, .100, .125, .150]
         )
+        sweep_params["Water Recovery"] = LinearSample(m.fs.recovery[0], 0.4, 0.8, 5)
     else:
         raise ValueError(f"{case_num} is not yet implemented")
 
@@ -113,6 +114,26 @@ def run_analysis_RO(case_num=1, flowsheet=RO_flowsheet_Sea, interpolate_nan_outp
         sweep_params["Water Recovery"] = LinearSample(
             m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.3, 0.5, 41
         )
+    elif case_num == 2:
+        # sensitivity analysis
+        sweep_params = dict()
+        sweep_params["Feed Mass Frac"] = PredeterminedFixedSample(
+            m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"], [.035, .050, .070, .100]
+        )  
+        sweep_params["Water Recovery"] = LinearSample(
+            m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.3, 0.7, 5
+        )
+
+    elif case_num == 3:
+        # sensitivity analysis
+        sweep_params = dict()
+        sweep_params["Feed Mass Frac"] = PredeterminedFixedSample(
+            m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "TDS"], [.035, .050, .070, .100]
+        )
+        sweep_params["Water Recovery"] = LinearSample(
+            m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.3, 0.7, 5
+        )
+
     else:
         raise ValueError(f"{case_num} is not yet implemented")
 
@@ -130,39 +151,41 @@ def run_analysis_RO(case_num=1, flowsheet=RO_flowsheet_Sea, interpolate_nan_outp
 
 if __name__ == "__main__":
     start_time = time.time()
-    results, sweep_params, m = run_analysis_MVC(case_num=1, interpolate_nan_outputs=True, flowsheet=MVC_flowsheet_Sea, output_filename="data_MVC_sea.csv")
+    results, sweep_params, m = run_analysis_MVC(case_num=1, interpolate_nan_outputs=True, flowsheet=MVC_flowsheet_Sea, output_filename="data_MVC_sea_2D.csv")
     end_time= time.time()
     elapsed_time_1 = end_time - start_time
 
-    # start_time = time.time()
-    # results, sweep_params, m = run_analysis_MVC(case_num=2, flowsheet=MVC_flowsheet_NaCl, output_filename="data_MVC_nacl.csv")
-    # end_time= time.time()
-    # elapsed_time_2 = end_time - start_time
+    start_time = time.time()
+    results, sweep_params, m = run_analysis_MVC(case_num=2, flowsheet=MVC_flowsheet_NaCl, output_filename="data_MVC_nacl_2D.csv")
+    end_time= time.time()
+    elapsed_time_2 = end_time - start_time
 
-    # start_time = time.time()
-    # results, sweep_params, m = run_analysis_MVC(case_num=2, flowsheet=MVC_flowsheet_Simple, output_filename="data_MVC_simple.csv")
-    # end_time= time.time()
-    # elapsed_time_3 = end_time - start_time
+    start_time = time.time()
+    results, sweep_params, m = run_analysis_MVC(case_num=2, flowsheet=MVC_flowsheet_Simple, output_filename="data_MVC_simple_2D.csv")
+    end_time= time.time()
+    elapsed_time_3 = end_time - start_time
 
-    # print(elapsed_time_1)
-    # print(elapsed_time_2)
-    # print(elapsed_time_3)
+    print("MVC")
+    print(elapsed_time_1)
+    print(elapsed_time_2)
+    print(elapsed_time_3)
 
-    # start_time = time.time()
-    # results, sweep_params, m = run_analysis_RO(case_num=1, flowsheet=RO_flowsheet_Sea, output_filename="data_RO_sea.csv")
-    # end_time= time.time()
-    # elapsed_time_1 = end_time - start_time
+    start_time = time.time()
+    results, sweep_params, m = run_analysis_RO(case_num=3, flowsheet=RO_flowsheet_Sea, output_filename="data_HPRO_sea.csv")
+    end_time= time.time()
+    elapsed_time_1 = end_time - start_time
 
-    # start_time = time.time()
-    # results, sweep_params, m = run_analysis_RO(case_num=1, flowsheet=RO_flowsheet_NaCl, output_filename="data_RO_nacl.csv")
-    # end_time= time.time()
-    # elapsed_time_2 = end_time - start_time
+    start_time = time.time()
+    results, sweep_params, m = run_analysis_RO(case_num=2, flowsheet=RO_flowsheet_NaCl, output_filename="data_HPRO_nacl.csv")
+    end_time= time.time()
+    elapsed_time_2 = end_time - start_time
 
-    # start_time = time.time()
-    # results, sweep_params, m = run_analysis_RO(case_num=1, flowsheet=RO_flowsheet_Simple, output_filename="data_RO_simple.csv")
-    # end_time= time.time()
-    # elapsed_time_3 = end_time - start_time
+    start_time = time.time()
+    results, sweep_params, m = run_analysis_RO(case_num=2, flowsheet=RO_flowsheet_Simple, output_filename="data_HPRO_simple.csv")
+    end_time= time.time()
+    elapsed_time_3 = end_time - start_time
 
-    # print(elapsed_time_1)
-    # print(elapsed_time_2)
-    # print(elapsed_time_3)
+    print("RO")
+    print(elapsed_time_1)
+    print(elapsed_time_2)
+    print(elapsed_time_3)

@@ -33,6 +33,8 @@ def set_up_sensitivity_MVC(flowsheet):
     outputs["Compressor pressure ratio"] = m.fs.compressor.pressure_ratio
     outputs["Brine HX area"] = m.fs.hx_brine.area
     outputs["Dist HX area"] = m.fs.hx_distillate.area
+    outputs["Brine Enth Flow"] = m.fs.evaporator.properties_brine[0].enth_flow
+    outputs["Vapor Pressure"] = m.fs.evaporator.properties_brine[0].pressure_sat
         
     return outputs, opt_function, m
 
@@ -50,17 +52,42 @@ def run_analysis_MVC(case_num=1, flowsheet=MVC_flowsheet_Sea, interpolate_nan_ou
         # sensitivity analysis
         sweep_params = dict()
         sweep_params["Inlet Salinity"] = PredeterminedFixedSample(
-            m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "TDS"], [.070, .100, .125, .150]
+            m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "TDS"], [.035, .05, .07, .100, .125, .15]
         )
-        sweep_params["Water Recovery"] = LinearSample(m.fs.recovery[0], 0.4, 0.8, 5)
+        sweep_params["Water Recovery"] = LinearSample(m.fs.recovery[0], 0.45, 0.75, 7)
 
     elif case_num == 2:
         # sensitivity analysis
         sweep_params = dict()
         sweep_params["Inlet Salinity"] = PredeterminedFixedSample(
-            m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"], [.070, .100, .125, .150]
+            m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"],[.035, .05, .07, .100, .125, .15] 
         )
-        sweep_params["Water Recovery"] = LinearSample(m.fs.recovery[0], 0.4, 0.8, 5)
+        sweep_params["Water Recovery"] = LinearSample(m.fs.recovery[0], 0.45, 0.75, 7)
+    elif case_num == 3:
+        # sensitivity analysis
+        sweep_params = dict()
+        sweep_params["Inlet Salinity"] = LinearSample(
+            m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "TDS"], .070,.150, 17
+        )
+
+    elif case_num == 4:
+        # sensitivity analysis
+        sweep_params = dict()
+        sweep_params["Inlet Salinity"] = LinearSample(
+            m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"], .070,.150, 17
+        )
+    elif case_num == 5:
+        sweep_params = dict()
+        sweep_params["Water Recovery"] = LinearSample(m.fs.recovery[0], 0.4, 0.7, 16)
+        sweep_params["Inlet Salinity"] = PredeterminedFixedSample(
+            m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "TDS"],[.07,] 
+        )
+    elif case_num == 6:
+        sweep_params = dict()
+        sweep_params["Water Recovery"] = LinearSample(m.fs.recovery[0], 0.4, 0.7, 16)
+        sweep_params["Inlet Salinity"] = PredeterminedFixedSample(
+            m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"],[.07,] 
+        )
     else:
         raise ValueError(f"{case_num} is not yet implemented")
 
@@ -118,21 +145,35 @@ def run_analysis_RO(case_num=1, flowsheet=RO_flowsheet_Sea, interpolate_nan_outp
         # sensitivity analysis
         sweep_params = dict()
         sweep_params["Feed Mass Frac"] = PredeterminedFixedSample(
-            m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"], [.035, .050, .070, .100]
+            m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"], [0.005, .01, 0.02, .035, 0.04, .050]
         )  
         sweep_params["Water Recovery"] = LinearSample(
-            m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.3, 0.7, 5
+            m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.35, 0.65, 7
         )
 
     elif case_num == 3:
         # sensitivity analysis
         sweep_params = dict()
         sweep_params["Feed Mass Frac"] = PredeterminedFixedSample(
-            m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "TDS"], [.035, .050, .070, .100]
+            m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "TDS"], [0.005, .01, 0.02, .035, 0.04, .050]
         )
         sweep_params["Water Recovery"] = LinearSample(
-            m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.3, 0.7, 5
+            m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.35, 0.65, 7
         )
+    elif case_num == 4:
+        # sensitivity analysis
+        sweep_params = dict()
+        sweep_params["Feed Mass Frac"] = LinearSample(
+            m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"], .035, .1, 14
+        )  
+
+    elif case_num == 5:
+        # sensitivity analysis
+        sweep_params = dict()
+        sweep_params["Feed Mass Frac"] = LinearSample(
+            m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "TDS"], .035, .1, 14
+        )
+
 
     else:
         raise ValueError(f"{case_num} is not yet implemented")
@@ -151,17 +192,17 @@ def run_analysis_RO(case_num=1, flowsheet=RO_flowsheet_Sea, interpolate_nan_outp
 
 if __name__ == "__main__":
     start_time = time.time()
-    results, sweep_params, m = run_analysis_MVC(case_num=1, interpolate_nan_outputs=True, flowsheet=MVC_flowsheet_Sea, output_filename="data_MVC_sea_2D.csv")
+    results, sweep_params, m = run_analysis_MVC(case_num=5, flowsheet=MVC_flowsheet_Sea, output_filename="data_MVC_sea.csv")
     end_time= time.time()
     elapsed_time_1 = end_time - start_time
 
     start_time = time.time()
-    results, sweep_params, m = run_analysis_MVC(case_num=2, flowsheet=MVC_flowsheet_NaCl, output_filename="data_MVC_nacl_2D.csv")
+    results, sweep_params, m = run_analysis_MVC(case_num=6, flowsheet=MVC_flowsheet_NaCl, output_filename="data_MVC_nacl.csv")
     end_time= time.time()
     elapsed_time_2 = end_time - start_time
 
     start_time = time.time()
-    results, sweep_params, m = run_analysis_MVC(case_num=2, flowsheet=MVC_flowsheet_Simple, output_filename="data_MVC_simple_2D.csv")
+    results, sweep_params, m = run_analysis_MVC(case_num=6, flowsheet=MVC_flowsheet_Simple, output_filename="data_MVC_simple.csv")
     end_time= time.time()
     elapsed_time_3 = end_time - start_time
 
@@ -170,22 +211,22 @@ if __name__ == "__main__":
     print(elapsed_time_2)
     print(elapsed_time_3)
 
-    start_time = time.time()
-    results, sweep_params, m = run_analysis_RO(case_num=3, flowsheet=RO_flowsheet_Sea, output_filename="data_HPRO_sea.csv")
-    end_time= time.time()
-    elapsed_time_1 = end_time - start_time
+    # start_time = time.time()
+    # results, sweep_params, m = run_analysis_RO(case_num=3, flowsheet=RO_flowsheet_Sea, output_filename="data_RO_sea_2D.csv")
+    # end_time= time.time()
+    # elapsed_time_1 = end_time - start_time
 
-    start_time = time.time()
-    results, sweep_params, m = run_analysis_RO(case_num=2, flowsheet=RO_flowsheet_NaCl, output_filename="data_HPRO_nacl.csv")
-    end_time= time.time()
-    elapsed_time_2 = end_time - start_time
+    # start_time = time.time()
+    # results, sweep_params, m = run_analysis_RO(case_num=2, flowsheet=RO_flowsheet_NaCl, output_filename="data_RO_nacl_2D.csv")
+    # end_time= time.time()
+    # elapsed_time_2 = end_time - start_time
 
-    start_time = time.time()
-    results, sweep_params, m = run_analysis_RO(case_num=2, flowsheet=RO_flowsheet_Simple, output_filename="data_HPRO_simple.csv")
-    end_time= time.time()
-    elapsed_time_3 = end_time - start_time
+    # start_time = time.time()
+    # results, sweep_params, m = run_analysis_RO(case_num=2, flowsheet=RO_flowsheet_Simple, output_filename="data_RO_simple_2D.csv")
+    # end_time= time.time()
+    # elapsed_time_3 = end_time - start_time
 
-    print("RO")
-    print(elapsed_time_1)
-    print(elapsed_time_2)
-    print(elapsed_time_3)
+    # print("RO")
+    # print(elapsed_time_1)
+    # print(elapsed_time_2)
+    # print(elapsed_time_3)

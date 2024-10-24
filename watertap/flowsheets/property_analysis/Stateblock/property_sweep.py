@@ -34,7 +34,7 @@ def run_analysis(case_num=1, flowsheet=flowsheet_Sea, salt="TDS", interpolate_na
         # sensitivity analysis
         sweep_params = dict()
         sweep_params["Feed TDS"] = PredeterminedFixedSample(
-            m.fs.stream[0].flow_mass_phase_comp["Liq", "TDS"], [3.361113e-02,4.838276e-02,9.373868e-02,1.366460e-01,1.775197e-01]
+            m.fs.stream[0].mass_frac_phase_comp["Liq", "TDS"], [.035,.070, .100, .125, .150, .200, .250]
         )
         sweep_params["Temperature"] = LinearSample(
             m.fs.stream[0].temperature, 25 + 273.15, 95 + 273.15, 8
@@ -44,7 +44,7 @@ def run_analysis(case_num=1, flowsheet=flowsheet_Sea, salt="TDS", interpolate_na
         # sensitivity analysis
         sweep_params = dict()
         sweep_params["Feed TDS"] = PredeterminedFixedSample(
-            m.fs.stream[0].flow_mass_phase_comp["Liq", "NaCl"], [3.361113e-02,4.838276e-02,9.373868e-02,1.366460e-01,1.775197e-01]
+            m.fs.stream[0].mass_frac_phase_comp["Liq", "NaCl"], [.035,.070, .100, .125, .150, .200, .250]
         )
         sweep_params["Temperature"] = LinearSample(
             m.fs.stream[0].temperature, 25 + 273.15, 95 + 273.15, 8

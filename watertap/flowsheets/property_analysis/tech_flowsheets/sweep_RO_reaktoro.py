@@ -55,11 +55,17 @@ def run_analysis(case_num=1, nx=2, interpolate_nan_outputs=True, output_filename
         # sensitivity analysis
         sweep_params = dict()
         sweep_params["Feed Mass Frac"] = PredeterminedFixedSample(
-            m.fs.feed.properties[0].mass_frac_phase_comp[("Liq", "NaCl")], [.035, .05, .07, .1]
+            m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"], [0.005, .01, 0.02, .035, 0.04, .050]
         )  
         sweep_params["Water Recovery"] = LinearSample(
-            m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.3, 0.7, 5
+            m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"], 0.35, 0.65, 7
         )
+    elif case_num == 4:
+        # sensitivity analysis
+        sweep_params = dict()
+        sweep_params["Feed Mass Frac"] = LinearSample(
+            m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"], .035, .1, 14
+        )  
         
     else:
         raise ValueError(f"{case_num} is not yet implemented")
@@ -78,7 +84,7 @@ def run_analysis(case_num=1, nx=2, interpolate_nan_outputs=True, output_filename
 
 if __name__ == "__main__":
     start_time = time.time()
-    results, sweep_params, m = run_analysis(case_num=2, output_filename="data_HPRO_reaktoro.csv")
+    results, sweep_params, m = run_analysis(case_num=2, output_filename="data_RO_reaktoro_2D.csv")
     end_time= time.time()
     elapsed_time_1 = end_time - start_time
 

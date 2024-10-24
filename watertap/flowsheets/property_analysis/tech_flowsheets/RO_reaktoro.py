@@ -490,7 +490,7 @@ def optimize_set_up(m):
     # unfix decision variables and add bounds
     # Pump
     m.fs.P1.outlet.pressure[0].unfix()
-    m.fs.P1.outlet.pressure[0].setub(200e5)
+    m.fs.P1.outlet.pressure[0].setub(85e5)
 
     # RO
     m.fs.RO.width.fix(5)

@@ -233,7 +233,7 @@ def optimize_set_up(m):
     # Pump
     m.fs.P1.control_volume.properties_out[0].pressure.unfix()
     m.fs.P1.control_volume.properties_out[0].pressure.setlb(10e5)
-    m.fs.P1.control_volume.properties_out[0].pressure.setub(200e5)
+    m.fs.P1.control_volume.properties_out[0].pressure.setub(85e5)
     m.fs.P1.deltaP.setlb(0)
 
     # RO

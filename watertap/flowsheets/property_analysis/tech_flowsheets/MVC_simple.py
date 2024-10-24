@@ -379,6 +379,7 @@ def set_operating_conditions(m):
     m.fs.evaporator.outlet_brine.temperature[0].fix(75 + 273.15)
     m.fs.evaporator.U.fix(3e3)  # W/K-m^2
     m.fs.evaporator.area.setub(1e6)  # m^2
+    m.fs.evaporator.properties_brine[0].mass_frac_phase_comp["Liq", "NaCl"].setub(0.24)
 
     # Compressor
     m.fs.compressor.pressure_ratio.fix(1.6)
@@ -407,10 +408,8 @@ def set_operating_conditions(m):
     m.fs.costing.evaporator.material_factor_cost.fix(m.fs.material_factor)
     
     # Temperature bounds
-    m.fs.evaporator.properties_vapor[0].temperature.setub(75 + 273.15)
+    # m.fs.evaporator.properties_vapor[0].temperature.setub(75 + 273.15)
     m.fs.compressor.control_volume.properties_out[0].temperature.setub(450)
-
-    m.fs.evaporator.properties_brine[0].mass_frac_phase_comp["Liq", "NaCl"].setub(0.25)
     
     # check degrees of freedom
     print("DOF after setting operating conditions: ", degrees_of_freedom(m))

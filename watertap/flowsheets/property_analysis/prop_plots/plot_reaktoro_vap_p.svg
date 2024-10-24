@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
   "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="259.575pt" height="253.081719pt" viewBox="0 0 259.575 253.081719" xmlns="http://www.w3.org/2000/svg" version="1.1">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="277.61375pt" height="271.417812pt" viewBox="0 0 277.61375 271.417812" xmlns="http://www.w3.org/2000/svg" version="1.1">
  <metadata>
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2024-10-09T12:56:18.372770</dc:date>
+    <dc:date>2024-10-22T14:55:46.589438</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -21,412 +21,480 @@
  </defs>
  <g id="figure_1">
   <g id="patch_1">
-   <path d="M 0 253.081719 
-L 259.575 253.081719 
-L 259.575 0 
+   <path d="M 0 271.417812 
+L 277.61375 271.417812 
+L 277.61375 0 
 L 0 0 
 z
 " style="fill: #ffffff"/>
   </g>
   <g id="axes_1">
    <g id="patch_2">
-    <path d="M 40.583125 214.475156 
-L 205.553125 214.475156 
-L 205.553125 34.295156 
-L 40.583125 34.295156 
+    <path d="M 42.8075 230.982187 
+L 220.4675 230.982187 
+L 220.4675 36.942187 
+L 42.8075 36.942187 
 z
 " style="fill: #ffffff"/>
    </g>
-   <g clip-path="url(#p3b33595dc0)">
+   <g clip-path="url(#p561216fd84)">
     <image xlink:href="data:image/png;base64,
-iVBORw0KGgoAAAANSUhEUgAAArAAAALvCAYAAACdnPaUAAAPCklEQVR4nO3YwW0UQRRFUaqnBuwNMZEaGREHGxIxkiVLYI0wQwZMs6q+wzkRvMVX63aNn7+er+8AACBiWz0AAAD+hYAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKTMy9tl9QbgHoyxegEA/wkvsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAEDK/PH2unoDBzdWDwDuwvA1YQd3wh5eYAEASBGwAACkCFgAAFIELAAAKQIWAIAUAQsAQIqABQAgRcACAJAiYAEASBGwAACkCFgAAFIELAAAKQIWAIAUAQsAQIqABQAgRcACAJAiYAEASBGwAACkCFgAAFIELAAAKQIWAIAUAQsAQIqABQAgRcACAJAiYAEASBGwAACkCFgAAFIELAAAKQIWAIAUAQsAQIqABQAgRcACAJAiYAEASBGwAACkCFgAAFIELAAAKQIWAIAUAQsAQIqABQAgRcACAJAiYAEASBGwAACkCFgAAFIELAAAKQIWAIAUAQsAQIqABQAgRcACAJAiYAEASBGwAACkCFgAAFIELAAAKQIWAIAUAQsAQIqABQAgRcACAJAiYAEASBGwAACkCFgAAFIELAAAKQIWAIAUAQsAQIqABQAgRcACAJAiYAEASBGwAACkCFgAAFIELAAAKQIWAIAUAQsAQIqABQAgRcACAJAiYAEASBGwAACkCFgAAFIELAAAKQIWAIAUAQsAQIqABQAgRcACAJAiYAEASBGwAACkCFgAAFIELAAAKQIWAIAUAQsAQIqABQAgRcACAJAiYAEASBGwAACkCFgAAFIELAAAKfPl8rJ6A3AHtjFWT+Dw3Ai3DXfCDl5gAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgJT59Pp99QbgDmxjrJ7AwbkR9nAl7OEFFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEiZX58uqzdwcP5y2GNuv1dP4OBO47p6AgFzcyfcpk0AAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAFAELAECKgAUAIEXAAgCQImABAEgRsAAApAhYAABSBCwAACkCFgCAlPnl28fVGzi4McbqCQTMs/9h/u58Pq2eQMBp+pZwmysBACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUsbDp8/X1SM4uDFWL6Dg8XH1Ao7u/YfVCyhwJ+zgBRYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBIEbAAAKQIWAAAUgQsAAApAhYAgBQBCwBAioAFACBFwAIAkCJgAQBI+QPtZx7U3QoQHwAAAABJRU5ErkJggg==" id="imagefbe2448fea" transform="scale(1 -1) translate(0 -180.24)" x="40.583125" y="-34.235156" width="165.12" height="180.24"/>
+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" id="image8cb7745e29" transform="scale(1 -1) translate(0 -194.16)" x="42.8075" y="-36.822187" width="177.84" height="194.16"/>
    </g>
    <g id="matplotlib.axis_1">
     <g id="xtick_1">
      <g id="line2d_1">
       <defs>
-       <path id="maa773c4a62" d="M 0 0 
+       <path id="me0323ad529" d="M 0 0 
 L 0 3.5 
 " style="stroke: #000000; stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#maa773c4a62" x="57.080125" y="214.475156" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#me0323ad529" x="55.4975" y="230.982187" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_1">
-      <text style="font: 10px 'Arial', serif; text-anchor: middle" x="57.080125" y="228.632969" transform="rotate(-0 57.080125 228.632969)">34.4</text>
+      <text style="font: 12px 'Arial', serif; text-anchor: middle" x="55.4975" y="246.571562" transform="rotate(-0 55.4975 246.571562)">35</text>
      </g>
     </g>
     <g id="xtick_2">
      <g id="line2d_2">
       <g>
-       <use xlink:href="#maa773c4a62" x="90.074125" y="214.475156" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#me0323ad529" x="80.8775" y="230.982187" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_2">
-      <text style="font: 10px 'Arial', serif; text-anchor: middle" x="90.074125" y="228.632969" transform="rotate(-0 90.074125 228.632969)">50.0</text>
+      <text style="font: 12px 'Arial', serif; text-anchor: middle" x="80.8775" y="246.571562" transform="rotate(-0 80.8775 246.571562)">70</text>
      </g>
     </g>
     <g id="xtick_3">
      <g id="line2d_3">
       <g>
-       <use xlink:href="#maa773c4a62" x="123.068125" y="214.475156" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#me0323ad529" x="106.2575" y="230.982187" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_3">
-      <text style="font: 10px 'Arial', serif; text-anchor: middle" x="123.068125" y="228.632969" transform="rotate(-0 123.068125 228.632969)">100.0</text>
+      <text style="font: 12px 'Arial', serif; text-anchor: middle" x="106.2575" y="246.571562" transform="rotate(-0 106.2575 246.571562)">100</text>
      </g>
     </g>
     <g id="xtick_4">
      <g id="line2d_4">
       <g>
-       <use xlink:href="#maa773c4a62" x="156.062125" y="214.475156" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#me0323ad529" x="131.6375" y="230.982187" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_4">
-      <text style="font: 10px 'Arial', serif; text-anchor: middle" x="156.062125" y="228.632969" transform="rotate(-0 156.062125 228.632969)">150.0</text>
+      <text style="font: 12px 'Arial', serif; text-anchor: middle" x="131.6375" y="246.571562" transform="rotate(-0 131.6375 246.571562)">125</text>
      </g>
     </g>
     <g id="xtick_5">
      <g id="line2d_5">
       <g>
-       <use xlink:href="#maa773c4a62" x="189.056125" y="214.475156" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#me0323ad529" x="157.0175" y="230.982187" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_5">
-      <text style="font: 10px 'Arial', serif; text-anchor: middle" x="189.056125" y="228.632969" transform="rotate(-0 189.056125 228.632969)">200.0</text>
+      <text style="font: 12px 'Arial', serif; text-anchor: middle" x="157.0175" y="246.571562" transform="rotate(-0 157.0175 246.571562)">150</text>
      </g>
     </g>
-    <g id="text_6">
-     <text style="font: 12px 'Arial', serif; text-anchor: middle" x="123.068125" y="243.356094" transform="rotate(-0 123.068125 243.356094)">Concentration (g/kg)</text>
+    <g id="xtick_6">
+     <g id="line2d_6">
+      <g>
+       <use xlink:href="#me0323ad529" x="182.3975" y="230.982187" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_6">
+      <text style="font: 12px 'Arial', serif; text-anchor: middle" x="182.3975" y="246.571562" transform="rotate(-0 182.3975 246.571562)">200</text>
+     </g>
+    </g>
+    <g id="xtick_7">
+     <g id="line2d_7">
+      <g>
+       <use xlink:href="#me0323ad529" x="207.7775" y="230.982187" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_7">
+      <text style="font: 12px 'Arial', serif; text-anchor: middle" x="207.7775" y="246.571562" transform="rotate(-0 207.7775 246.571562)">250</text>
+     </g>
+    </g>
+    <g id="text_8">
+     <text style="font: 12px 'Arial', serif; text-anchor: middle" x="131.6375" y="261.692187" transform="rotate(-0 131.6375 261.692187)">Concentration (g/kg)</text>
     </g>
    </g>
    <g id="matplotlib.axis_2">
     <g id="ytick_1">
-     <g id="line2d_6">
+     <g id="line2d_8">
       <defs>
-       <path id="m09e731b338" d="M 0 0 
+       <path id="m25d5986b4f" d="M 0 0 
 L -3.5 0 
 " style="stroke: #000000; stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#m09e731b338" x="40.583125" y="203.213906" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_7">
-      <text style="font: 10px 'Arial', serif; text-anchor: end" x="33.583125" y="205.799062" transform="rotate(-0 33.583125 205.799062)">25</text>
-     </g>
-    </g>
-    <g id="ytick_2">
-     <g id="line2d_7">
-      <g>
-       <use xlink:href="#m09e731b338" x="40.583125" y="180.691406" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_8">
-      <text style="font: 10px 'Arial', serif; text-anchor: end" x="33.583125" y="183.276562" transform="rotate(-0 33.583125 183.276562)">35</text>
-     </g>
-    </g>
-    <g id="ytick_3">
-     <g id="line2d_8">
-      <g>
-       <use xlink:href="#m09e731b338" x="40.583125" y="158.168906" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m25d5986b4f" x="42.8075" y="218.854687" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_9">
-      <text style="font: 10px 'Arial', serif; text-anchor: end" x="33.583125" y="160.754062" transform="rotate(-0 33.583125 160.754062)">45</text>
+      <text style="font: 12px 'Arial', serif; text-anchor: end" x="35.8075" y="221.956875" transform="rotate(-0 35.8075 221.956875)">25</text>
      </g>
     </g>
-    <g id="ytick_4">
+    <g id="ytick_2">
      <g id="line2d_9">
       <g>
-       <use xlink:href="#m09e731b338" x="40.583125" y="135.646406" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m25d5986b4f" x="42.8075" y="194.599687" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_10">
-      <text style="font: 10px 'Arial', serif; text-anchor: end" x="33.583125" y="138.231562" transform="rotate(-0 33.583125 138.231562)">55</text>
+      <text style="font: 12px 'Arial', serif; text-anchor: end" x="35.8075" y="197.701875" transform="rotate(-0 35.8075 197.701875)">35</text>
      </g>
     </g>
-    <g id="ytick_5">
+    <g id="ytick_3">
      <g id="line2d_10">
       <g>
-       <use xlink:href="#m09e731b338" x="40.583125" y="113.123906" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m25d5986b4f" x="42.8075" y="170.344687" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_11">
-      <text style="font: 10px 'Arial', serif; text-anchor: end" x="33.583125" y="115.709062" transform="rotate(-0 33.583125 115.709062)">65</text>
+      <text style="font: 12px 'Arial', serif; text-anchor: end" x="35.8075" y="173.446875" transform="rotate(-0 35.8075 173.446875)">45</text>
      </g>
     </g>
-    <g id="ytick_6">
+    <g id="ytick_4">
      <g id="line2d_11">
       <g>
-       <use xlink:href="#m09e731b338" x="40.583125" y="90.601406" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m25d5986b4f" x="42.8075" y="146.089687" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_12">
-      <text style="font: 10px 'Arial', serif; text-anchor: end" x="33.583125" y="93.186562" transform="rotate(-0 33.583125 93.186562)">75</text>
+      <text style="font: 12px 'Arial', serif; text-anchor: end" x="35.8075" y="149.191875" transform="rotate(-0 35.8075 149.191875)">55</text>
      </g>
     </g>
-    <g id="ytick_7">
+    <g id="ytick_5">
      <g id="line2d_12">
       <g>
-       <use xlink:href="#m09e731b338" x="40.583125" y="68.078906" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m25d5986b4f" x="42.8075" y="121.834687" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_13">
-      <text style="font: 10px 'Arial', serif; text-anchor: end" x="33.583125" y="70.664062" transform="rotate(-0 33.583125 70.664062)">85</text>
+      <text style="font: 12px 'Arial', serif; text-anchor: end" x="35.8075" y="124.936875" transform="rotate(-0 35.8075 124.936875)">65</text>
      </g>
     </g>
-    <g id="ytick_8">
+    <g id="ytick_6">
      <g id="line2d_13">
       <g>
-       <use xlink:href="#m09e731b338" x="40.583125" y="45.556406" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m25d5986b4f" x="42.8075" y="97.579687" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_14">
-      <text style="font: 10px 'Arial', serif; text-anchor: end" x="33.583125" y="48.141562" transform="rotate(-0 33.583125 48.141562)">95</text>
+      <text style="font: 12px 'Arial', serif; text-anchor: end" x="35.8075" y="100.681875" transform="rotate(-0 35.8075 100.681875)">75</text>
      </g>
     </g>
-    <g id="text_15">
-     <text style="font: 12px 'Arial', serif; text-anchor: middle" x="15.935625" y="124.385156" transform="rotate(-90 15.935625 124.385156)">Temperature (°C)</text>
+    <g id="ytick_7">
+     <g id="line2d_14">
+      <g>
+       <use xlink:href="#m25d5986b4f" x="42.8075" y="73.324687" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_15">
+      <text style="font: 12px 'Arial', serif; text-anchor: end" x="35.8075" y="76.426875" transform="rotate(-0 35.8075 76.426875)">85</text>
+     </g>
+    </g>
+    <g id="ytick_8">
+     <g id="line2d_15">
+      <g>
+       <use xlink:href="#m25d5986b4f" x="42.8075" y="49.069687" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_16">
+      <text style="font: 12px 'Arial', serif; text-anchor: end" x="35.8075" y="52.171875" transform="rotate(-0 35.8075 52.171875)">95</text>
+     </g>
+    </g>
+    <g id="text_17">
+     <text style="font: 12px 'Arial', serif; text-anchor: middle" x="15.935625" y="133.962187" transform="rotate(-90 15.935625 133.962187)">Temperature (°C)</text>
     </g>
    </g>
    <g id="patch_3">
-    <path d="M 40.583125 214.475156 
-L 40.583125 34.295156 
+    <path d="M 42.8075 230.982187 
+L 42.8075 36.942187 
 " style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="patch_4">
-    <path d="M 205.553125 214.475156 
-L 205.553125 34.295156 
+    <path d="M 220.4675 230.982187 
+L 220.4675 36.942187 
 " style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="patch_5">
-    <path d="M 40.583125 214.475156 
-L 205.553125 214.475156 
+    <path d="M 42.8075 230.982187 
+L 220.4675 230.982187 
 " style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="patch_6">
-    <path d="M 40.583125 34.295156 
-L 205.553125 34.295156 
+    <path d="M 42.8075 36.942187 
+L 220.4675 36.942187 
 " style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="text_16">
-    <text style="font: 10px 'Arial', serif; text-anchor: middle" x="32.334625" y="14.357812" transform="rotate(-0 32.334625 14.357812)">A</text>
-   </g>
-   <g id="text_17">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="57.080125" y="204.765" transform="rotate(-0 57.080125 204.765)">3.1</text>
-   </g>
    <g id="text_18">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="90.074125" y="204.765" transform="rotate(-0 90.074125 204.765)">3.0</text>
+    <text style="font: 12px 'Arial', serif; text-anchor: middle" x="36.4625" y="15.789375" transform="rotate(-0 36.4625 15.789375)">A</text>
    </g>
    <g id="text_19">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="123.068125" y="204.765" transform="rotate(-0 123.068125 204.765)">3.0</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="55.4975" y="221.181328" transform="rotate(-0 55.4975 221.181328)">3.1</text>
    </g>
    <g id="text_20">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="156.062125" y="204.765" transform="rotate(-0 156.062125 204.765)">2.9</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="80.8775" y="221.181328" transform="rotate(-0 80.8775 221.181328)">3.0</text>
    </g>
    <g id="text_21">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="189.056125" y="204.765" transform="rotate(-0 189.056125 204.765)">2.9</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="106.2575" y="221.181328" transform="rotate(-0 106.2575 221.181328)">3.0</text>
    </g>
    <g id="text_22">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="57.080125" y="182.2425" transform="rotate(-0 57.080125 182.2425)">5.5</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="131.6375" y="221.181328" transform="rotate(-0 131.6375 221.181328)">2.9</text>
    </g>
    <g id="text_23">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="90.074125" y="182.2425" transform="rotate(-0 90.074125 182.2425)">5.4</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="157.0175" y="221.181328" transform="rotate(-0 157.0175 221.181328)">2.9</text>
    </g>
    <g id="text_24">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="123.068125" y="182.2425" transform="rotate(-0 123.068125 182.2425)">5.3</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="182.3975" y="221.181328" transform="rotate(-0 182.3975 221.181328)">2.8</text>
    </g>
    <g id="text_25">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="156.062125" y="182.2425" transform="rotate(-0 156.062125 182.2425)">5.2</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="207.7775" y="221.181328" transform="rotate(-0 207.7775 221.181328)">2.6</text>
    </g>
    <g id="text_26">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="189.056125" y="182.2425" transform="rotate(-0 189.056125 182.2425)">5.1</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="55.4975" y="196.926328" transform="rotate(-0 55.4975 196.926328)">5.5</text>
    </g>
    <g id="text_27">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="57.080125" y="159.72" transform="rotate(-0 57.080125 159.72)">9.3</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="80.8775" y="196.926328" transform="rotate(-0 80.8775 196.926328)">5.3</text>
    </g>
    <g id="text_28">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="90.074125" y="159.72" transform="rotate(-0 90.074125 159.72)">9.2</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="106.2575" y="196.926328" transform="rotate(-0 106.2575 196.926328)">5.2</text>
    </g>
    <g id="text_29">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="123.068125" y="159.72" transform="rotate(-0 123.068125 159.72)">9.0</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="131.6375" y="196.926328" transform="rotate(-0 131.6375 196.926328)">5.2</text>
    </g>
    <g id="text_30">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="156.062125" y="159.72" transform="rotate(-0 156.062125 159.72)">8.8</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="157.0175" y="196.926328" transform="rotate(-0 157.0175 196.926328)">5.1</text>
    </g>
    <g id="text_31">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="189.056125" y="159.72" transform="rotate(-0 189.056125 159.72)">8.6</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="182.3975" y="196.926328" transform="rotate(-0 182.3975 196.926328)">4.9</text>
    </g>
    <g id="text_32">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="57.080125" y="137.1975" transform="rotate(-0 57.080125 137.1975)">15</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="207.7775" y="196.926328" transform="rotate(-0 207.7775 196.926328)">4.7</text>
    </g>
    <g id="text_33">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="90.074125" y="137.1975" transform="rotate(-0 90.074125 137.1975)">15</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="55.4975" y="172.671328" transform="rotate(-0 55.4975 172.671328)">9.3</text>
    </g>
    <g id="text_34">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="123.068125" y="137.1975" transform="rotate(-0 123.068125 137.1975)">15</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="80.8775" y="172.671328" transform="rotate(-0 80.8775 172.671328)">9.1</text>
    </g>
    <g id="text_35">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="156.062125" y="137.1975" transform="rotate(-0 156.062125 137.1975)">14</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="106.2575" y="172.671328" transform="rotate(-0 106.2575 172.671328)">8.9</text>
    </g>
    <g id="text_36">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="189.056125" y="137.1975" transform="rotate(-0 189.056125 137.1975)">14</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="131.6375" y="172.671328" transform="rotate(-0 131.6375 172.671328)">8.8</text>
    </g>
    <g id="text_37">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="57.080125" y="114.675" transform="rotate(-0 57.080125 114.675)">24</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="157.0175" y="172.671328" transform="rotate(-0 157.0175 172.671328)">8.6</text>
    </g>
    <g id="text_38">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="90.074125" y="114.675" transform="rotate(-0 90.074125 114.675)">24</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="182.3975" y="172.671328" transform="rotate(-0 182.3975 172.671328)">8.3</text>
    </g>
    <g id="text_39">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="123.068125" y="114.675" transform="rotate(-0 123.068125 114.675)">23</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="207.7775" y="172.671328" transform="rotate(-0 207.7775 172.671328)">8.0</text>
    </g>
    <g id="text_40">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="156.062125" y="114.675" transform="rotate(-0 156.062125 114.675)">23</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="55.4975" y="148.416328" transform="rotate(-0 55.4975 148.416328)">15</text>
    </g>
    <g id="text_41">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="189.056125" y="114.675" transform="rotate(-0 189.056125 114.675)">23</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="80.8775" y="148.416328" transform="rotate(-0 80.8775 148.416328)">15</text>
    </g>
    <g id="text_42">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="57.080125" y="92.1525" transform="rotate(-0 57.080125 92.1525)">37</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="106.2575" y="148.416328" transform="rotate(-0 106.2575 148.416328)">15</text>
    </g>
    <g id="text_43">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="90.074125" y="92.1525" transform="rotate(-0 90.074125 92.1525)">37</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="131.6375" y="148.416328" transform="rotate(-0 131.6375 148.416328)">14</text>
    </g>
    <g id="text_44">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="123.068125" y="92.1525" transform="rotate(-0 123.068125 92.1525)">36</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="157.0175" y="148.416328" transform="rotate(-0 157.0175 148.416328)">14</text>
    </g>
    <g id="text_45">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="156.062125" y="92.1525" transform="rotate(-0 156.062125 92.1525)">35</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="182.3975" y="148.416328" transform="rotate(-0 182.3975 148.416328)">14</text>
    </g>
    <g id="text_46">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="189.056125" y="92.1525" transform="rotate(-0 189.056125 92.1525)">35</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="207.7775" y="148.416328" transform="rotate(-0 207.7775 148.416328)">13</text>
    </g>
    <g id="text_47">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="57.080125" y="69.63" transform="rotate(-0 57.080125 69.63)">56</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="55.4975" y="124.161328" transform="rotate(-0 55.4975 124.161328)">24</text>
    </g>
    <g id="text_48">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="90.074125" y="69.63" transform="rotate(-0 90.074125 69.63)">55</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="80.8775" y="124.161328" transform="rotate(-0 80.8775 124.161328)">24</text>
    </g>
    <g id="text_49">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="123.068125" y="69.63" transform="rotate(-0 123.068125 69.63)">54</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="106.2575" y="124.161328" transform="rotate(-0 106.2575 124.161328)">23</text>
    </g>
    <g id="text_50">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="156.062125" y="69.63" transform="rotate(-0 156.062125 69.63)">53</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="131.6375" y="124.161328" transform="rotate(-0 131.6375 124.161328)">23</text>
    </g>
    <g id="text_51">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="189.056125" y="69.63" transform="rotate(-0 189.056125 69.63)">52</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="157.0175" y="124.161328" transform="rotate(-0 157.0175 124.161328)">23</text>
    </g>
    <g id="text_52">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="57.080125" y="47.1075" transform="rotate(-0 57.080125 47.1075)">81</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="182.3975" y="124.161328" transform="rotate(-0 182.3975 124.161328)">22</text>
    </g>
    <g id="text_53">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="90.074125" y="47.1075" transform="rotate(-0 90.074125 47.1075)">81</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="207.7775" y="124.161328" transform="rotate(-0 207.7775 124.161328)">21</text>
    </g>
    <g id="text_54">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="123.068125" y="47.1075" transform="rotate(-0 123.068125 47.1075)">79</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="55.4975" y="99.906328" transform="rotate(-0 55.4975 99.906328)">37</text>
    </g>
    <g id="text_55">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="156.062125" y="47.1075" transform="rotate(-0 156.062125 47.1075)">77</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="80.8775" y="99.906328" transform="rotate(-0 80.8775 99.906328)">37</text>
    </g>
    <g id="text_56">
-    <text style="font: 6px 'Arial', serif; text-anchor: middle" x="189.056125" y="47.1075" transform="rotate(-0 189.056125 47.1075)">76</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="106.2575" y="99.906328" transform="rotate(-0 106.2575 99.906328)">36</text>
    </g>
    <g id="text_57">
-    <text style="font: 12px 'Arial', serif; text-anchor: middle" x="123.068125" y="28.295156" transform="rotate(-0 123.068125 28.295156)">Reaktoro</text>
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="131.6375" y="99.906328" transform="rotate(-0 131.6375 99.906328)">35</text>
+   </g>
+   <g id="text_58">
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="157.0175" y="99.906328" transform="rotate(-0 157.0175 99.906328)">35</text>
+   </g>
+   <g id="text_59">
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="182.3975" y="99.906328" transform="rotate(-0 182.3975 99.906328)">34</text>
+   </g>
+   <g id="text_60">
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="207.7775" y="99.906328" transform="rotate(-0 207.7775 99.906328)">32</text>
+   </g>
+   <g id="text_61">
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="55.4975" y="75.651328" transform="rotate(-0 55.4975 75.651328)">56</text>
+   </g>
+   <g id="text_62">
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="80.8775" y="75.651328" transform="rotate(-0 80.8775 75.651328)">55</text>
+   </g>
+   <g id="text_63">
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="106.2575" y="75.651328" transform="rotate(-0 106.2575 75.651328)">54</text>
+   </g>
+   <g id="text_64">
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="131.6375" y="75.651328" transform="rotate(-0 131.6375 75.651328)">53</text>
+   </g>
+   <g id="text_65">
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="157.0175" y="75.651328" transform="rotate(-0 157.0175 75.651328)">52</text>
+   </g>
+   <g id="text_66">
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="182.3975" y="75.651328" transform="rotate(-0 182.3975 75.651328)">50</text>
+   </g>
+   <g id="text_67">
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="207.7775" y="75.651328" transform="rotate(-0 207.7775 75.651328)">48</text>
+   </g>
+   <g id="text_68">
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="55.4975" y="51.396328" transform="rotate(-0 55.4975 51.396328)">81</text>
+   </g>
+   <g id="text_69">
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="80.8775" y="51.396328" transform="rotate(-0 80.8775 51.396328)">80</text>
+   </g>
+   <g id="text_70">
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="106.2575" y="51.396328" transform="rotate(-0 106.2575 51.396328)">78</text>
+   </g>
+   <g id="text_71">
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="131.6375" y="51.396328" transform="rotate(-0 131.6375 51.396328)">77</text>
+   </g>
+   <g id="text_72">
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="157.0175" y="51.396328" transform="rotate(-0 157.0175 51.396328)">76</text>
+   </g>
+   <g id="text_73">
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="182.3975" y="51.396328" transform="rotate(-0 182.3975 51.396328)">73</text>
+   </g>
+   <g id="text_74">
+    <text style="font: 9px 'Arial', serif; text-anchor: middle" x="207.7775" y="51.396328" transform="rotate(-0 207.7775 51.396328)">71</text>
+   </g>
+   <g id="text_75">
+    <text style="font: 14.4px 'Arial', serif; text-anchor: middle" x="131.6375" y="30.942187" transform="rotate(-0 131.6375 30.942187)">Reaktoro</text>
    </g>
   </g>
   <g id="axes_2">
    <g id="patch_7">
-    <path d="M 211.403125 210.965156 
-L 217.253125 210.965156 
-L 217.253125 35.465156 
-L 211.403125 35.465156 
+    <path d="M 226.7675 227.202187 
+L 233.0675 227.202187 
+L 233.0675 38.202187 
+L 226.7675 38.202187 
 z
 " style="fill: #ffffff"/>
    </g>
    <image xlink:href="data:image/png;base64,
-iVBORw0KGgoAAAANSUhEUgAAABgAAALcCAYAAAD9kXBzAAADEklEQVR4nO3cQW4UQRBE0THq+5+VHRs0zQ38F6hditH7ByDkzIjszAL89efv7/v1IL+e/MN/ROC6X49W6BNK9HCFPqFEXFQoUXI9nLNPKNHrHneRHCRykOznQNDOCwhawkXJ/iySg0QOkutezwGB8wKClihRsv9mp8mJtSXhomR/fRe08wKCluwHTQ4SOUiUKNlf37novIASJftB0+REiZLrpUTB9fD2/gkl4qLCLEr2r8z9S18Ozgvs58AH57yAf5VA4P/ZH9f7P4G15byAb3IiaIm1JfHakuwHTQ4SH5zE2pLsjwpBOy9gXCf7ry1ykMhBsp+D50v0fljgA0pkbSncycm+izQ52W8yF50X4KLkenNRwEXJ/pXpwkn2m8xF5wW4KOGixGtLsr+2uHCS/SZz0XkBLkq4KLneXBTsu8ioSFw4iQsn4aKEixJ3cnLd99ejAkbFeYHrvd5kLjovwEUJFyX7R+BPrC3jQdPkxDRNTNNkf313BJ4X4KJk30WanOw3mYvOC1hbEstvwkXJvos0OfGUkOznQNDOC3BRwkXJ/n3gCEz2m8xF5wW4KPH/kxMuSvZPqP2/Edfk8wIunISLEkdgImjJftA0Odlv8k9MUy76Hkdg4ghMuCjZd5FXx2S/ydaW8wKW38SdnHBRsj+L9n8COTgvYJomXJSYRYn7INl/SvC7cxIlSkzT5LofnhWfUCJBCwQt2XeRUZHsL15ycF5AiRIfnMS4TvaDJgfJfpONivMCgpZcb0ELzKJkP2imaSIHyX4OuOi8gFmU7AdNDhK7abKfA9P0vAAXJcZ1sl8iOUj2m8xF5wV8kxP/KiExi5L9EpmmyX6Tuei8gG9ywkWJWZTsu0iTE2/XyX4OBO28wHU//Nt5PqFEXBTszyJNTpQo2c8BF50X8HadeG1J9meRUZFcLyUKrtfDJ84nlMg0DQQtEbRk30VGRSIHyX4OlOi8wPV6C9r3cFGyXyIfnMTakuznQNDOC3BRYhYl+0GTg2S/yUbFeQFBSwQt4aJkfxbJQSIHiRIlHmYTLkr+AVo1/okDWK2WAAAAAElFTkSuQmCC" id="image63d0db3796" transform="scale(1 -1) translate(0 -175.68)" x="211.44" y="-35.28" width="5.76" height="175.68"/>
+iVBORw0KGgoAAAANSUhEUgAAABoAAAMUCAYAAACiqDcjAAADA0lEQVR4nO3cS45bMQxFQXWg/a81s0yCp97DGQiEULUBAvIl9bHhn3///551wZ8bRa4W2mddWbkXl+7Syr24dFI3vpDPKNuXBsOLS7eO1DUaNtOwmYbNNGymYTOpy8y6TMNmGjbbR8Mq9GwhkyGzdJl370zqMgfITOoyN75Mw2YaNtOwmYbNNOz8Qj6jzI0vk7rM0mUaNpO6zNJle1m6aF+68L24dFJXmXWZd4bM69b8QiZDZjJktvLMj8QUul/INpFZuswBMnM4yTRs5lyXeRjMNGymYecXspVnDpCZoZpp2Mx+lHkYzDRspmEzDZvt71KhB5fOua7yRJNJ3fxC4p2JdyZ1mdRl+5O6SOoy7wyZy3ImdZnUZVKXSV3mYXB+IQfIzGU5k7pM6jKpy6Qu25/URVKXmXWZy3LmspxJXSZ18wt5C8r2OT9XCr24dJcKPbh0n9RFUpdJXSZ1mXeGbH9LwzZSl9kmMttE5iI2v5B3hky8M6nLpC6TukzqMgfIzLUlk7pM6jKpy7xuZRp2fiGTIRPvTOoyN77MO0MmdZnUZVKX+S+aTOoyl+XMD5AyqZtfyGU5E+/MO0OmYTMNm0ldJnXZPs7ekXeGzDtDJnWZ1GVe8ucXEu/MATJzbck80WRSl5l1maXLNGxmm8ikLjPrMhexzOtW5i805xfyGWX2o2yfS1P1xaXTsJGGzaQuM+syZ+9Mw2aWLrPDZraJTMPOL2QyZOKdGaqZhs32p2Ejsy7TsJltItOwmYbNpC4z6zINO7+QyZC5tmQmQ2Y/yqQus01kli7TsJnUZVKXOZxkfruVmXXzC/mMMvtRJnWZ1GVOQZnUZWZdJnWZ1GW+P8o0bKZhs30u/Yfme0sn3vMLGaqZ1GWWLtOwmdRlvqjKPAxmZl1m1mV7Wbpor0u35ReXzjYxvZDJkJkMmdRlhmqmYTMNm1m6bK9PwzZSl1m6zA6bOddlGnZ+IZMhE+/MUM00bKZhM6nLzLpMw2YaNpO6zKzLNGymYecX8hllvm3JpC77BfMh/vmKW9tmAAAAAElFTkSuQmCC" id="imageaa61adfb31" transform="scale(1 -1) translate(0 -189.12)" x="226.8" y="-37.92" width="6.24" height="189.12"/>
    <g id="matplotlib.axis_3"/>
    <g id="matplotlib.axis_4">
     <g id="ytick_9">
-     <g id="line2d_14">
+     <g id="line2d_16">
       <defs>
-       <path id="m9225b74fec" d="M 0 0 
+       <path id="me530d0e01c" d="M 0 0 
 L 3.5 0 
 " style="stroke: #000000; stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#m9225b74fec" x="217.253125" y="210.640774" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#me530d0e01c" x="233.0675" y="226.334744" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
-     <g id="text_58">
-      <text style="font: 10px 'Arial', serif; text-anchor: start" x="224.253125" y="214.21968" transform="rotate(-0 224.253125 214.21968)">3</text>
+     <g id="text_76">
+      <text style="font: 12px 'Arial', serif; text-anchor: start" x="240.0675" y="230.629431" transform="rotate(-0 240.0675 230.629431)">3</text>
      </g>
     </g>
     <g id="ytick_10">
-     <g id="line2d_15">
+     <g id="line2d_17">
       <g>
-       <use xlink:href="#m9225b74fec" x="217.253125" y="168.154551" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#me530d0e01c" x="233.0675" y="180.678933" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
-     <g id="text_59">
-      <text style="font: 10px 'Arial', serif; text-anchor: start" x="224.253125" y="171.733457" transform="rotate(-0 224.253125 171.733457)">22</text>
+     <g id="text_77">
+      <text style="font: 12px 'Arial', serif; text-anchor: start" x="240.0675" y="184.97362" transform="rotate(-0 240.0675 184.97362)">22</text>
      </g>
     </g>
     <g id="ytick_11">
-     <g id="line2d_16">
+     <g id="line2d_18">
       <g>
-       <use xlink:href="#m9225b74fec" x="217.253125" y="123.432211" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#me530d0e01c" x="233.0675" y="132.620184" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
-     <g id="text_60">
-      <text style="font: 10px 'Arial', serif; text-anchor: start" x="224.253125" y="127.011117" transform="rotate(-0 224.253125 127.011117)">42</text>
+     <g id="text_78">
+      <text style="font: 12px 'Arial', serif; text-anchor: start" x="240.0675" y="136.914871" transform="rotate(-0 240.0675 136.914871)">42</text>
      </g>
     </g>
     <g id="ytick_12">
-     <g id="line2d_17">
+     <g id="line2d_19">
       <g>
-       <use xlink:href="#m9225b74fec" x="217.253125" y="78.70987" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#me530d0e01c" x="233.0675" y="84.561435" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
-     <g id="text_61">
-      <text style="font: 10px 'Arial', serif; text-anchor: start" x="224.253125" y="82.288777" transform="rotate(-0 224.253125 82.288777)">62</text>
+     <g id="text_79">
+      <text style="font: 12px 'Arial', serif; text-anchor: start" x="240.0675" y="88.856122" transform="rotate(-0 240.0675 88.856122)">62</text>
      </g>
     </g>
     <g id="ytick_13">
-     <g id="line2d_18">
+     <g id="line2d_20">
       <g>
-       <use xlink:href="#m9225b74fec" x="217.253125" y="36.223647" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#me530d0e01c" x="233.0675" y="38.905623" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
-     <g id="text_62">
-      <text style="font: 10px 'Arial', serif; text-anchor: start" x="224.253125" y="39.802553" transform="rotate(-0 224.253125 39.802553)">81</text>
+     <g id="text_80">
+      <text style="font: 12px 'Arial', serif; text-anchor: start" x="240.0675" y="43.200311" transform="rotate(-0 240.0675 43.200311)">81</text>
      </g>
     </g>
-    <g id="text_63">
-     <text style="font: 12px 'Arial', serif; text-anchor: middle" x="243.639375" y="123.215156" transform="rotate(-270 243.639375 123.215156)">Vapor Pressure (kPa)</text>
+    <g id="text_81">
+     <text style="font: 12px 'Arial', serif; text-anchor: middle" x="261.678125" y="132.702187" transform="rotate(-270 261.678125 132.702187)">Vapor pressure (kPa)</text>
     </g>
    </g>
    <g id="LineCollection_1"/>
    <g id="patch_8">
-    <path d="M 211.403125 210.965156 
-L 214.328125 210.965156 
-L 217.253125 210.965156 
-L 217.253125 35.465156 
-L 214.328125 35.465156 
-L 211.403125 35.465156 
-L 211.403125 210.965156 
+    <path d="M 226.7675 227.202187 
+L 229.9175 227.202187 
+L 233.0675 227.202187 
+L 233.0675 38.202187 
+L 229.9175 38.202187 
+L 226.7675 38.202187 
+L 226.7675 227.202187 
 z
 " style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
   </g>
  </g>
  <defs>
-  <clipPath id="p3b33595dc0">
-   <rect x="40.583125" y="34.295156" width="164.97" height="180.18"/>
+  <clipPath id="p561216fd84">
+   <rect x="42.8075" y="36.942187" width="177.66" height="194.04"/>
   </clipPath>
  </defs>
 </svg>

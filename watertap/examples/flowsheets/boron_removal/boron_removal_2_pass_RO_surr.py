@@ -17,6 +17,7 @@ from pyomo.environ import (
     Objective,
     Param,
     Var,
+    log10,
     TransformationFactory,
     assert_optimal_termination,
     units as pyunits,
@@ -71,7 +72,7 @@ def main():
     print("\n***---Optimization results---***")
     display_system(m)
     display_design(m)
-    # display_state(m)
+    display_state(m)
 
 
 def build():
@@ -103,6 +104,12 @@ def build():
     m.fs.disposal1 = Product(property_package=m.fs.properties)
     
     # 2nd Stage
+    m.fs.M2 = Mixer(
+        property_package=m.fs.properties,
+        momentum_mixing_type=MomentumMixingType.equality,
+        inlet_list=["RO1_perm"],
+    )
+    # m.fs.M2.pressure_equality_constraints[0, 2].deactivate()
     m.fs.P2 = Pump(property_package=m.fs.properties)
     m.fs.RO2 = ReverseOsmosis0D(
         property_package=m.fs.properties,
@@ -119,7 +126,7 @@ def build():
 
     # # vars
     m.fs.HCl = Var(initialize=20, bounds=(0,None), doc="HCl dosing rate mg/kg w")
-    m.fs.pH_RO1_feed = Var(initialize=6, bounds=(5.5, 6.5), doc="pH after HCl addition")
+    m.fs.pH_RO1_feed = Var(initialize=6, bounds=(4, 7), doc="pH after HCl addition")
     m.fs.pH_RO1_feed.fix(5.5)
 
     # create input and output variable object lists for flowsheet
@@ -142,6 +149,7 @@ def build():
     m.fs.boron_2rej = Var(initialize=0.75, bounds=(0, 1))
     m.fs.NaOH = Var(initialize=5, bounds=(0,None), doc="NaOH dosing rate mg/ kg w")
     m.fs.pH_RO2_feed = Var(initialize=8, bounds=(7.5,12.5), doc="pH after NaOH addition")
+    m.fs.pH_recycle = Var(initialize=8, bounds=(4,13), doc="pH of recycle")
     m.fs.boron_limit = Param(initialize= 0.5/1000, mutable = True, doc= "boron limit g/ kg w")
 
     # create input and output variable object lists for flowsheet
@@ -158,32 +166,34 @@ def build():
             m.fs.boron_RO1_perm == m.fs.boron_RO1_inlet * (1 - m.fs.boron_1rej)
         )
     )
-    # high pH regression for boron rej -- 1 membrane
+    # # high pH regression for boron rej -- 1 membrane
+    # m.fs.eq_boron_rej2 = Constraint(
+    #     expr=(
+    #         m.fs.boron_2rej
+    #         == (
+    #             - 4.2628 * m.fs.pH_RO2_feed ** 2
+    #             + 96.05 * m.fs.pH_RO2_feed 
+    #             - 442.79
+    #         )
+    #         / 100
+    #     )
+    # )
+
+    # brackish water membrane rejection
+    m.fs.rej2_uncertain = Param(initialize= 1, mutable = True, doc= "uncertainty multiplier")
     m.fs.eq_boron_rej2 = Constraint(
         expr=(
             m.fs.boron_2rej
-            == (
-                - 4.2628 * m.fs.pH_RO2_feed ** 2
-                + 96.05 * m.fs.pH_RO2_feed 
-                - 442.79
+            == m.fs.rej2_uncertain *(
+                - 0.7007 * m.fs.pH_RO2_feed ** 3
+                + 19.64 * m.fs.pH_RO2_feed ** 2
+                - 168.07 * m.fs.pH_RO2_feed 
+                + 499.28
             )
             / 100
         )
     )
 
-    # # brackish water membrane rejection
-    # m.fs.eq_boron_rej2 = Constraint(
-    #     expr=(
-    #         m.fs.boron_2rej
-    #         == (
-    #             - 0.7007 * m.fs.pH_RO2_feed ** 3
-    #             + 19.64 * m.fs.pH_RO2_feed ** 2
-    #             - 168.07 * m.fs.pH_RO2_feed 
-    #             + 499.28
-    #         )
-    #         / 100
-    #     )
-    # )
     m.fs.boron_1rej.fix(0.50)
    
     m.fs.eq_boron_RO2_quality = Constraint(
@@ -197,15 +207,21 @@ def build():
             m.fs.boron_RO1_inlet == m.fs.boron_feed + (m.fs.boron_RO1_perm * m.fs.boron_2rej)
         )
     )
+    m.fs.eq_recycle_pH = Constraint(
+        expr=(
+            m.fs.pH_recycle == -log10((10**(-m.fs.pH_RO2_feed) - 10**(-(m.fs.pH_RO2_feed+1))))
+        )
+    )
 
     # --------- Connections ---------
     # 1st Stage
     m.fs.s00 = Arc(source=m.fs.feed.outlet, destination=m.fs.M1.feed)
     m.fs.s01 = Arc(source=m.fs.M1.outlet, destination=m.fs.P1.inlet)
     m.fs.s02 = Arc(source=m.fs.P1.outlet, destination=m.fs.RO1.inlet)
-    m.fs.s03 = Arc(source=m.fs.RO1.permeate, destination=m.fs.P2.inlet)
+    m.fs.s03 = Arc(source=m.fs.RO1.permeate, destination=m.fs.M2.RO1_perm)
     m.fs.s04 = Arc(source=m.fs.RO1.retentate, destination=m.fs.disposal1.inlet)
     # 2nd Stage
+    m.fs.s08 = Arc(source=m.fs.M2.outlet, destination=m.fs.P2.inlet)
     m.fs.s05 = Arc(source=m.fs.P2.outlet, destination=m.fs.RO2.inlet)
     m.fs.s06 = Arc(source=m.fs.RO2.permeate, destination=m.fs.product.inlet)
     m.fs.s07 = Arc(source=m.fs.RO2.retentate, destination=m.fs.M1.recycle)
@@ -217,13 +233,15 @@ def build():
     m.fs.P1.costing = UnitModelCostingBlock(flowsheet_costing_block=m.fs.costing)
     m.fs.RO1.costing = UnitModelCostingBlock(flowsheet_costing_block=m.fs.costing)
     # costing (2nd stage)
+    m.fs.M2.costing = UnitModelCostingBlock(flowsheet_costing_block=m.fs.costing)
     m.fs.P2.costing = UnitModelCostingBlock(flowsheet_costing_block=m.fs.costing)
     m.fs.RO2.costing = UnitModelCostingBlock(flowsheet_costing_block=m.fs.costing)
+    
+    # base addition
     m.fs.costing.NaOH_cost = Param(
         initialize=0.5, units=m.fs.costing.base_currency / pyunits.kg, mutable=True
     )
     m.fs.costing.register_flow_type("NaOH", m.fs.costing.NaOH_cost)
-
     naoh = (m.fs.NaOH * 1e-6) # mg to kg
     water1 = (m.fs.RO1.permeate.flow_mass_phase_comp[0, "Liq", "H2O"])
     m.fs.costing.cost_flow(
@@ -233,7 +251,7 @@ def build():
         ),
         "NaOH",
     )
-
+    # acid addition
     m.fs.costing.HCl_cost = Param(
         initialize=0.5, units=m.fs.costing.base_currency / pyunits.kg, mutable=True
     )
@@ -323,10 +341,10 @@ def set_operating_conditions(m, water_recovery=0.5, over_pressure=0.3, solver=No
 
     # Assume these are the same as RO1?
     # BWRO
-    # m.fs.RO2.A_comp.fix(3 / (3600 * 1000 * 1e5))  # membrane water permeability coefficient [m/s-Pa]
-    # m.fs.RO2.B_comp.fix(0.15 / (3600 * 1000))  # membrane salt permeability coefficient [m/s]
-    m.fs.RO2.A_comp.fix(4.2e-12)  # membrane water permeability coefficient [m/s-Pa]
-    m.fs.RO2.B_comp.fix(3.5e-8)  # membrane salt permeability coefficient [m/s]
+    m.fs.RO2.A_comp.fix(3 / (3600 * 1000 * 1e5))  # membrane water permeability coefficient [m/s-Pa]
+    m.fs.RO2.B_comp.fix(0.15 / (3600 * 1000))  # membrane salt permeability coefficient [m/s]
+    # m.fs.RO2.A_comp.fix(4.2e-12)  # membrane water permeability coefficient [m/s-Pa]
+    # m.fs.RO2.B_comp.fix(3.5e-8)  # membrane salt permeability coefficient [m/s]
     m.fs.RO2.feed_side.channel_height.fix(1e-3)  # channel height in membrane stage [m]
     m.fs.RO2.feed_side.spacer_porosity.fix(
         0.97
@@ -567,6 +585,8 @@ def display_design(m):
     print("---RO2---")
     print("RO2 operating pressure %.1f bar" % (m.fs.RO2.inlet.pressure[0].value / 1e5))
     print("RO2 membrane area %.1f m2" % (m.fs.RO2.area.value))
+    print("Operating pH of RO2 retentate (recycle): %.1f " %(m.fs.pH_recycle.value))
+   
     # print("RO2 width %.1f m2" % (m.fs.RO2.width.value))
   
 

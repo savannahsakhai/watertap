@@ -20,17 +20,17 @@ def build_boron_removal_cost_param_block(blk):
     blk.capital_cost_vessel = pyo.Param(
         initialize=100,
         units=pyo.units.USD_2021 / pyo.units.m**3,
-        doc="place holder cost vessel",
+        doc="cost vessel",
     )
-    blk.capital_cost_caustic_addition = pyo.Param(
-        initialize=0.5,
-        units=pyo.units.USD_2021 / pyo.units.kg,
-        doc="place holder cost chemical addition",
-    )
+    # blk.capital_cost_caustic_addition = pyo.Param(
+    #     initialize=0.5,
+    #     units=pyo.units.USD_2021 / pyo.units.kg,
+    #     doc="place holder cost chemical addition",
+    # )
     blk.residence_time_vessel = pyo.Param(
         initialize=1200,
         units=pyo.units.seconds,
-        doc="place holder cost vessel",
+        doc="residence time based sizing",
     )
 
 
@@ -42,28 +42,17 @@ def cost_boron_removal(blk):
     make_capital_cost_var(blk)
     blk.costing_package.add_cost_factor(blk, "TIC")
 
-    rxr_vol = (
-        pyo.units.convert(
-            blk.unit_model.control_volume.properties_out[0].flow_vol_phase["Liq"],
-            to_units=pyo.units.m**3 / pyo.units.s,
-        )
-        * blk.costing_package.boron_removal.residence_time_vessel
-    )
-
     blk.capital_cost_constraint = pyo.Constraint(
         expr=(
             blk.capital_cost
             == blk.cost_factor
+            * blk.costing_package.boron_removal.capital_cost_vessel 
             * (
-                (
-                    blk.costing_package.boron_removal.capital_cost_caustic_addition
-                    * pyo.units.convert(
-                        blk.unit_model.caustic_dose_rate[0],
-                        to_units=pyo.units.kg / pyo.units.day,
-                    )
-                    * (8000 * pyo.units.day)  # num of days
-                )
-                + (blk.costing_package.boron_removal.capital_cost_vessel * rxr_vol)
+            pyo.units.convert(
+                blk.unit_model.control_volume.properties_out[0].flow_vol_phase["Liq"],
+                to_units=pyo.units.m**3 / pyo.units.s,
+            )
+            * blk.costing_package.boron_removal.residence_time_vessel
+            )
             )
         )
-    )

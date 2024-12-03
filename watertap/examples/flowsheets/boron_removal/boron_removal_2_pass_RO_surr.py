@@ -122,16 +122,18 @@ def build():
     m.fs.product = Product(property_package=m.fs.properties)
 
     # acidification -- surrogate
-    acid_add_surr = PysmoSurrogate.load_from_file(r'G:\My Drive\Research\Dev\Boron Surrogate\Surrogate Gen\Acid pH -- recycle,hcl\pysmo_rbf_spline_surrogate_phreeqc_acid.json')
+    acid_add_surr = PysmoSurrogate.load_from_file(r'G:\My Drive\Research\Dev\Boron Surrogate\Surrogate Gen\Acid pH -- updated\pysmo_rbf_spline_surrogate_phreeqc_acid_updated.json')
 
     # # vars
+    m.fs.pH_recycle = Var(initialize=8, bounds=(4,13), doc="pH of recycle")
+    m.fs.pH_mix = Var(initialize=8, bounds=(4,13), doc="pH of recycle + feed mix")
     m.fs.HCl = Var(initialize=20, bounds=(0,None), doc="HCl dosing rate mg/kg w")
     m.fs.pH_RO1_feed = Var(initialize=6, bounds=(4, 7), doc="pH after HCl addition")
     m.fs.pH_RO1_feed.fix(5.5)
 
     # create input and output variable object lists for flowsheet
-    inputs_acid = [m.fs.HCl]
-    outputs_acid = [m.fs.pH_RO1_feed]
+    inputs_acid = [m.fs.pH_recycle,m.fs.HCl]
+    outputs_acid = [m.fs.pH_mix, m.fs.pH_RO1_feed]
     
     # create the Pyomo/IDAES block that corresponds to the surrogate
     m.fs.acid_add = SurrogateBlock(concrete=True)
@@ -149,7 +151,6 @@ def build():
     m.fs.boron_2rej = Var(initialize=0.75, bounds=(0, 1))
     m.fs.NaOH = Var(initialize=5, bounds=(0,None), doc="NaOH dosing rate mg/ kg w")
     m.fs.pH_RO2_feed = Var(initialize=8, bounds=(7.5,12.5), doc="pH after NaOH addition")
-    m.fs.pH_recycle = Var(initialize=8, bounds=(4,13), doc="pH of recycle")
     m.fs.boron_limit = Param(initialize= 0.5/1000, mutable = True, doc= "boron limit g/ kg w")
 
     # create input and output variable object lists for flowsheet
@@ -184,7 +185,7 @@ def build():
     m.fs.eq_boron_rej2 = Constraint(
         expr=(
             m.fs.boron_2rej
-            == m.fs.rej2_uncertain *(
+            == (
                 - 0.7007 * m.fs.pH_RO2_feed ** 3
                 + 19.64 * m.fs.pH_RO2_feed ** 2
                 - 168.07 * m.fs.pH_RO2_feed 
@@ -198,13 +199,12 @@ def build():
    
     m.fs.eq_boron_RO2_quality = Constraint(
         expr=(
-            m.fs.boron_RO1_perm * (1 - m.fs.boron_2rej) <= m.fs.boron_limit
+            m.fs.boron_RO1_perm * m.fs.rej2_uncertain * (1 - m.fs.boron_2rej) <= m.fs.boron_limit
     )
     )
-
     m.fs.eq_boron_mixer = Constraint(
         expr=(
-            m.fs.boron_RO1_inlet == m.fs.boron_feed + (m.fs.boron_RO1_perm * m.fs.boron_2rej)
+            m.fs.boron_RO1_inlet == m.fs.boron_feed + (m.fs.boron_RO1_perm * m.fs.boron_2rej) * m.fs.rej2_uncertain
         )
     )
     m.fs.eq_recycle_pH = Constraint(
@@ -569,6 +569,7 @@ def display_design(m):
     print("---RO1---")
     print("RO1 operating pressure %.1f bar" % (m.fs.RO1.inlet.pressure[0].value / 1e5))
     print("RO1 membrane area %.1f m2" % (m.fs.RO1.area.value))
+    print("RO1 rejection %.3f " % (m.fs.RO1.rejection_phase_comp[[0, "Liq", "NaCl"]].value))
     # print("RO1 width %.1f m2" % (m.fs.RO1.width.value))
     print("---pH swing---")
     print("NaOH dose %.1f mg/ kg w" %(m.fs.NaOH.value))
@@ -585,6 +586,7 @@ def display_design(m):
     print("---RO2---")
     print("RO2 operating pressure %.1f bar" % (m.fs.RO2.inlet.pressure[0].value / 1e5))
     print("RO2 membrane area %.1f m2" % (m.fs.RO2.area.value))
+    print("RO2 rejection %.3f " % (m.fs.RO2.rejection_phase_comp[[0, "Liq", "NaCl"]].value))
     print("Operating pH of RO2 retentate (recycle): %.1f " %(m.fs.pH_recycle.value))
    
     # print("RO2 width %.1f m2" % (m.fs.RO2.width.value))

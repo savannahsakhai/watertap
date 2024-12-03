@@ -165,13 +165,9 @@ def run_analysis(case_num=1, nx=5, pc= 0.5, interpolate_nan_outputs=False, outpu
 
 
 if __name__ == "__main__":
-    # cases = range(1,13)
-    # for i in cases:
-    #     results, sweep_params, m = run_analysis(case_num=i,
-    #                                             nx=2, 
-    #                                             pc= 0.25
-    #     )
-    results, sweep_params, m = run_analysis(case_num=14,
+    cases = range(1,14)
+    for i in cases:
+        results, sweep_params, m = run_analysis(case_num=i,
                                                 nx=2, 
                                                 pc= 0.25
         )

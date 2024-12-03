@@ -35,12 +35,15 @@ def set_up_sensitivity():
     outputs["Recovery"] = m.fs.water_recovery
 
     outputs["RO1_Boron_rej"] = m.fs.boron_1rej
-    outputs["RO1_Feed_pH"] = m.fs.pH_RO1_feed
     outputs["HCl dose"] = m.fs.HCl
 
     outputs["RO2_Boron_rej"] = m.fs.boron_2rej
-    outputs["RO2_Feed_pH"] = m.fs.pH_RO2_feed
     outputs["NaOH dose"] = m.fs.NaOH
+
+    outputs["RO1_Feed_pH"] = m.fs.pH_RO1_feed
+    outputs["RO2_Feed_pH"] = m.fs.pH_RO2_feed
+    outputs["pH recycle"] = m.fs.pH_recycle
+    outputs["pH mix"] = m.fs.pH_mix
 
     outputs["Mem Area RO1"] = m.fs.RO1.area
     outputs["Mem Area RO2"] = m.fs.RO2.area
@@ -54,7 +57,7 @@ def set_up_sensitivity():
 def run_analysis(case_num=1, nx=2, interpolate_nan_outputs=True, output_filename=None):
 
     if output_filename is None:
-        output_filename = "sensitivity_full_flowsheet_bwro" + str(case_num) + ".csv"
+        output_filename = "sensitivity_full_flowsheet_bwro_map" + str(case_num) + ".csv"
 
     outputs, opt_function, m = set_up_sensitivity()
 
@@ -62,8 +65,8 @@ def run_analysis(case_num=1, nx=2, interpolate_nan_outputs=True, output_filename
 
     if case_num == 1:
         # sensitivity analysis
-        sweep_params["boron_feed"] = LinearSample(
-            m.fs.boron_feed,  1 / 1000, 25 / 1000, 26
+        sweep_params["boron_feed"] = PredeterminedFixedSample(
+            m.fs.boron_feed,  [1/1000, 5/1000, 10/1000, 15/1000, 20/1000, 25/1000]
         )
         sweep_params["boron_limit"] = PredeterminedFixedSample(
             m.fs.boron_limit, [0.3/1000, 0.5 / 1000, 1 / 1000, 2.4 / 1000]

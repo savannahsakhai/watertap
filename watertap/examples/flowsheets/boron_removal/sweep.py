@@ -57,7 +57,7 @@ def set_up_sensitivity():
 def run_analysis(case_num=1, nx=2, interpolate_nan_outputs=True, output_filename=None):
 
     if output_filename is None:
-        output_filename = "sensitivity_full_flowsheet_bwro_map" + str(case_num) + ".csv"
+        output_filename = "sensitivity_full_flowsheet_bwro_map" + str(case_num)
 
     outputs, opt_function, m = set_up_sensitivity()
 
@@ -78,7 +78,8 @@ def run_analysis(case_num=1, nx=2, interpolate_nan_outputs=True, output_filename
         m,
         sweep_params,
         outputs,
-        csv_results_file_name=output_filename,
+        csv_results_file_name=output_filename+ ".csv",
+        h5_results_file_name=output_filename+ ".h5",
         optimize_function=opt_function,
         # optimize_kwargs=optimize_kwargs,
         interpolate_nan_outputs=interpolate_nan_outputs,

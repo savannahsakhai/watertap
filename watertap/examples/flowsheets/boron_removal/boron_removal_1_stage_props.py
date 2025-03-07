@@ -34,8 +34,8 @@ import idaes.logger as idaeslog
 from idaes.core.util.misc import StrEnum
 
 import watertap.property_models.NaCl_T_dep_prop_pack as props
-from watertap.unit_models.reverse_osmosis_0D import (
-    ReverseOsmosis0D,
+from watertap.unit_models.reverse_osmosis_1D import (
+    ReverseOsmosis1D,
     ConcentrationPolarizationType,
     MassTransferCoefficient,
     PressureChangeType,
@@ -86,8 +86,14 @@ def build():
     # --------- Unit models ---------
     # 1st Stage
     m.fs.feed = Feed(property_package=m.fs.properties)
+    m.fs.M1 = Mixer(
+        property_package=m.fs.properties,
+        momentum_mixing_type=MomentumMixingType.equality,
+        inlet_list=["feed", "recycle"],
+    )
+    m.fs.M1.pressure_equality_constraints[0, 2].deactivate()
     m.fs.P1 = Pump(property_package=m.fs.properties)
-    m.fs.RO1 = ReverseOsmosis0D(
+    m.fs.RO1 = ReverseOsmosis1D(
         property_package=m.fs.properties,
         has_pressure_change=True,
         pressure_change_type=PressureChangeType.calculated,
@@ -113,24 +119,25 @@ def build():
     m.fs.acid_add = SurrogateBlock(concrete=True)
     m.fs.acid_add.build_model(acid_add_surr, input_vars=inputs_acid, output_vars=outputs_acid)
 
-    # vars and params
-    m.fs.boron_feed = Var(initialize=5/1000, bounds=(0, None), doc= "RO1 perm - boron g/ kg w")
-    # m.fs.boron_RO1_perm = Var(initialize=5.4/1000, bounds=(0, None), doc= "RO1 perm - boron g/ kg w")
-    m.fs.boron_1rej = Var(initialize=0.5, bounds=(0, 1))
-    m.fs.boron_limit = Param(initialize= 2.4/1000, mutable = True, doc= "boron limit g/ kg w")
+    # # vars and params
+    # m.fs.boron_feed = Var(initialize=5/1000, bounds=(0, None), doc= "RO1 perm - boron g/ kg w")
+    # # m.fs.boron_RO1_perm = Var(initialize=5.4/1000, bounds=(0, None), doc= "RO1 perm - boron g/ kg w")
+    # m.fs.boron_1rej = Var(initialize=0.5, bounds=(0, 1))
+    # m.fs.boron_limit = Param(initialize= 2.4/1000, mutable = True, doc= "boron limit g/ kg w")
 
-    m.fs.boron_1rej.fix(0.8)
-    # constraints
+    # m.fs.boron_1rej.fix(0.8)
+    # # constraints
    
-    m.fs.eq_boron_RO2_quality = Constraint(
-        expr=(
-            m.fs.boron_feed * (1 - m.fs.boron_1rej) <= m.fs.boron_limit
-    )
-    )
+    # m.fs.eq_boron_RO2_quality = Constraint(
+    #     expr=(
+    #         m.fs.boron_feed * (1 - m.fs.boron_1rej) <= m.fs.boron_limit
+    # )
+    # )
 
     # --------- Connections ---------
     # 1st Stage
-    m.fs.s01 = Arc(source=m.fs.feed.outlet, destination=m.fs.P1.inlet)
+    m.fs.s00 = Arc(source=m.fs.feed.outlet, destination=m.fs.M1.feed)
+    m.fs.s01 = Arc(source=m.fs.M1.outlet, destination=m.fs.P1.inlet)
     m.fs.s02 = Arc(source=m.fs.P1.outlet, destination=m.fs.RO1.inlet)
     m.fs.s03 = Arc(source=m.fs.RO1.permeate, destination=m.fs.product.inlet)
     m.fs.s04 = Arc(source=m.fs.RO1.retentate, destination=m.fs.disposal.inlet)
@@ -139,6 +146,7 @@ def build():
 
     # --------- Costing ---------
     # costing (1st stage)
+    m.fs.M1.costing = UnitModelCostingBlock(flowsheet_costing_block=m.fs.costing)
     m.fs.P1.costing = UnitModelCostingBlock(flowsheet_costing_block=m.fs.costing)
     m.fs.RO1.costing = UnitModelCostingBlock(flowsheet_costing_block=m.fs.costing)
 
@@ -148,7 +156,7 @@ def build():
     m.fs.costing.register_flow_type("HCl", m.fs.costing.HCl_cost)
 
     HCl = (m.fs.HCl * 1e-6) # mg to kg
-    water2 = (m.fs.RO1.feed_side.properties_in[0].flow_mass_phase_comp["Liq", "H2O"])
+    water2 = (m.fs.M1.outlet.flow_mass_phase_comp[0, "Liq", "H2O"])
 
     m.fs.costing.cost_flow(
         pyunits.convert(
@@ -202,50 +210,27 @@ def set_operating_conditions(m, water_recovery=0.5, over_pressure=0.3, solver=No
         },  # feed NaCl mass fraction [-]
         hold_state=True,  # fixes the calculated component mass flow rates
     )
-    # m.fs.boron_RO1_inlet.fix(10/1000) # boron conc in feed g/kg w
-    m.fs.boron_feed.fix(5/1000)
-    m.fs.P1.efficiency_pump.fix(0.80)  # pump efficiency [-]
-    m.fs.P1.control_volume.properties_out[0].pressure.fix(50e5)
 
-    # RO units - Assume these remain the same as a 1 stage RO system or should sizing be halfed?
+    m.fs.P1.efficiency_pump.fix(0.80)  # pump efficiency [-]
+    m.fs.P1.control_volume.properties_out[0].pressure.fix(70e5)
+
+     # RO units - Assume these remain the same as a 1 stage RO system or should sizing be halfed?
     m.fs.RO1.A_comp.fix(4.2e-12)  # membrane water permeability coefficient [m/s-Pa]
     m.fs.RO1.B_comp.fix(3.5e-8)  # membrane salt permeability coefficient [m/s]
-    m.fs.RO1.feed_side.channel_height.fix(1e-3)  # channel height in membrane stage [m]
-    m.fs.RO1.feed_side.spacer_porosity.fix(
-        0.97
-    )  # spacer porosity in membrane stage [-]
+    m.fs.RO1.feed_side.channel_height.fix(1e-3)  # channel height [m]
+    m.fs.RO1.feed_side.spacer_porosity.fix(0.97)  # spacer porosity [-]
     m.fs.RO1.permeate.pressure[0].fix(101325)  # atmospheric pressure [Pa]
     m.fs.RO1.width.fix(5)  # stage width [m]
-
-    # ---initialize ROs---
-    # initialize RO1
-    m.fs.RO1.feed_side.properties_in[0].flow_mass_phase_comp["Liq", "H2O"] = value(
-        m.fs.feed.properties[0].flow_mass_phase_comp["Liq", "H2O"]
-    )
-    m.fs.RO1.feed_side.properties_in[0].flow_mass_phase_comp["Liq", "NaCl"] = value(
-        m.fs.feed.properties[0].flow_mass_phase_comp["Liq", "NaCl"]
-    )
-    m.fs.RO1.feed_side.properties_in[0].temperature = value(
-        m.fs.feed.properties[0].temperature
-    )
-    m.fs.RO1.feed_side.properties_in[0].pressure = value(
-        m.fs.P1.control_volume.properties_out[0].pressure
-    )
+   
     m.fs.RO1.area.fix(50)  # guess area for RO initialization
-    m.fs.RO1.initialize(optarg=solver.options, solver="ipopt-watertap")
-
-    # unfix guessed area, and fix water recovery - should water recovery be 0.5 for both stages?
-    m.fs.RO1.area.unfix()
-    m.fs.RO1.recovery_mass_phase_comp[0, "Liq", "H2O"].fix(water_recovery)
-
-    # check degrees of freedom
-    if degrees_of_freedom(m) != 0:
-        raise RuntimeError(
-            "The set_operating_conditions function resulted in {} "
-            "degrees of freedom rather than 0. This error suggests "
-            "that too many or not enough variables are fixed for a "
-            "simulation.".format(degrees_of_freedom(m))
-        )
+    # # check degrees of freedom
+    # if degrees_of_freedom(m) != 0:
+    #     raise RuntimeError(
+    #         "The set_operating_conditions function resulted in {} "
+    #         "degrees of freedom rather than 0. This error suggests "
+    #         "that too many or not enough variables are fixed for a "
+    #         "simulation.".format(degrees_of_freedom(m))
+    #     )
 
 
 def solve(blk, solver=None, tee=False, check_termination=False):
@@ -263,10 +248,27 @@ def initialize_system(m, solver=None):
     optarg = solver.options
 
     # ---initialize ROs---
+    # initialize RO1
+    m.fs.RO1.feed_side.properties[0, 0].flow_mass_phase_comp["Liq", "H2O"] = value(
+        m.fs.feed.properties[0].flow_mass_phase_comp["Liq", "H2O"]
+    )
+    m.fs.RO1.feed_side.properties[0, 0].flow_mass_phase_comp["Liq", "NaCl"] = value(
+        m.fs.feed.properties[0].flow_mass_phase_comp["Liq", "NaCl"]
+    )
+    m.fs.RO1.feed_side.properties[0, 0].temperature = value(
+        m.fs.feed.properties[0].temperature
+    )
+    m.fs.RO1.feed_side.properties[0, 0].pressure = value(
+        m.fs.P1.control_volume.properties_out[0].pressure
+    )
     m.fs.RO1.initialize(optarg=optarg, solver="ipopt-watertap")
+    # unfix guessed area, and fix water recovery - should water recovery be 0.5 for both stages?
+    m.fs.RO1.area.unfix()
+    m.fs.RO1.recovery_mass_phase_comp[0, "Liq", "H2O"].fix(0.5)
     
     # ---initialize feed block---
     m.fs.feed.initialize(optarg=optarg)
+    m.fs.M1.initialize(optarg=optarg)
     # ---initialize pumps 1 & 2---
     propagate_state(m.fs.s01)
     m.fs.P1.initialize(optarg=optarg)
@@ -279,7 +281,7 @@ def optimize_set_up(m):
     m.fs.objective = Objective(expr=m.fs.costing.LCOW)
     # unfix decision variables and add bounds
     m.fs.RO1.recovery_mass_phase_comp[0, "Liq", "H2O"].unfix()
-    m.fs.boron_1rej.unfix()
+    # m.fs.boron_1rej.unfix()
 
     # pumps
     m.fs.P1.control_volume.properties_out[0].pressure.unfix()
@@ -347,15 +349,15 @@ def display_system(m):
     prod_mass_frac_NaCl = (
         m.fs.product.flow_mass_phase_comp[0, "Liq", "NaCl"].value / prod_flow_mass
     )
-    prod_conc_mg_kg_Boron = (m.fs.boron_feed.value * (1 - m.fs.boron_1rej.value)) * 1e3
-    print("Product: %.3f kg/s, %.0f ppm salt, %.2f ppm boron" % (prod_flow_mass, prod_mass_frac_NaCl * 1e6, prod_conc_mg_kg_Boron))
+    # prod_conc_mg_kg_Boron = (m.fs.boron_feed.value * (1 - m.fs.boron_1rej.value)) * 1e3
+    # print("Product: %.3f kg/s, %.0f ppm salt, %.2f ppm boron" % (prod_flow_mass, prod_mass_frac_NaCl * 1e6, prod_conc_mg_kg_Boron))
     
 
     print(
         "Energy Consumption: %.1f kWh/m3"
         % value(m.fs.costing.specific_energy_consumption)
     )
-    print("Levelized cost of water: %.2f $/m3" % value(m.fs.costing.LCOW))
+    print("Levelized cost of water: %.4f $/m3" % value(m.fs.costing.LCOW))
 
 
 def display_design(m):

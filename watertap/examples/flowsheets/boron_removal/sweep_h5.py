@@ -11,13 +11,14 @@
 #################################################################################
 from parameter_sweep import LinearSample, parameter_sweep, PredeterminedFixedSample
 from pyomo.environ import units as pyunits
-import watertap.examples.flowsheets.boron_removal.boron_removal_2_pass_RO_surr as boron_removal_flowsheet
+import watertap.examples.flowsheets.boron_removal.boron_removal_2_pass_RO_surr_1D as boron_removal_flowsheet
 # watertap\examples\flowsheets\boron_removal\boron_removal_2_pass_RO_surr.py
 
 def build_model(**kwargs):
     m = boron_removal_flowsheet.build()
     boron_removal_flowsheet.set_operating_conditions(
-        m, water_recovery=0.5, over_pressure=0.3
+        m 
+        # , water_recovery=0.5, over_pressure=0.3
     )
     boron_removal_flowsheet.initialize_system(m)
     boron_removal_flowsheet.solve(m)

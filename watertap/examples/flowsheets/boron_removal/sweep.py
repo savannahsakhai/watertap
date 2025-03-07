@@ -11,16 +11,14 @@
 #################################################################################
 from parameter_sweep import LinearSample, parameter_sweep, PredeterminedFixedSample
 from pyomo.environ import units as pyunits
-import watertap.examples.flowsheets.boron_removal.boron_removal_2_pass_RO_surr as boron_removal_flowsheet
+import boron_removal_2_pass_RO_surr_1D as boron_removal_flowsheet
 # watertap\examples\flowsheets\boron_removal\boron_removal_2_pass_RO_surr.py
 
 def set_up_sensitivity():
     outputs = {}
 
     m = boron_removal_flowsheet.build()
-    boron_removal_flowsheet.set_operating_conditions(
-        m, water_recovery=0.5, over_pressure=0.3
-    )
+    boron_removal_flowsheet.set_operating_conditions(m)
     boron_removal_flowsheet.initialize_system(m)
     boron_removal_flowsheet.solve(m)
     boron_removal_flowsheet.optimize_set_up(m)
@@ -32,6 +30,7 @@ def set_up_sensitivity():
     # create outputs
     outputs["LCOW"] = m.fs.costing.LCOW
     outputs["SEC"] = m.fs.costing.specific_energy_consumption
+    outputs["SEC_Boron"] = m.fs.spefic_energy_boron_removed
     outputs["Recovery"] = m.fs.water_recovery
 
     outputs["RO1_Boron_rej"] = m.fs.boron_1rej
@@ -57,7 +56,7 @@ def set_up_sensitivity():
 def run_analysis(case_num=1, nx=2, interpolate_nan_outputs=True, output_filename=None):
 
     if output_filename is None:
-        output_filename = "sensitivity_full_flowsheet_bwro_map" + str(case_num)
+        output_filename = "sensitivity_full_flowsheet_bwro_map_1D" + str(case_num)
 
     outputs, opt_function, m = set_up_sensitivity()
 

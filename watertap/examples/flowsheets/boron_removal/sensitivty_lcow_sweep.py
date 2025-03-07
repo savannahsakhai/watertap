@@ -1,6 +1,6 @@
 from watertap.tools.parameter_sweep import LinearSample, parameter_sweep, PredeterminedFixedSample
 from pyomo.environ import units as pyunits
-import watertap.examples.flowsheets.boron_removal.boron_removal_2_pass_RO_surr as boron_removal_flowsheet
+import boron_removal_2_pass_RO_surr_1D as boron_removal_flowsheet
 import pandas as pd
 import numpy as np
 
@@ -8,9 +8,7 @@ def set_up_sensitivity():
     outputs = {}
 
     m = boron_removal_flowsheet.build()
-    boron_removal_flowsheet.set_operating_conditions(
-        m, water_recovery=0.5, over_pressure=0.3
-    )
+    boron_removal_flowsheet.set_operating_conditions(m)
     boron_removal_flowsheet.initialize_system(m)
     boron_removal_flowsheet.solve(m)
     boron_removal_flowsheet.optimize_set_up(m)
@@ -20,8 +18,8 @@ def set_up_sensitivity():
     opt_function = boron_removal_flowsheet.solve
 
     # create outputs
-    outputs["LCOW"] = ((m.fs.costing.LCOW-0.92)/0.92)*100
-    outputs["SEC"] = ((m.fs.costing.specific_energy_consumption-5.1)/5.1)*100
+    outputs["LCOW"] = ((m.fs.costing.LCOW-1.012316)/1.012316)*100
+    outputs["SEC"] = ((m.fs.costing.specific_energy_consumption-5.437537)/5.437537)*100
 
     return outputs, opt_function, m
 
@@ -165,7 +163,7 @@ def run_analysis(case_num=1, nx=5, pc= 0.5, interpolate_nan_outputs=False, outpu
 
 
 if __name__ == "__main__":
-    cases = range(1,14)
+    cases = range(1,15)
     for i in cases:
         results, sweep_params, m = run_analysis(case_num=i,
                                                 nx=2, 

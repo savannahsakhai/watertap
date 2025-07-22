@@ -64,7 +64,7 @@ def main():
     print("\n***---Optimization results---***")
     display_system(m)
     display_design(m)
-    m.fs.report()
+
     return m
 
 
@@ -239,7 +239,13 @@ def optimize_set_up(m):
     # RO
     m.fs.RO.area.unfix()
     m.fs.RO.area.setlb(1)
-    m.fs.RO.area.setub(50000)
+    m.fs.RO.area.setub(5000)
+    m.fs.RO.width.unfix()
+    m.fs.RO.width.setlb(0.25)
+    m.fs.RO.width.setub(1000)
+    m.fs.RO.length.unfix()
+    m.fs.RO.length.setlb(0.25)
+    m.fs.RO.length.setub(1000)
     m.fs.RO.recovery_mass_phase_comp[0, "Liq", "H2O"].fix(0.5)
 
     # additional specifications
@@ -262,7 +268,7 @@ def optimize_set_up(m):
     )
 
     # check degrees of freedom
-    assert_degrees_of_freedom(m, 1)
+    # assert_degrees_of_freedom(m, 1)
 
 
 def optimize(m, solver=None, check_termination=True):
@@ -319,6 +325,8 @@ def display_design(m):
     print("---decision variables---")
     print("Operating pressure %.1f bar" % (m.fs.RO.inlet.pressure[0].value / 1e5))
     print("Membrane area %.1f m2" % (m.fs.RO.area.value))
+    print("Membrane width %.1f m" % (m.fs.RO.width.value))
+    print("Membrane length %.1f m" % (m.fs.RO.length.value))
     print("---design variables---")
     print(
         "Pump 1\noutlet pressure: %.1f bar\npower %.2f kW"

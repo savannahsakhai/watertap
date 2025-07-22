@@ -24,6 +24,7 @@ def set_up_sensitivity():
     reaktoro_flowsheet.optimize_set_up(m)
     reaktoro_flowsheet.solve(m)
 
+
     # optimize_kwargs = {"fail_flag": False}
     opt_function = reaktoro_flowsheet.solve
     # create outputs
@@ -36,7 +37,7 @@ def set_up_sensitivity():
     return outputs, opt_function, m
 
 
-def run_analysis(case_num=1, nx=2, interpolate_nan_outputs=True, output_filename=None):
+def run_analysis(case_num=1, nx=2, pc= 0.5, interpolate_nan_outputs=True, output_filename=None):
 
     if output_filename is None:
         output_filename = "sensitivity_full_flowsheet_" + str(case_num) + ".csv"
@@ -65,6 +66,24 @@ def run_analysis(case_num=1, nx=2, interpolate_nan_outputs=True, output_filename
         sweep_params = dict()
         sweep_params["Feed Mass Frac"] = LinearSample(
             m.fs.feed.properties[0].mass_frac_phase_comp["Liq", "NaCl"], .035, .1, 14
+        )
+    elif case_num == 5:
+       sweep_params = dict()
+    #    m.fs.costing.electricity_cost.unfix()
+       sweep_params["electricity_cost"] = LinearSample(
+            m.fs.costing.electricity_cost, 
+            0.07*(1-pc),
+            0.07*(1+pc), 
+            nx
+        )
+    elif case_num == 6:
+        sweep_params = dict()
+        # m.fs.costing.reverse_osmosis.membrane_cost.unfix()
+        sweep_params["membrane_cost"] = LinearSample(
+            m.fs.costing.reverse_osmosis.membrane_cost, 
+            30*(1-pc),
+            30*(1+pc), 
+            nx
         )  
         
     else:
@@ -83,9 +102,20 @@ def run_analysis(case_num=1, nx=2, interpolate_nan_outputs=True, output_filename
 
 
 if __name__ == "__main__":
-    start_time = time.time()
-    results, sweep_params, m = run_analysis(case_num=2, output_filename="data_RO_reaktoro_2D.csv")
-    end_time= time.time()
-    elapsed_time_1 = end_time - start_time
+    # start_time = time.time()
+    # results, sweep_params, m = run_analysis(case_num=2, output_filename="data_RO_reaktoro_2D.csv")
+    # end_time= time.time()
+    # elapsed_time_1 = end_time - start_time
 
-    print(elapsed_time_1)
+    # print(elapsed_time_1)
+
+    cases = range(5,7)
+    for i in cases:
+        start_time = time.time()
+        results, sweep_params, m = run_analysis(case_num=i,
+                                                nx=2, 
+                                                pc= 0.25, 
+                                                output_filename="RO_Reaktoro_sensitivity_" + str(i) + ".csv"
+                                                )
+        end_time= time.time()
+        elapsed_time_1 = end_time - start_time

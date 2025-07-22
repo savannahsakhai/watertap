@@ -211,22 +211,22 @@ if __name__ == "__main__":
     print(elapsed_time_2)
     print(elapsed_time_3)
 
-    # start_time = time.time()
-    # results, sweep_params, m = run_analysis_RO(case_num=3, flowsheet=RO_flowsheet_Sea, output_filename="data_RO_sea_2D.csv")
-    # end_time= time.time()
-    # elapsed_time_1 = end_time - start_time
+    start_time = time.time()
+    results, sweep_params, m = run_analysis_RO(case_num=3, flowsheet=RO_flowsheet_Sea, output_filename="data_RO_sea_2D.csv")
+    end_time= time.time()
+    elapsed_time_1 = end_time - start_time
 
-    # start_time = time.time()
-    # results, sweep_params, m = run_analysis_RO(case_num=2, flowsheet=RO_flowsheet_NaCl, output_filename="data_RO_nacl_2D.csv")
-    # end_time= time.time()
-    # elapsed_time_2 = end_time - start_time
+    start_time = time.time()
+    results, sweep_params, m = run_analysis_RO(case_num=2, flowsheet=RO_flowsheet_NaCl, output_filename="data_RO_nacl_2D.csv")
+    end_time= time.time()
+    elapsed_time_2 = end_time - start_time
 
-    # start_time = time.time()
-    # results, sweep_params, m = run_analysis_RO(case_num=2, flowsheet=RO_flowsheet_Simple, output_filename="data_RO_simple_2D.csv")
-    # end_time= time.time()
-    # elapsed_time_3 = end_time - start_time
+    start_time = time.time()
+    results, sweep_params, m = run_analysis_RO(case_num=2, flowsheet=RO_flowsheet_Simple, output_filename="data_RO_simple_2D.csv")
+    end_time= time.time()
+    elapsed_time_3 = end_time - start_time
 
-    # print("RO")
-    # print(elapsed_time_1)
-    # print(elapsed_time_2)
-    # print(elapsed_time_3)
+    print("RO")
+    print(elapsed_time_1)
+    print(elapsed_time_2)
+    print(elapsed_time_3)

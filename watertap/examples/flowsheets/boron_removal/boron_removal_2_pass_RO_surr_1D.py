@@ -617,6 +617,7 @@ def display_design(m):
     print("Operating pH of RO2 retentate (recycle): %.1f " %(m.fs.pH_recycle.value))
    
     # print("RO2 width %.1f m2" % (m.fs.RO2.width.value))
+    print(m.fs.costing.aggregate_flow_costs["NaOH"].get_units())
   
 
 def display_state(m):

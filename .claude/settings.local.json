@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c:*)",
+      "Bash(python -m pip show:*)",
+      "Bash(where:*)",
+      "Bash(conda run:*)",
+      "Bash(powershell -Command \"python -c:*)",
+      "Bash(powershell:*)"
+    ]
+  }
+}

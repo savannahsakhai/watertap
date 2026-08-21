@@ -67,5 +67,5 @@ def run_analysis(case_num=1, flowsheet=flowsheet_Sea, salt="TDS", interpolate_na
 
 if __name__ == "__main__":
     results, sweep_params, m = run_analysis(case_num=1, flowsheet=flowsheet_Sea, salt = "TDS", output_filename="data_property_sea.csv")
-    results, sweep_params, m = run_analysis(case_num=2, flowsheet=flowsheet_NaCl, salt = "NaCl", output_filename="data_property_nacl.csv")
-    results, sweep_params, m = run_analysis(case_num=2, flowsheet=flowsheet_simple, salt = "NaCl", output_filename="data_property_simple.csv")
+    # results, sweep_params, m = run_analysis(case_num=2, flowsheet=flowsheet_NaCl, salt = "NaCl", output_filename="data_property_nacl.csv")
+    # results, sweep_params, m = run_analysis(case_num=2, flowsheet=flowsheet_simple, salt = "NaCl", output_filename="data_property_simple.csv")

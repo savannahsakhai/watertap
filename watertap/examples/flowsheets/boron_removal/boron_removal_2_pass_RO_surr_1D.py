@@ -189,17 +189,23 @@ def build():
     # )
 
     # brackish water membrane rejection
+    # multiplier on boron passage through RO2; u > 1 = more passage = worse rejection.
+    # Applied to (1 - rejection) rather than to rejection itself so that boron_2rej
+    # cannot exceed 1. Reduces to the nominal correlation at u = 1.
     m.fs.rej2_uncertain = Param(initialize= 1, mutable = True, doc= "uncertainty multiplier")
     m.fs.eq_boron_rej2 = Constraint(
         expr=(
             m.fs.boron_2rej
-            == (
-                - 0.7007 * m.fs.pH_RO2_feed ** 3
-                + 19.64 * m.fs.pH_RO2_feed ** 2
-                - 168.07 * m.fs.pH_RO2_feed 
-                + 499.28
+            == 1 - m.fs.rej2_uncertain*(
+                1
+                - (
+                    - 0.7007 * m.fs.pH_RO2_feed ** 3
+                    + 19.64 * m.fs.pH_RO2_feed ** 2
+                    - 168.07 * m.fs.pH_RO2_feed
+                    + 499.28
+                )
+                / 100
             )
-            / 100
         )
     )
 
@@ -207,19 +213,19 @@ def build():
    
     m.fs.eq_boron_RO2_quality = Constraint(
         expr=(
-            m.fs.boron_RO1_perm * m.fs.rej2_uncertain * (1 - m.fs.boron_2rej) <= m.fs.boron_limit
+            m.fs.boron_RO1_perm * (1 - m.fs.boron_2rej) <= m.fs.boron_limit
     )
     )
 
     m.fs.eq_boron_removal = Constraint(
         expr=(
-            m.fs.boron_removed == m.fs.boron_feed - (m.fs.boron_RO1_perm * m.fs.rej2_uncertain * (1 - m.fs.boron_2rej))
+            m.fs.boron_removed == m.fs.boron_feed - (m.fs.boron_RO1_perm * (1 - m.fs.boron_2rej))
         )
     )
 
     m.fs.eq_boron_mixer = Constraint(
         expr=(
-            m.fs.boron_RO1_inlet == m.fs.boron_feed + (m.fs.boron_RO1_perm * m.fs.boron_2rej) * m.fs.rej2_uncertain
+            m.fs.boron_RO1_inlet == m.fs.boron_feed + (m.fs.boron_RO1_perm * m.fs.boron_2rej)
         )
     )
     

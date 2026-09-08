@@ -6,7 +6,9 @@
       "Bash(where:*)",
       "Bash(conda run:*)",
       "Bash(powershell -Command \"python -c:*)",
-      "Bash(powershell:*)"
+      "Bash(powershell:*)",
+      "Bash(python bound_check.py)",
+      "PowerShell(conda env list)"
     ]
   }
 }
